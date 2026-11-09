@@ -7,6 +7,77 @@
 <meta name="theme-color" content="#f8e9e8">
 <title>Цветочная история</title>
 
+/* Дополнительные игровые окна */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #65464c88;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 420px;
+  max-height: 80dvh;
+  overflow-y: auto;
+  background: linear-gradient(145deg,#fffaf1,#fce7e4);
+  border: 4px solid white;
+  border-radius: 25px;
+  padding: 20px;
+  box-shadow: 0 8px 25px #53343b44;
+}
+
+.modal-title {
+  font-family: Georgia,serif;
+  color: #b66e7c;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.game-item {
+  background: white;
+  border-radius: 17px;
+  padding: 14px;
+  margin: 10px 0;
+  box-shadow: 0 4px 0 #ead2c9;
+}
+
+.game-item p {
+  font-size: 13px;
+  color: #a7837e;
+}
+
+.game-action {
+  width: 100%;
+  padding: 13px;
+  margin-top: 8px;
+  background: linear-gradient(#f4b0b2,#df8999);
+  color: white;
+  font-weight: bold;
+  border-radius: 14px;
+  box-shadow: 0 4px 0 #c87583;
+}
+
+.close-modal {
+  display: block;
+  margin: 15px auto 0;
+  padding: 10px 25px;
+  border-radius: 14px;
+  background: #f1ded7;
+  color: #805c65;
+  font-weight: bold;
+}
+
 <style>
 * {
   box-sizing: border-box;
@@ -446,6 +517,15 @@ button {
 
 <div class="toast" id="toast"></div>
 
+<div class="modal" id="gameModal">
+  <div class="modal-card">
+    <div id="modalContent"></div>
+    <button class="close-modal" onclick="closePanel()">
+      Закрыть
+    </button>
+  </div>
+</div>
+
 <script>
 let coins = Number(localStorage.getItem("flowerCoins")) || 250;
 let today = new Date().toDateString();
@@ -494,6 +574,203 @@ function gift() {
   message("Получено 50 монет! ✨");
 }
 </script>
+
+let decorations = JSON.parse(
+  localStorage.getItem("flowerDecorations") || "[]"
+);
+
+let bouquetCount = Number(
+  localStorage.getItem("flowerBouquets") || 0
+);
+
+function closePanel() {
+  document.getElementById("gameModal").classList.remove("show");
+}
+
+function openPanel(name) {
+  const modal = document.getElementById("gameModal");
+  const content = document.getElementById("modalContent");
+
+  const screens = {
+    achievements: `
+      <div class="modal-title">🏆 Достижения</div>
+      <div class="game-item">
+        🌷 Первые шаги
+        <p>Открой свою цветочную лавку</p>
+      </div>
+      <div class="game-item">
+        💐 Начинающий флорист
+        <p>Создано букетов: ${bouquetCount}</p>
+      </div>
+      <div class="game-item">
+        🎀 Коллекционер
+        <p>Куплено украшений: ${decorations.length}</p>
+      </div>
+    `,
+
+    events: `
+      <div class="modal-title">🎀 События</div>
+      <div class="game-item">
+        🌸 Цветочная неделя
+        <p>Создавай букеты и украшай свою лавку!</p>
+        <b>Награда: 100 монет</b>
+        <button class="game-action" onclick="eventReward()">
+          Получить награду
+        </button>
+      </div>
+      <div class="game-item">
+        🐈 День котика
+        <p>Скоро в твоей лавке появится особое событие.</p>
+      </div>
+    `,
+
+    bouquets: `
+      <div class="modal-title">💐 Мастерская букетов</div>
+      <div class="game-item">
+        🌹 Розовый букет
+        <p>Собери красивый букет из трёх цветов.</p>
+        <button class="game-action" onclick="makeBouquet()">
+          🌷 Собрать букет
+        </button>
+      </div>
+      <div class="game-item">
+        Всего создано букетов: ${bouquetCount}
+      </div>
+    `,
+
+    games: `
+      <div class="modal-title">🎮 Мини-игры</div>
+      <div class="game-item">
+        🌼 Цветочная удача
+        <p>Нажми кнопку и попробуй получить монеты.</p>
+        <button class="game-action" onclick="playFlowerGame()">
+          Играть
+        </button>
+      </div>
+      <div class="game-item">
+        🐝 Цветочная прогулка
+        <p>Собери лепестки и получи награду.</p>
+        <button class="game-action" onclick="playWalk()">
+          Начать прогулку
+        </button>
+      </div>
+    `,
+
+    decorations: `
+      <div class="modal-title">🎀 Украшения</div>
+      <div class="game-item">
+        🪴 Красивое растение
+        <p>Цена: 50 монет</p>
+        <button class="game-action" onclick="buyDecoration('Растение',50)">
+          Купить
+        </button>
+      </div>
+      <div class="game-item">
+        🧶 Мягкий коврик
+        <p>Цена: 100 монет</p>
+        <button class="game-action" onclick="buyDecoration('Коврик',100)">
+          Купить
+        </button>
+      </div>
+      <div class="game-item">
+        🪧 Вывеска лавки
+        <p>Цена: 150 монет</p>
+        <button class="game-action" onclick="buyDecoration('Вывеска',150)">
+          Купить
+        </button>
+      </div>
+      <div class="game-item">
+        Куплено украшений: ${decorations.length}
+      </div>
+    `
+  };
+
+  content.innerHTML = screens[name] || "";
+  modal.classList.add("show");
+}
+
+function tab(button, name) {
+  document.querySelectorAll(".nav-button").forEach(item => {
+    item.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
+  const pages = {
+    "Лавка": null,
+    "Букеты": "bouquets",
+    "Мини-игры": "games",
+    "Украшения": "decorations"
+  };
+
+  if (pages[name] === null) {
+    closePanel();
+  } else {
+    openPanel(pages[name]);
+  }
+}
+
+function updateCoins() {
+  document.getElementById("coins").textContent = coins;
+  localStorage.setItem("flowerCoins", coins);
+}
+
+function makeBouquet() {
+  bouquetCount++;
+  localStorage.setItem("flowerBouquets", bouquetCount);
+  message("Ты создала новый букет! 💐");
+  openPanel("bouquets");
+}
+
+function playFlowerGame() {
+  const reward = Math.floor(Math.random() * 21) + 10;
+  coins += reward;
+  updateCoins();
+  message("Ты выиграла " + reward + " монет! 🌸");
+}
+
+function playWalk() {
+  coins += 15;
+  updateCoins();
+  message("Ты собрала лепестки и получила 15 монет! 🌼");
+}
+
+function buyDecoration(name, price) {
+  if (decorations.includes(name)) {
+    message("Это украшение уже куплено!");
+    return;
+  }
+
+  if (coins < price) {
+    message("Пока не хватает монет!");
+    return;
+  }
+
+  coins -= price;
+  decorations.push(name);
+
+  localStorage.setItem(
+    "flowerDecorations",
+    JSON.stringify(decorations)
+  );
+
+  updateCoins();
+  message("Куплено: " + name + "! 🎀");
+  openPanel("decorations");
+}
+
+function eventReward() {
+  if (localStorage.getItem("flowerEventReward")) {
+    message("Ты уже получила эту награду!");
+    return;
+  }
+
+  coins += 100;
+  localStorage.setItem("flowerEventReward", "yes");
+  updateCoins();
+  message("Получено 100 монет! 🎉");
+  openPanel("events");
+}
 
 </body>
 </html>
