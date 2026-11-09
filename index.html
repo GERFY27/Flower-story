@@ -7,77 +7,6 @@
 <meta name="theme-color" content="#f8e9e8">
 <title>Цветочная история</title>
 
-/* Дополнительные игровые окна */
-
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background: #65464c88;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-}
-
-.modal.show {
-  display: flex;
-}
-
-.modal-card {
-  width: 100%;
-  max-width: 420px;
-  max-height: 80dvh;
-  overflow-y: auto;
-  background: linear-gradient(145deg,#fffaf1,#fce7e4);
-  border: 4px solid white;
-  border-radius: 25px;
-  padding: 20px;
-  box-shadow: 0 8px 25px #53343b44;
-}
-
-.modal-title {
-  font-family: Georgia,serif;
-  color: #b66e7c;
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.game-item {
-  background: white;
-  border-radius: 17px;
-  padding: 14px;
-  margin: 10px 0;
-  box-shadow: 0 4px 0 #ead2c9;
-}
-
-.game-item p {
-  font-size: 13px;
-  color: #a7837e;
-}
-
-.game-action {
-  width: 100%;
-  padding: 13px;
-  margin-top: 8px;
-  background: linear-gradient(#f4b0b2,#df8999);
-  color: white;
-  font-weight: bold;
-  border-radius: 14px;
-  box-shadow: 0 4px 0 #c87583;
-}
-
-.close-modal {
-  display: block;
-  margin: 15px auto 0;
-  padding: 10px 25px;
-  border-radius: 14px;
-  background: #f1ded7;
-  color: #805c65;
-  font-weight: bold;
-}
-
 <style>
 * {
   box-sizing: border-box;
@@ -104,12 +33,8 @@ button {
   min-height: 100dvh;
   margin: auto;
   padding: 15px 15px 110px;
-  background:
-    radial-gradient(ellipse at 10% 20%, #fff9e8 0 5%, transparent 6%),
-    linear-gradient(180deg, #f8e5e4, #fff3e7);
+  background: linear-gradient(180deg,#f8e5e4,#fff3e7);
 }
-
-/* Верхняя панель */
 
 .top {
   display: flex;
@@ -141,8 +66,6 @@ button {
   font-weight: 800;
 }
 
-/* Заголовок */
-
 .logo {
   text-align: center;
   margin: 20px 0 17px;
@@ -162,8 +85,6 @@ button {
   margin: 6px 0 0;
   letter-spacing: 1px;
 }
-
-/* Цветочная лавка */
 
 .shop {
   position: relative;
@@ -306,8 +227,6 @@ button {
   50% { transform: scale(1.3); }
 }
 
-/* Кнопки */
-
 .buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -336,8 +255,6 @@ button {
   display: block;
   margin-bottom: 3px;
 }
-
-/* Задание дня */
 
 .heading {
   font-family: Georgia,serif;
@@ -389,8 +306,6 @@ button {
   box-shadow: 0 1px 0 #c87583;
 }
 
-/* Нижнее меню */
-
 .navigation {
   position: fixed;
   z-index: 10;
@@ -428,7 +343,7 @@ button {
 
 .toast {
   position: fixed;
-  z-index: 30;
+  z-index: 60;
   left: 50%;
   bottom: 100px;
   transform: translateX(-50%);
@@ -442,6 +357,77 @@ button {
   font-size: 13px;
   text-align: center;
   box-shadow: 0 5px 15px #0002;
+}
+
+/* Игровые окна */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #65464c88;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 420px;
+  max-height: 80dvh;
+  overflow-y: auto;
+  background: linear-gradient(145deg,#fffaf1,#fce7e4);
+  border: 4px solid white;
+  border-radius: 25px;
+  padding: 20px;
+  box-shadow: 0 8px 25px #53343b44;
+}
+
+.modal-title {
+  font-family: Georgia,serif;
+  color: #b66e7c;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.game-item {
+  background: white;
+  border-radius: 17px;
+  padding: 14px;
+  margin: 10px 0;
+  box-shadow: 0 4px 0 #ead2c9;
+}
+
+.game-item p {
+  font-size: 13px;
+  color: #a7837e;
+}
+
+.game-action {
+  width: 100%;
+  padding: 13px;
+  margin-top: 8px;
+  background: linear-gradient(#f4b0b2,#df8999);
+  color: white;
+  font-weight: bold;
+  border-radius: 14px;
+  box-shadow: 0 4px 0 #c87583;
+}
+
+.close-modal {
+  display: block;
+  margin: 15px auto 0;
+  padding: 10px 25px;
+  border-radius: 14px;
+  background: #f1ded7;
+  color: #805c65;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -464,13 +450,11 @@ button {
 
   <div class="shop">
     <div class="sign">🌷 Цветочная лавка 🌷</div>
-
     <div class="window">
       <div class="flower">🌹</div>
       <div class="flower">🌻</div>
       <div class="flower">🌷</div>
     </div>
-
     <div class="shelf"></div>
     <div class="counter"></div>
     <div class="plant">🪴</div>
@@ -479,10 +463,10 @@ button {
   </div>
 
   <div class="buttons">
-    <button class="big-button" onclick="message('Твои достижения скоро появятся здесь!')">
+    <button class="big-button" onclick="openPanel('achievements')">
       <span>🏆</span>Достижения
     </button>
-    <button class="big-button" onclick="message('Скоро начнутся новые события!')">
+    <button class="big-button" onclick="openPanel('events')">
       <span>🎀</span>События
     </button>
   </div>
@@ -520,9 +504,7 @@ button {
 <div class="modal" id="gameModal">
   <div class="modal-card">
     <div id="modalContent"></div>
-    <button class="close-modal" onclick="closePanel()">
-      Закрыть
-    </button>
+    <button class="close-modal" onclick="closePanel()">Закрыть</button>
   </div>
 </div>
 
@@ -530,6 +512,14 @@ button {
 let coins = Number(localStorage.getItem("flowerCoins")) || 250;
 let today = new Date().toDateString();
 let giftTaken = localStorage.getItem("flowerGiftTaken") === today;
+
+let decorations = JSON.parse(
+  localStorage.getItem("flowerDecorations") || "[]"
+);
+
+let bouquetCount = Number(
+  localStorage.getItem("flowerBouquets") || 0
+);
 
 document.getElementById("coins").textContent = coins;
 
@@ -544,45 +534,6 @@ function message(text) {
   }, 2300);
 }
 
-function tab(button, name) {
-  document.querySelectorAll(".nav-button").forEach(b => {
-    b.classList.remove("active");
-  });
-
-  button.classList.add("active");
-
-  if (name === "Лавка") {
-    message("Добро пожаловать в свою лавку! 🌷");
-  } else {
-    message("Раздел «" + name + "» скоро откроется!");
-  }
-}
-
-function gift() {
-  if (giftTaken) {
-    message("Ты уже забрала подарок сегодня! 💗");
-    return;
-  }
-
-  coins += 50;
-  giftTaken = true;
-
-  localStorage.setItem("flowerCoins", coins);
-  localStorage.setItem("flowerGiftTaken", today);
-
-  document.getElementById("coins").textContent = coins;
-  message("Получено 50 монет! ✨");
-}
-</script>
-
-let decorations = JSON.parse(
-  localStorage.getItem("flowerDecorations") || "[]"
-);
-
-let bouquetCount = Number(
-  localStorage.getItem("flowerBouquets") || 0
-);
-
 function closePanel() {
   document.getElementById("gameModal").classList.remove("show");
 }
@@ -596,7 +547,7 @@ function openPanel(name) {
       <div class="modal-title">🏆 Достижения</div>
       <div class="game-item">
         🌷 Первые шаги
-        <p>Открой свою цветочную лавку</p>
+        <p>Добро пожаловать в свою цветочную лавку!</p>
       </div>
       <div class="game-item">
         💐 Начинающий флорист
@@ -605,6 +556,10 @@ function openPanel(name) {
       <div class="game-item">
         🎀 Коллекционер
         <p>Куплено украшений: ${decorations.length}</p>
+      </div>
+      <div class="game-item">
+        🪙 Копилка
+        <p>Сейчас у тебя ${coins} монет</p>
       </div>
     `,
 
@@ -715,6 +670,20 @@ function updateCoins() {
   localStorage.setItem("flowerCoins", coins);
 }
 
+function gift() {
+  if (giftTaken) {
+    message("Ты уже забрала подарок сегодня! 💗");
+    return;
+  }
+
+  coins += 50;
+  giftTaken = true;
+
+  localStorage.setItem("flowerGiftTaken", today);
+  updateCoins();
+  message("Получено 50 монет! ✨");
+}
+
 function makeBouquet() {
   bouquetCount++;
   localStorage.setItem("flowerBouquets", bouquetCount);
@@ -771,6 +740,11 @@ function eventReward() {
   message("Получено 100 монет! 🎉");
   openPanel("events");
 }
+
+document.getElementById("gameModal").addEventListener("click", function(event) {
+  if (event.target === this) closePanel();
+});
+</script>
 
 </body>
 </html>
