@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6dfe3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Цветочная история">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Цветочная история</title>
+<style>
+:root{--pink:#d98da1;--rose:#a95f75;--cream:#fff8f4;--ink:#614b4d;--line:#f0d8d8;--green:#829b7b}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#fff2ef,#fffaf5 45%,#f7f1e8);color:var(--ink);font-family:Georgia,serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{text-align:center;padding:20px 14px 14px;background:#f6dfe3;border-bottom:1px solid #efd0d6}
+h1{font-size:26px;margin:0;color:#99566c}header p{margin:6px 0 0;font-size:13px}
+.stats{display:flex;justify-content:space-around;gap:6px;padding:12px 8px;background:#fffdfb;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--line)}
+.stat{text-align:center;font:13px Arial,sans-serif}.stat b{display:block;font-size:17px;color:var(--rose);margin-top:3px}
+main{max-width:620px;margin:auto;padding:12px}
+.panel{background:#fffdfb;border:1px solid var(--line);border-radius:20px;padding:15px;margin:12px 0;box-shadow:0 5px 18px #a56c6810}
+h2{font-size:19px;margin:0 0 8px;color:#875568}
+.hint{font:12px Arial,sans-serif;color:#987f7e;line-height:1.45;margin:5px 0 12px}
+#garden{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cell{aspect-ratio:1;border:1.5px solid #efd6d7;border-radius:14px;background:#fff6f3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--ink);padding:3px;min-width:0}
+.cell.selected{outline:3px solid #d98da1;background:#ffe9ee}
+.cell .flower{font-size:clamp(23px,7vw,34px);line-height:1.1}
+.cell .lvl{font:10px Arial,sans-serif;color:#a17c80}
+.cell.empty{font-size:22px;color:#d6b8b8}
+button{font:14px Arial,sans-serif;border:0;border-radius:12px;background:var(--pink);color:white;padding:11px 13px;cursor:pointer}
+button:active{transform:scale(.98)}button.secondary{background:#b7a09b}button:disabled{opacity:.45}
+.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:12px}
+#message{min-height:20px;text-align:center;color:#a75d75;font:13px Arial,sans-serif;margin:10px 0 0}
+.orderrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.orderrow p{margin:5px 0;font-size:14px}.reward{white-space:nowrap;text-align:right;font:13px Arial,sans-serif}
+#puzzle{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.tile{padding:0;aspect-ratio:1;border-radius:10px;background:#fff0ed;color:var(--ink);font-size:clamp(20px,6vw,27px);border:1px solid #f1d8d7}
+.tile.done{background:#f6e8dc;opacity:.5}
+.shoprow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #f4e7e4}
+.shoprow:first-of-type{border-top:0}.shoprow small{display:block;color:#9c8581;font:12px Arial,sans-serif;margin-top:3px}
+footer{text-align:center;color:#a88f8b;font:11px Arial,sans-serif;padding:18px}
+@media(min-width:500px){main{padding:18px}.panel{padding:19px}}
+</style>
+</head>
+<body>
+<header><h1>🌷 Цветочная история</h1><p>Маленькая лавка больших чудес</p></header>
+<div class="stats">
+ <div class="stat">Монеты<b>🪙 <span id="coins">120</span></b></div>
+ <div class="stat">Цветы открыты<b>🌼 <span id="unlocked">2</span></b></div>
+ <div class="stat">Магазин<b>🏡 <span id="level">1</span></b></div>
+</div>
+<main>
+<section class="panel">
+ <h2>🌸 Цветочная мастерская</h2>
+ <p class="hint">Выбери два одинаковых цветка одного уровня — они объединятся в букет следующего уровня. Освобождай место и собирай заказы.</p>
+ <div id="garden"></div>
+ <div class="actions"><button id="addFlower">＋ Цветочек · 10 🪙</button><button class="secondary" id="clear">Сбросить выбор</button></div>
+ <div id="message" aria-live="polite">Начни с объединения двух маленьких цветочков.</div>
+</section>
+<section class="panel">
+ <h2>💌 Заказ жителя</h2>
+ <div class="orderrow">
+  <div><b id="customer">Эмма</b><p id="request">Просит букет уровня 2 🌷</p></div>
+  <div class="reward"><b id="reward">40 🪙</b><br><button id="deliver">Передать букет</button></div>
+ </div>
+</section>
+<section class="panel">
+ <h2>🎮 Цветочная головоломка</h2>
+ <p class="hint">Нажми на клетку, чтобы проверить три одинаковых цветка подряд по горизонтали или вертикали. Победа приносит монеты. Каждые три победы открывают новый вид цветка.</p>
+ <div id="puzzle"></div>
+ <div class="actions"><button class="secondary" id="newPuzzle">Новое поле</button></div>
+ <p id="puzzleInfo" class="hint" aria-live="polite">Найди три одинаковых цветка в ряд.</p>
+</section>
+<section class="panel">
+ <h2>🏡 Развитие лавки</h2>
+ <div class="shoprow"><div>🪴 Дополнительные полки<small>Добавляют 4 места для цветов</small></div><button data-upgrade="space">60 🪙</button></div>
+ <div class="shoprow"><div>🌷 Красивая витрина<small>Увеличивает награду за заказы</small></div><button data-upgrade="profit">100 🪙</button></div>
+ <div class="shoprow"><div>✨ Уютный интерьер<small>Повышает уровень магазина</small></div><button data-upgrade="decor">150 🪙</button></div>
+</section>
+</main>
+<footer>Твой прогресс сохраняется на этом устройстве 🌿</footer>
+<script>
+const FLOWERS=[{name:"Ромашка",icon:"🌼"},{name:"Тюльпан",icon:"🌷"},{name:"Роза",icon:"🌹"},{name:"Подсолнух",icon:"🌻"},{name:"Лаванда",icon:"🪻"},{name:"Сакура",icon:"🌸"},{name:"Пион",icon:"💐"}];
+const NAMES=["Эмма","Том","Лили","бабушка Роза","Макс","Мия"];
+const KEY="flower-story-save-v1";
+let state;
+function fresh(){return {coins:120,unlocked:2,level:1,space:16,profit:1,decor:0,board:[1,1,null,null,null,null,null,null,null,null,null,null,null,null,null,null],selected:null,wins:0,orderLevel:2,customer:0,puzzle:[],puzzleDone:[]};}
+function load(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.board)&&x.board.length>=16)return {...fresh(),...x};}catch(e){}return fresh();}
+state=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function say(t){document.getElementById("message").textContent=t}
+function iconFor(level){return FLOWERS[Math.min(Math.max(level-1,0),state.unlocked-1)].icon}
+function render(){
+ document.getElementById("coins").textContent=state.coins;
+ document.getElementById("unlocked").textContent=state.unlocked;
+ document.getElementById("level").textContent=state.level;
+ const g=document.getElementById("garden");g.innerHTML="";
+ state.board.forEach((v,i)=>{
+  const b=document.createElement("button");
+  b.className="cell "+(v===null?"empty":"")+(state.selected===i?" selected":"");
+  if(v===null)b.innerHTML="<span>＋</span>";
+  else b.innerHTML='<span class="flower">'+iconFor(v)+'</span><span class="lvl">'+(v===1?"маленький":v===2?"средний":v===3?"большой":"ур. "+v)+'</span>';
+  b.addEventListener("click",()=>tap(i));g.appendChild(b);
+ });
+ renderOrder();
+}
+function tap(i){
+ if(state.board[i]===null){say("Это свободное место. Добавь туда цветочек кнопкой ниже.");return;}
+ if(state.selected===null){state.selected=i;render();return;}
+ const a=state.selected,b=i;state.selected=null;
+ if(a===b){render();return;}
+ if(state.board[a]===state.board[b]){
+  state.board[a]++;state.board[b]=null;state.coins+=5;
+  say("Чудесно! Получился букет следующего уровня. +5 монет");
+ }else{say("Для объединения нужны два одинаковых цветка одного уровня.");}
+ save();render();
+}
+function renderOrder(){
+ document.getElementById("customer").textContent=NAMES[state.customer%NAMES.length];
+ document.getElementById("request").textContent="Просит букет уровня "+state.orderLevel+" "+iconFor(state.orderLevel);
+ document.getElementById("reward").textContent=(state.orderLevel*20*state.profit)+" 🪙";
+}
+function newOrder(){
+ state.customer=(state.customer+1)%NAMES.length;
+ state.orderLevel=Math.min(2+Math.floor(Math.random()*Math.min(3,state.unlocked+1)),5);
+}
+document.getElementById("addFlower").onclick=()=>{
+ if(state.coins<10){say("Пока не хватает монет.");return;}
+ let i=state.board.indexOf(null);if(i<0){say("Нет свободных мест. Купи дополнительные полки.");return;}
+ state.coins-=10;state.board[i]=1;save();render();say("Новый маленький цветочек появился!");
+};
+document.getElementById("clear").onclick=()=>{state.selected=null;render();};
+document.getElementById("deliver").onclick=()=>{
+ let i=state.board.findIndex(v=>v===state.orderLevel);
+ if(i<0){say("Сначала собери букет нужного уровня.");return;}
+ const reward=state.orderLevel*20*state.profit;
+ state.board[i]=null;state.coins+=reward;newOrder();save();render();say("Заказ выполнен! Житель доволен. +"+reward+" монет.");
+};
+document.querySelectorAll("[data-upgrade]").forEach(btn=>btn.onclick=()=>{
+ const type=btn.dataset.upgrade,price={space:60,profit:100,decor:150}[type];
+ if(state.coins<price){say("Недостаточно монет для улучшения.");return;}
+ state.coins-=price;
+ if(type==="space"){state.space+=4;state.board.push(null,null,null,null);}
+ if(type==="profit")state.profit++;
+ if(type==="decor"){state.decor++;state.level++;}
+ save();render();say("Лавка стала ещё уютнее!");
+});
+function makePuzzle(){
+ const p=document.getElementById("puzzle");p.innerHTML="";
+ state.puzzle=Array.from({length:25},()=>Math.floor(Math.random()*state.unlocked));
+ state.puzzleDone=[];state.puzzle.forEach((v,i)=>{
+  const b=document.createElement("button");b.className="tile";b.textContent=FLOWERS[v].icon;
+  b.onclick=()=>checkPuzzle(i);p.appendChild(b);
+ });
+ document.getElementById("puzzleInfo").textContent="Найди три одинаковых цветка подряд.";
+}
+function checkPuzzle(i){
+ if(state.puzzleDone.includes(i))return;
+ const v=state.puzzle[i],row=Math.floor(i/5),col=i%5;let group=[i];
+ if(col>=2&&state.puzzle[i-1]===v&&state.puzzle[i-2]===v)group.push(i-1,i-2);
+ if(row>=2&&state.puzzle[i-5]===v&&state.puzzle[i-10]===v)group.push(i-5,i-10);
+ if(group.length<3){document.getElementById("puzzleInfo").textContent="Пока нет тройки. Попробуй другую клетку.";return;}
+ state.puzzleDone.push(...group);group.forEach(k=>{let b=document.getElementById("puzzle").children[k];b.classList.add("done");b.textContent="✨";b.disabled=true;});
+ state.coins+=20;state.wins++;
+ let msg="Тройка найдена! +20 монет.";
+ if(state.wins%3===0&&state.unlocked<FLOWERS.length){state.unlocked++;msg+=" Открыт новый цветок: "+FLOWERS[state.unlocked-1].name+"!";}
+ document.getElementById("puzzleInfo").textContent=msg;save();render();
+}
+document.getElementById("newPuzzle").onclick=makePuzzle;
+makePuzzle();render();save();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
+</script>
+</body>
+</html>
