@@ -549,6 +549,16 @@ body{width:100%;min-height:100dvh;overflow-x:hidden}
  pointer-events:none;
 }
 
+
+/* App-like touch behavior: lock the scene, allow scrolling inside dialogs. */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{position:fixed;inset:0;width:100%;touch-action:none}
+.app{height:100dvh;min-height:0;overflow:hidden;overscroll-behavior:none;touch-action:none}
+.navigation{touch-action:manipulation}
+button{touch-action:manipulation}
+.modal{overscroll-behavior:contain;touch-action:none}
+.modal-card{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+
 </style>
 </head>
 
