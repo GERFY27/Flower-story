@@ -748,11 +748,23 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 .shop .cat[src]{pointer-events:auto !important;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .shop .cat[src]:active{filter:drop-shadow(0 4px 2px #795c4b44) brightness(1.06)}
 .shop .cat[src]:focus-visible{outline:2px solid #d889a4;outline-offset:3px;border-radius:12px}
+
+/* Pastel arcade boards */
+.arcade-info{text-align:center;font-weight:800;color:#aa6980;margin:10px 0 16px}
+.arcade-hint{text-align:center;font-size:12px;color:#9c7581}
+.match-grid,.memory-grid,.catch-grid{display:grid;gap:5px;margin:10px auto 16px;max-width:350px}
+.match-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+.memory-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.catch-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:300px}
+.match-tile,.memory-tile,.catch-cell{min-width:0;aspect-ratio:1;border-radius:12px;background:#f9dce4;border:2px solid #fffaf5;box-shadow:0 3px 0 #d9a8b4;font-size:clamp(19px,5vw,29px);padding:0;touch-action:manipulation}
+.match-tile.selected{background:#fff3ad;outline:3px solid #dc98aa}
+.memory-tile{font-size:clamp(24px,7vw,38px)}
+.catch-cell{font-size:40px;background:#f2e9d7}
 </style>
 </head>
 
 <body>
-<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.1.6</div></div>
+<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.2.0</div></div>
 <div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
 <div class="app">
 
@@ -913,6 +925,7 @@ function message(text) {
 }
 
 function closePanel() {
+  arcadeStop();
   document.getElementById("gameModal").classList.remove("show");
 }
 
@@ -972,21 +985,10 @@ function openPanel(name) {
     `,
 
     games: `
-      <div class="modal-title">🎮 Мини-игры</div>
-      <div class="game-item">
-        🌼 Цветочная удача
-        <p>Нажми кнопку и попробуй получить монеты.</p>
-        <button class="game-action" onclick="playFlowerGame()">
-          Играть
-        </button>
-      </div>
-      <div class="game-item">
-        🐝 Цветочная прогулка
-        <p>Собери лепестки и получи награду.</p>
-        <button class="game-action" onclick="playWalk()">
-          Начать прогулку
-        </button>
-      </div>
+      <div class="modal-title">Цветочные мини-игры</div>
+      <div class="game-item">🌷 Три в ряд<p>Меняй соседние цветы местами. Собирай три одинаковых в линию за 15 ходов.</p><button class="game-action" onclick="startMatch3()">Играть</button></div>
+      <div class="game-item">🦋 Найди пару<p>Открой все одинаковые цветочные карточки за меньшее число попыток.</p><button class="game-action" onclick="startMemory()">Играть</button></div>
+      <div class="game-item">🌼 Лови цветы<p>Собери как можно больше цветочков за 20 секунд.</p><button class="game-action" onclick="startCatch()">Играть</button></div>
     `,
 
     decorations: `
@@ -1018,6 +1020,7 @@ function openPanel(name) {
     `
   };
 
+  if(name==="games")arcadeStop();
   content.innerHTML = screens[name] || "";
   modal.classList.add("show");
 }
@@ -1052,7 +1055,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.1.6"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.2.0"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1278,6 +1281,124 @@ function makeBouquet() {
   openPanel("bouquets");
 }
 
+
+/* Three playable arcade mini-games */
+let arcade=null,arcadeTimer=null;
+function arcadeStop(){if(arcadeTimer){clearInterval(arcadeTimer);arcadeTimer=null;}arcade=null;}
+function arcadeView(html){
+  document.getElementById("modalContent").innerHTML=html;
+  document.getElementById("gameModal").classList.add("show");
+}
+function arcadeReward(amount){
+  coins+=amount;updateCoins();
+  message("Награда: +"+amount+" монет!");
+}
+function arcadeBack(){arcadeStop();openPanel("games");}
+const flowers=["🌷","🌼","🌸","🌹","🌻"];
+function matchRuns(board){
+  const found=new Set();
+  for(let r=0;r<6;r++)for(let c=0;c<6;c++){
+    const p=r*6+c,v=board[p];
+    if(c<4&&v===board[p+1]&&v===board[p+2]){let j=c;while(j<6&&board[r*6+j]===v)found.add(r*6+j++);}
+    if(r<4&&v===board[p+6]&&v===board[p+12]){let j=r;while(j<6&&board[j*6+c]===v)found.add(j++*6+c);}
+  }
+  return [...found];
+}
+function freshBoard(){
+  const b=[];
+  for(let i=0;i<36;i++){
+    let choices=[0,1,2,3,4];
+    if(i%6>=2)choices=choices.filter(v=>!(b[i-1]===v&&b[i-2]===v));
+    if(i>=12)choices=choices.filter(v=>!(b[i-6]===v&&b[i-12]===v));
+    b.push(choices[Math.floor(Math.random()*choices.length)]);
+  }
+  return b;
+}
+function startMatch3(){
+  arcadeStop();
+  arcade={type:"match",board:freshBoard(),moves:15,score:0,selected:-1,busy:false};
+  drawMatch3();
+}
+function drawMatch3(){
+  if(!arcade||arcade.type!=="match")return;
+  const g=arcade;
+  arcadeView('<div class="modal-title">🌷 Три в ряд</div><p class="arcade-info">Очки: '+g.score+' · Ходы: '+g.moves+'</p><div class="match-grid">'+g.board.map((v,i)=>'<button class="match-tile '+(i===g.selected?'selected':'')+'" onclick="tapMatch('+i+')" aria-label="Цветок '+(i+1)+'">'+flowers[v]+'</button>').join('')+'</div><p class="arcade-hint">Нажми на два соседних цветка, чтобы поменять их местами.</p><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+}
+function tapMatch(i){
+  const g=arcade;
+  if(!g||g.type!=="match"||g.busy||g.moves<=0)return;
+  if(g.selected<0){g.selected=i;drawMatch3();return;}
+  const j=g.selected;g.selected=-1;
+  if(i===j){drawMatch3();return;}
+  if(Math.abs(Math.floor(i/6)-Math.floor(j/6))+Math.abs(i%6-j%6)!==1){g.selected=i;drawMatch3();return;}
+  [g.board[i],g.board[j]]=[g.board[j],g.board[i]];
+  if(!matchRuns(g.board).length){[g.board[i],g.board[j]]=[g.board[j],g.board[i]];drawMatch3();return;}
+  g.moves--;
+  let chain=0,removed=matchRuns(g.board);
+  while(removed.length&&chain<12){
+    g.score+=removed.length*10;
+    const marked=new Set(removed);
+    for(let c=0;c<6;c++){
+      const kept=[];
+      for(let r=5;r>=0;r--)if(!marked.has(r*6+c))kept.push(g.board[r*6+c]);
+      while(kept.length<6)kept.push(Math.floor(Math.random()*5));
+      for(let r=5;r>=0;r--)g.board[r*6+c]=kept[5-r];
+    }
+    removed=matchRuns(g.board);chain++;
+  }
+  if(g.moves===0){const reward=Math.min(100,Math.max(10,Math.floor(g.score/30)));arcadeReward(reward);arcadeView('<div class="modal-title">Игра окончена!</div><p class="arcade-info">Очки: '+g.score+' · Получено монет: '+reward+'</p><button class="game-action" onclick="startMatch3()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');return;}
+  drawMatch3();
+}
+function startMemory(){
+  arcadeStop();
+  const cards=[0,0,1,1,2,2,3,3,4,4,0,0].sort(()=>Math.random()-.5);
+  arcade={type:"memory",cards,opened:[],matched:[],attempts:0,busy:false};
+  drawMemory();
+}
+function drawMemory(){
+  const g=arcade;if(!g||g.type!=="memory")return;
+  arcadeView('<div class="modal-title">🦋 Найди пару</div><p class="arcade-info">Пары: '+(g.matched.length/2)+'/6 · Попытки: '+g.attempts+'</p><div class="memory-grid">'+g.cards.map((v,i)=>'<button class="memory-tile" onclick="tapMemory('+i+')" aria-label="Карточка '+(i+1)+'">'+(g.opened.includes(i)||g.matched.includes(i)?flowers[v]:'❀')+'</button>').join('')+'</div><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+}
+function tapMemory(i){
+  const g=arcade;if(!g||g.type!=="memory"||g.busy||g.opened.includes(i)||g.matched.includes(i))return;
+  g.opened.push(i);
+  if(g.opened.length===2){
+    g.attempts++;
+    if(g.cards[g.opened[0]]===g.cards[g.opened[1]]){
+      g.matched.push(...g.opened);g.opened=[];
+      if(g.matched.length===12){
+        const reward=Math.max(15,65-g.attempts*3);arcadeReward(reward);
+        arcadeView('<div class="modal-title">Все пары найдены!</div><p class="arcade-info">Попытки: '+g.attempts+' · Награда: '+reward+' монет</p><button class="game-action" onclick="startMemory()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');return;
+      }
+    }else{
+      g.busy=true;
+      setTimeout(()=>{if(arcade!==g)return;g.opened=[];g.busy=false;drawMemory();},850);
+    }
+  }
+  drawMemory();
+}
+function startCatch(){
+  arcadeStop();
+  arcade={type:"catch",score:0,seconds:20,spot:Math.floor(Math.random()*9)};
+  drawCatch();
+  arcadeTimer=setInterval(()=>{
+    const g=arcade;if(!g||g.type!=="catch"){clearInterval(arcadeTimer);arcadeTimer=null;return;}
+    g.seconds--;
+    if(g.seconds<=0){
+      clearInterval(arcadeTimer);arcadeTimer=null;
+      const reward=Math.min(80,g.score*3);arcadeReward(reward);
+      arcadeView('<div class="modal-title">Время вышло!</div><p class="arcade-info">Собрано цветов: '+g.score+' · Награда: '+reward+' монет</p><button class="game-action" onclick="startCatch()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+    }else drawCatch();
+  },1000);
+}
+function drawCatch(){
+  const g=arcade;if(!g||g.type!=="catch")return;
+  arcadeView('<div class="modal-title">🌼 Лови цветы</div><p class="arcade-info">Время: '+g.seconds+' сек · Цветы: '+g.score+'</p><div class="catch-grid">'+Array.from({length:9},(_,i)=>'<button class="catch-cell" onclick="tapCatch('+i+')" aria-label="Полянка '+(i+1)+'">'+(i===g.spot?'🌸':'')+'</button>').join('')+'</div><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+}
+function tapCatch(i){
+  const g=arcade;if(!g||g.type!=="catch"||g.seconds<=0||i!==g.spot)return;
+  g.score++;let next=Math.floor(Math.random()*8);if(next>=g.spot)next++;g.spot=next;drawCatch();
+}
 function playFlowerGame() {
   const reward = Math.floor(Math.random() * 21) + 10;
   coins += reward;
