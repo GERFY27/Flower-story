@@ -1070,10 +1070,6 @@ function toggleGameMotion(){
   const label=document.getElementById("motionSettingLabel");
   if(label)label.textContent=disabled?"выключена":"включена";
 }
-document.body.classList.toggle("reduce-game-motion",disabled);
-  const label=document.getElementById("motionSettingLabel");
-  if(label)label.textContent=disabled?"выключена":"включена";
-}
 document.body.classList.toggle("reduce-game-motion",localStorage.getItem("flowerReduceMotion")==="1");
 function openWeeklyGifts() {
   const now=new Date();
