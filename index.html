@@ -747,7 +747,7 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 </head>
 
 <body>
-<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.1.0</div></div>
+<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.1.1</div></div>
 <div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
 <div class="app">
 
@@ -1009,35 +1009,44 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.1.0"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.1.1"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
 let gameSoundEnabled=localStorage.getItem("flowerSoundEnabled")!=="0";
 let gameVolume=Math.max(0,Math.min(100,Number(localStorage.getItem("flowerVolume")??"45")||0));
 let gameAudioContext=null;
-function playGameClick(){
+function playGameClick(kind="tap"){
   if(!gameSoundEnabled||gameVolume<=0)return;
   try{
-    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
-    if(!AudioContextClass)return;
-    if(!gameAudioContext)gameAudioContext=new AudioContextClass();
-    if(gameAudioContext.state==="suspended")gameAudioContext.resume();
-    const osc=gameAudioContext.createOscillator(),gain=gameAudioContext.createGain();
+    const Context=window.AudioContext||window.webkitAudioContext;
+    if(!Context)return;
+    if(!gameAudioContext)gameAudioContext=new Context();
+    if(gameAudioContext.state==="suspended")gameAudioContext.resume().catch(()=>{});
     const now=gameAudioContext.currentTime;
-    osc.type="sine";
-    osc.frequency.setValueAtTime(660,now);
-    osc.frequency.exponentialRampToValueAtTime(880,now+.09);
-    gain.gain.setValueAtTime(.0001,now);
-    gain.gain.exponentialRampToValueAtTime(Math.max(.0001,gameVolume/100*.07),now+.012);
-    gain.gain.exponentialRampToValueAtTime(.0001,now+.13);
-    osc.connect(gain);gain.connect(gameAudioContext.destination);
-    osc.start(now);osc.stop(now+.14);
+    const notes=kind==="reward"?[659.25,987.77]:kind==="close"?[523.25]:[783.99,1046.5];
+    notes.forEach((frequency,index)=>{
+      const osc=gameAudioContext.createOscillator();
+      const gain=gameAudioContext.createGain();
+      const start=now+index*.055;
+      const level=Math.max(.0001,(gameVolume/100)*.16);
+      osc.type="sine";
+      osc.frequency.setValueAtTime(frequency,start);
+      osc.frequency.exponentialRampToValueAtTime(frequency*1.035,start+.075);
+      gain.gain.setValueAtTime(.0001,start);
+      gain.gain.exponentialRampToValueAtTime(level,start+.012);
+      gain.gain.exponentialRampToValueAtTime(.0001,start+.15);
+      osc.connect(gain);gain.connect(gameAudioContext.destination);
+      osc.start(start);osc.stop(start+.16);
+    });
   }catch(e){}
 }
-document.addEventListener("click",event=>{
-  if(event.target.closest("button")&&!event.target.closest("#soundToggle"))playGameClick();
-});
+document.addEventListener("pointerdown",event=>{
+  const button=event.target.closest("button");
+  if(!button||button.disabled||button.id==="soundToggle")return;
+  playGameClick(button.classList.contains("close-modal")?"close":button.classList.contains("weekly-claim")?"reward":"tap");
+},{passive:true});
+
 function openSettings() {
   document.getElementById("modalContent").innerHTML =
     '<div class="modal-title">Настройки</div>'+
@@ -1062,6 +1071,7 @@ function setGameVolume(value){
   localStorage.setItem("flowerVolume",String(gameVolume));
   const out=document.getElementById("gameVolumeValue");
   if(out)out.textContent=gameVolume+"%";
+  if(gameSoundEnabled&&gameVolume>0)playGameClick();
 }
 function toggleGameMotion(){
   const disabled=localStorage.getItem("flowerReduceMotion")!=="1";
