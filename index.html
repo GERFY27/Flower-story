@@ -747,7 +747,7 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 </head>
 
 <body>
-<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.1.1</div></div>
+<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.1.2</div></div>
 <div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
 <div class="app">
 
@@ -1009,7 +1009,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.1.1"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.1.2"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1047,11 +1047,80 @@ document.addEventListener("pointerdown",event=>{
   playGameClick(button.classList.contains("close-modal")?"close":button.classList.contains("weekly-claim")?"reward":"tap");
 },{passive:true});
 
+/* Original gentle flower-shop lullaby, synthesized locally (no third-party track). */
+let gameMusicEnabled=localStorage.getItem("flowerMusicEnabled")!=="0";
+let musicTimer=null,musicNextTime=0,musicStep=0,musicGain=null;
+const musicMelody=[392,440,523.25,440,392,329.63,349.23,392,440,523.25,587.33,523.25,440,392,349.23,329.63,
+  349.23,392,440,392,349.23,293.66,329.63,349.23,392,440,493.88,440,392,349.23,329.63,293.66];
+const musicChords=[[261.63,329.63,392],[220,261.63,329.63],[174.61,220,261.63],[196,246.94,293.66]];
+function ensureMusicAudio(){
+  const Context=window.AudioContext||window.webkitAudioContext;
+  if(!Context)return false;
+  if(!gameAudioContext)gameAudioContext=new Context();
+  if(!musicGain){
+    musicGain=gameAudioContext.createGain();
+    musicGain.gain.value=0;
+    musicGain.connect(gameAudioContext.destination);
+  }
+  return true;
+}
+function musicNote(freq,start,duration,level){
+  const ctx=gameAudioContext;
+  const osc=ctx.createOscillator(),gain=ctx.createGain();
+  osc.type="sine";osc.frequency.setValueAtTime(freq,start);
+  gain.gain.setValueAtTime(.0001,start);
+  gain.gain.exponentialRampToValueAtTime(Math.max(.0002,level),start+.06);
+  gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+  osc.connect(gain);gain.connect(musicGain);
+  osc.start(start);osc.stop(start+duration+.02);
+}
+function scheduleMusic(){
+  if(!gameMusicEnabled||!gameSoundEnabled||document.hidden||!gameAudioContext||gameAudioContext.state!=="running")return;
+  const ctx=gameAudioContext;
+  const beat=.46;
+  while(musicNextTime<ctx.currentTime+.6){
+    const index=musicStep%musicMelody.length;
+    const start=musicNextTime;
+    musicNote(musicMelody[index],start,.37,.34);
+    if(index%8===0){
+      const chord=musicChords[Math.floor(index/8)%musicChords.length];
+      chord.forEach((freq,i)=>musicNote(freq/2,start,3.2,.07/(i+1)));
+    }
+    musicNextTime+=beat;
+    musicStep++;
+  }
+}
+function updateMusic(){
+  const shouldPlay=gameMusicEnabled&&gameSoundEnabled&&gameVolume>0&&!document.hidden;
+  if(!shouldPlay){
+    if(musicTimer!==null){clearInterval(musicTimer);musicTimer=null;}
+    if(musicGain&&gameAudioContext)musicGain.gain.setTargetAtTime(0,gameAudioContext.currentTime,.08);
+    return;
+  }
+  if(!ensureMusicAudio())return;
+  if(gameAudioContext.state==="suspended")gameAudioContext.resume().catch(()=>{});
+  musicGain.gain.setTargetAtTime((gameVolume/100)*.13,gameAudioContext.currentTime,.2);
+  if(musicTimer===null){
+    musicNextTime=gameAudioContext.currentTime+.08;
+    musicTimer=setInterval(scheduleMusic,180);
+    scheduleMusic();
+  }
+}
+function toggleGameMusic(){
+  gameMusicEnabled=!gameMusicEnabled;
+  localStorage.setItem("flowerMusicEnabled",gameMusicEnabled?"1":"0");
+  const button=document.getElementById("musicToggle");
+  if(button){button.textContent=gameMusicEnabled?"Включена":"Выключена";button.setAttribute("aria-checked",String(gameMusicEnabled));}
+  updateMusic();
+}
+document.addEventListener("pointerdown",()=>{if(gameMusicEnabled&&gameSoundEnabled)updateMusic();},{once:true,passive:true});
+document.addEventListener("visibilitychange",updateMusic);
 function openSettings() {
   document.getElementById("modalContent").innerHTML =
     '<div class="modal-title">Настройки</div>'+
     '<div class="settings-section">'+
       '<div class="settings-line"><span>Звук игры</span><button id="soundToggle" class="settings-switch" type="button" role="switch" aria-checked="'+gameSoundEnabled+'" onclick="toggleGameSound()">'+(gameSoundEnabled?'Включён':'Выключен')+'</button></div>'+
+      '<div class="settings-line"><span>Фоновая музыка</span><button id="musicToggle" class="settings-switch" type="button" role="switch" aria-checked="'+gameMusicEnabled+'" onclick="toggleGameMusic()">'+(gameMusicEnabled?'Включена':'Выключена')+'</button></div>'+
       '<label class="settings-volume-label" for="gameVolume">Громкость <output id="gameVolumeValue">'+gameVolume+'%</output></label>'+
       '<input id="gameVolume" class="settings-volume" type="range" min="0" max="100" step="1" value="'+gameVolume+'" oninput="setGameVolume(this.value)" aria-label="Громкость игры">'+
       '<button class="game-action" onclick="toggleGameMotion()">Анимация: <span id="motionSettingLabel">'+(localStorage.getItem("flowerReduceMotion")==="1"?'выключена':'включена')+'</span></button>'+
@@ -1065,12 +1134,14 @@ function toggleGameSound(){
   const btn=document.getElementById("soundToggle");
   if(btn){btn.textContent=gameSoundEnabled?"Включён":"Выключен";btn.setAttribute("aria-checked",String(gameSoundEnabled));}
   if(gameSoundEnabled)playGameClick();
+  updateMusic();
 }
 function setGameVolume(value){
   gameVolume=Math.max(0,Math.min(100,Number(value)||0));
   localStorage.setItem("flowerVolume",String(gameVolume));
   const out=document.getElementById("gameVolumeValue");
   if(out)out.textContent=gameVolume+"%";
+  updateMusic();
   if(gameSoundEnabled&&gameVolume>0)playGameClick();
 }
 function toggleGameMotion(){
