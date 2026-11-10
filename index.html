@@ -730,6 +730,16 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
  padding:4px !important;
 }
 @media(max-width:350px){.top .right-controls .daily.gift-trigger{top:calc(100% + 10px) !important;width:100% !important;height:auto !important}}
+
+/* Game settings: audio controls and app information */
+.settings-section{background:#fff9f5;border:2px solid #f3d9d9;border-radius:18px;padding:15px;display:flex;flex-direction:column;gap:14px}
+.settings-line{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;font-size:14px;color:#a36b7b}
+.settings-switch{min-width:105px;padding:10px 12px;border-radius:13px;background:linear-gradient(#f4b0c0,#df8ca5);color:#fff;font-weight:700;box-shadow:0 3px 0 #c57990}
+.settings-switch[aria-checked="false"]{background:linear-gradient(#d9cdd0,#c4b5bc);box-shadow:0 3px 0 #ab9aa2}
+.settings-volume-label{display:flex;justify-content:space-between;align-items:center;font-weight:700;color:#a36b7b;font-size:14px}
+.settings-volume{width:100%;accent-color:#d88fa7;touch-action:pan-x;height:24px;margin:0}
+.settings-footer{text-align:center;margin-top:22px;padding-top:15px;border-top:1px solid #ebd1d2;color:#a58a91;font-size:12px;line-height:1.9}
+.settings-footer div:first-child{font-weight:700;color:#b8748c}
 </style>
 </head>
 
@@ -996,17 +1006,66 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
+const GAME_VERSION="0.1.0";
+const GAME_DEVELOPER="GERFY27";
+let gameSoundEnabled=localStorage.getItem("flowerSoundEnabled")!=="0";
+let gameVolume=Math.max(0,Math.min(100,Number(localStorage.getItem("flowerVolume")??"45")||0));
+let gameAudioContext=null;
+function playGameClick(){
+  if(!gameSoundEnabled||gameVolume<=0)return;
+  try{
+    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContextClass)return;
+    if(!gameAudioContext)gameAudioContext=new AudioContextClass();
+    if(gameAudioContext.state==="suspended")gameAudioContext.resume();
+    const osc=gameAudioContext.createOscillator(),gain=gameAudioContext.createGain();
+    const now=gameAudioContext.currentTime;
+    osc.type="sine";
+    osc.frequency.setValueAtTime(660,now);
+    osc.frequency.exponentialRampToValueAtTime(880,now+.09);
+    gain.gain.setValueAtTime(.0001,now);
+    gain.gain.exponentialRampToValueAtTime(Math.max(.0001,gameVolume/100*.07),now+.012);
+    gain.gain.exponentialRampToValueAtTime(.0001,now+.13);
+    osc.connect(gain);gain.connect(gameAudioContext.destination);
+    osc.start(now);osc.stop(now+.14);
+  }catch(e){}
+}
+document.addEventListener("click",event=>{
+  if(event.target.closest("button")&&!event.target.closest("#soundToggle"))playGameClick();
+});
 function openSettings() {
   document.getElementById("modalContent").innerHTML =
     '<div class="modal-title">Настройки</div>'+
-    '<div class="game-item" style="text-align:center">Цветочная история<br><small>Настройки игры</small></div>'+
-    '<button class="game-action" onclick="toggleGameMotion()">Анимация: <span id="motionSettingLabel">'+(localStorage.getItem("flowerReduceMotion")==="1"?"выключена":"включена")+'</span></button>';
+    '<div class="settings-section">'+
+      '<div class="settings-line"><span>Звук игры</span><button id="soundToggle" class="settings-switch" type="button" role="switch" aria-checked="'+gameSoundEnabled+'" onclick="toggleGameSound()">'+(gameSoundEnabled?'Включён':'Выключен')+'</button></div>'+
+      '<label class="settings-volume-label" for="gameVolume">Громкость <output id="gameVolumeValue">'+gameVolume+'%</output></label>'+
+      '<input id="gameVolume" class="settings-volume" type="range" min="0" max="100" step="1" value="'+gameVolume+'" oninput="setGameVolume(this.value)" aria-label="Громкость игры">'+
+      '<button class="game-action" onclick="toggleGameMotion()">Анимация: <span id="motionSettingLabel">'+(localStorage.getItem("flowerReduceMotion")==="1"?'выключена':'включена')+'</span></button>'+
+    '</div>'+
+    '<div class="settings-footer"><div>Цветочная история</div><div>Версия '+GAME_VERSION+'</div><div>Разработчик: '+GAME_DEVELOPER+'</div></div>';
   document.getElementById("gameModal").classList.add("show");
+}
+function toggleGameSound(){
+  gameSoundEnabled=!gameSoundEnabled;
+  localStorage.setItem("flowerSoundEnabled",gameSoundEnabled?"1":"0");
+  const btn=document.getElementById("soundToggle");
+  if(btn){btn.textContent=gameSoundEnabled?"Включён":"Выключен";btn.setAttribute("aria-checked",String(gameSoundEnabled));}
+  if(gameSoundEnabled)playGameClick();
+}
+function setGameVolume(value){
+  gameVolume=Math.max(0,Math.min(100,Number(value)||0));
+  localStorage.setItem("flowerVolume",String(gameVolume));
+  const out=document.getElementById("gameVolumeValue");
+  if(out)out.textContent=gameVolume+"%";
 }
 function toggleGameMotion(){
   const disabled=localStorage.getItem("flowerReduceMotion")!=="1";
   localStorage.setItem("flowerReduceMotion",disabled?"1":"0");
   document.body.classList.toggle("reduce-game-motion",disabled);
+  const label=document.getElementById("motionSettingLabel");
+  if(label)label.textContent=disabled?"выключена":"включена";
+}
+document.body.classList.toggle("reduce-game-motion",disabled);
   const label=document.getElementById("motionSettingLabel");
   if(label)label.textContent=disabled?"выключена":"включена";
 }
