@@ -652,10 +652,10 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 /* Gentle floating animation for the illustrated game title */
 @keyframes flowerTitleFloat{
   0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
+  50%{transform:translateY(-4px)}
 }
 .game-title-art{
-  animation:flowerTitleFloat 3.6s ease-in-out infinite;
+  animation:flowerTitleFloat 5.2s cubic-bezier(.45,0,.55,1) infinite;
   will-change:transform;
 }
 @media(prefers-reduced-motion:reduce){
