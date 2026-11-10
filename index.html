@@ -713,6 +713,23 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 .splash-caption{margin-top:-12px;font-size:12px;letter-spacing:1px;color:#b78296}
 @keyframes splashFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media(prefers-reduced-motion:reduce){.splash-title,.splash-flower{animation:none}#flowerSplash{transition:none}}
+
+/* Gift is anchored directly to the settings button, not to currency */
+.top .right-controls{position:relative;flex:0 0 clamp(36px,10vw,45px);width:clamp(36px,10vw,45px);height:clamp(36px,10vw,45px)}
+.top .right-controls .settings-trigger{width:100%;height:100%;display:flex}
+.top .right-controls .daily.gift-trigger{
+ position:absolute !important;
+ top:calc(100% + 12px) !important;
+ right:0 !important;
+ left:auto !important;
+ width:100% !important;
+ height:auto !important;
+ aspect-ratio:1/1;
+ min-width:0 !important;
+ margin:0 !important;
+ padding:4px !important;
+}
+@media(max-width:350px){.top .right-controls .daily.gift-trigger{top:calc(100% + 10px) !important;width:100% !important;height:auto !important}}
 </style>
 </head>
 
@@ -726,9 +743,11 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
     <div class="money">
       <div class="money-item"><img class="currency-icon" src="./%D0%BC%D0%BE%D0%BD%D0%B5%D1%82%D0%B0.png" alt="Монеты"> <span id="coins">250</span></div>
       <div class="money-item"><img class="currency-icon" src="./%D0%B0%D0%BB%D0%BC%D0%B0%D0%B7.png" alt="Алмазы"> <span>15</span></div>
+    </div>
+    <div class="right-controls">
+      <button class="settings-trigger" onclick="openSettings()" aria-label="Настройки"><img src="./%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8.png" alt=""></button>
       <button class="daily gift-trigger" onclick="openWeeklyGifts()" aria-label="Открыть подарки на неделю"><img class="gift" src="./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png" alt="Подарки недели"></button>
     </div>
-    <button class="settings-trigger" onclick="openSettings()" aria-label="Настройки"><img src="./%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8.png" alt=""></button>
   </div>
 
   <div class="logo">
