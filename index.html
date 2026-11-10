@@ -580,6 +580,29 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 .shop .cat[src]{top:calc(min(100vw, 520px) * .80) !important;left:43% !important;right:auto !important;bottom:auto !important;animation:none !important;transform:none !important;}
 .game-title-art{display:block;width:100%;max-width:440px;height:auto;max-height:clamp(58px,18vw,105px);object-fit:contain;margin:0 auto;filter:none}.logo{display:flex;flex-direction:column;align-items:center;gap:2px}.logo p{margin:0}
 .game-title-art{width:108% !important;max-width:475px !important;max-height:clamp(66px,20vw,115px) !important;}
+
+/* Compact daily reward card in the upper-right of the scene */
+.app{position:relative}
+.daily{
+ position:absolute !important;
+ top:clamp(170px,43vw,215px);
+ right:clamp(8px,2vw,14px);
+ z-index:7;
+ width:clamp(116px,33vw,150px);
+ padding:7px !important;
+ gap:4px !important;
+ border-radius:14px !important;
+ flex-wrap:wrap;
+ justify-content:center;
+ text-align:center;
+ box-shadow:0 3px 0 #e9d0c5 !important;
+}
+.daily .gift{width:clamp(33px,10vw,47px);height:auto;object-fit:contain;flex-shrink:0}
+.daily-info{flex:1 1 60px;min-width:0}
+.daily-info b{display:block;font-size:clamp(9px,2.3vw,11px);line-height:1.15}
+.daily-info p{display:none}
+.daily .claim{width:100%;font-size:clamp(10px,2.7vw,12px);padding:7px 5px;border-radius:11px}
+@media(max-width:350px){.daily{width:112px;top:162px}.daily .gift{width:32px}}
 </style>
 </head>
 
@@ -624,10 +647,10 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
     </button>
   </div>
 
-  <div class="heading">🌸 Подарок для тебя</div>
+  
 
   <div class="daily">
-    <div class="gift">🎁</div>
+    <img class="gift" src="./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png" alt="Подарок">
     <div class="daily-info">
       <b>Ежедневный подарок</b>
       <p>Забери 50 монет для своей лавки!</p>
