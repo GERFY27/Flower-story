@@ -661,6 +661,18 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 @media(prefers-reduced-motion:reduce){
   .game-title-art{animation:none}
 }
+
+/* Keep the illustrated title truly centered on narrow phone screens */
+.logo{width:100%;display:flex;align-items:center;justify-content:center}
+.logo .game-title-art{
+ display:block;
+ width:108% !important;
+ max-width:475px !important;
+ flex-shrink:0;
+ margin-left:0 !important;
+ margin-right:0 !important;
+ object-position:center center;
+}
 </style>
 </head>
 
