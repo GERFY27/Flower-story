@@ -6,6 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#f8e9e8">
 <title>Цветочная история</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
 <style>
 * {
@@ -569,10 +572,15 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 .modal{overscroll-behavior:contain;touch-action:none}
 .modal-card{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
 
+
+/* Landscape guard: browser orientation cannot be forcibly locked. */
+#portraitGuard{display:none;position:fixed;inset:0;z-index:9999;background:#f7e1e8;color:#98566f;align-items:center;justify-content:center;text-align:center;padding:24px;font:700 22px/1.5 -apple-system,BlinkMacSystemFont,Arial,sans-serif}
+@media (orientation:landscape) and (pointer:coarse){#portraitGuard{display:flex}}
 </style>
 </head>
 
 <body>
+<div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
 <div class="app">
 
   <div class="top">
