@@ -766,11 +766,19 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 .match-sparkle:nth-child(3n){color:#f6d38d;font-size:14px}
 .match-sparkle:nth-child(4n){color:#e4a7d7;font-size:21px}
 @keyframes match-sparkle-float{0%{opacity:0;transform:translate(-50%,-50%) scale(.35) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--spark-x)),calc(-50% + var(--spark-y))) scale(.8) rotate(85deg)}}
+
+.flower-rain{position:relative;height:min(52vh,370px);min-height:260px;max-width:350px;margin:12px auto;border:3px solid #fff7ed;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#f9d9e8,#fff3e8 67%,#d9e8c7);touch-action:none;box-shadow:inset 0 0 22px #e7a9c455}
+.flower-rain:after{content:"✿  ✧  ✿  ✧  ✿";position:absolute;bottom:3px;left:0;right:0;text-align:center;color:#a8bc89;opacity:.6;pointer-events:none}
+.rain-basket{position:absolute;z-index:3;bottom:4%;left:50%;font-size:52px;line-height:1;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 4px 3px #b77d8244)}
+.rain-item{position:absolute;z-index:2;font-size:31px;line-height:1;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 2px 2px #fff8)}
+.rain-gold{filter:drop-shadow(0 0 8px #ffde69)}
+.rain-caught{animation:rain-bounce 180ms ease-out}
+@keyframes rain-bounce{50%{transform:translateX(-50%) scale(1.16)}}
 </style>
 </head>
 
 <body>
-<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.2.2</div></div>
+<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.2.3</div></div>
 <div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
 <div class="app">
 
@@ -994,7 +1002,7 @@ function openPanel(name) {
       <div class="modal-title">Цветочные мини-игры</div>
       <div class="game-item">🌷 Три в ряд<p>Меняй соседние цветы местами. Собирай три одинаковых в линию за 15 ходов.</p><button class="game-action" onclick="startMatch3()">Играть</button></div>
       <div class="game-item">🦋 Найди пару<p>Открой все одинаковые цветочные карточки за меньшее число попыток.</p><button class="game-action" onclick="startMemory()">Играть</button></div>
-      <div class="game-item">🌼 Лови цветы<p>Собери как можно больше цветочков за 20 секунд.</p><button class="game-action" onclick="startCatch()">Играть</button></div>
+      <div class="game-item">🌸 Цветочный дождь<p>Лови падающие цветы корзинкой, собирай золотые цветы и избегай бабочек.</p><button class="game-action" onclick="startCatch()">Играть</button></div>
     `,
 
     decorations: `
@@ -1061,7 +1069,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.2.2"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.2.3"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1290,7 +1298,7 @@ function makeBouquet() {
 
 /* Three playable arcade mini-games */
 let arcade=null,arcadeTimer=null;
-function arcadeStop(){if(arcadeTimer){clearInterval(arcadeTimer);arcadeTimer=null;}arcade=null;}
+function arcadeStop(){if(arcadeTimer){clearInterval(arcadeTimer);arcadeTimer=null;}if(arcade&&arcade.type==="catch"&&arcade.frame)cancelAnimationFrame(arcade.frame);arcade=null;}
 function arcadeView(html){
   document.getElementById("modalContent").innerHTML=html;
   document.getElementById("gameModal").classList.add("show");
@@ -1477,25 +1485,64 @@ function tapMemory(i){
 }
 function startCatch(){
   arcadeStop();
-  arcade={type:"catch",score:0,seconds:20,spot:Math.floor(Math.random()*9)};
-  drawCatch();
-  arcadeTimer=setInterval(()=>{
-    const g=arcade;if(!g||g.type!=="catch"){clearInterval(arcadeTimer);arcadeTimer=null;return;}
-    g.seconds--;
-    if(g.seconds<=0){
-      clearInterval(arcadeTimer);arcadeTimer=null;
-      const reward=Math.min(80,g.score*3);arcadeReward(reward);
-      arcadeView('<div class="modal-title">Время вышло!</div><p class="arcade-info">Собрано цветов: '+g.score+' · Награда: '+reward+' монет</p><button class="game-action" onclick="startCatch()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
-    }else drawCatch();
-  },1000);
+  arcade={type:"catch",score:0,seconds:30,basket:.5,items:[],spawn:0,last:0,elapsed:0,frame:0,active:true};
+  arcadeView('<div class="modal-title">🌸 Цветочный дождь</div><p class="arcade-info" id="rainScore">Очки: 0 · Время: 30 сек</p><div class="flower-rain" id="flowerRain" aria-label="Лови цветы, перемещая корзинку"><div class="rain-basket" id="rainBasket">🧺</div></div><p class="arcade-hint">Веди пальцем по полянке. 🌸 +1 · 🌟 +5 · 🦋 −2</p><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+  const field=document.getElementById("flowerRain"),g=arcade;
+  const move=event=>{
+    if(arcade!==g||!g.active)return;
+    const rect=field.getBoundingClientRect();
+    g.basket=Math.max(.09,Math.min(.91,(event.clientX-rect.left)/rect.width));
+    document.getElementById("rainBasket").style.left=(g.basket*100)+"%";
+  };
+  field.addEventListener("pointerdown",event=>{field.setPointerCapture(event.pointerId);move(event);});
+  field.addEventListener("pointermove",move);
+  g.frame=requestAnimationFrame(tickCatch);
 }
-function drawCatch(){
-  const g=arcade;if(!g||g.type!=="catch")return;
-  arcadeView('<div class="modal-title">🌼 Лови цветы</div><p class="arcade-info">Время: '+g.seconds+' сек · Цветы: '+g.score+'</p><div class="catch-grid">'+Array.from({length:9},(_,i)=>'<button class="catch-cell" onclick="tapCatch('+i+')" aria-label="Полянка '+(i+1)+'">'+(i===g.spot?'🌸':'')+'</button>').join('')+'</div><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
-}
-function tapCatch(i){
-  const g=arcade;if(!g||g.type!=="catch"||g.seconds<=0||i!==g.spot)return;
-  g.score++;let next=Math.floor(Math.random()*8);if(next>=g.spot)next++;g.spot=next;drawCatch();
+function tickCatch(time){
+  const g=arcade;
+  if(!g||g.type!=="catch"||!g.active)return;
+  if(!g.last)g.last=time;
+  const dt=Math.min(.05,(time-g.last)/1000);
+  g.last=time;g.elapsed+=dt;
+  g.seconds=Math.max(0,30-g.elapsed);
+  const field=document.getElementById("flowerRain");
+  if(!field)return;
+  if(g.seconds<=0){
+    g.active=false;
+    const reward=Math.max(0,Math.min(100,Math.floor(g.score*2)));
+    arcadeReward(reward);
+    arcadeView('<div class="modal-title">Цветочный дождь завершён!</div><p class="arcade-info">Очки: '+g.score+' · Награда: '+reward+' монет</p><button class="game-action" onclick="startCatch()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+    return;
+  }
+  const difficulty=1+g.elapsed/28;
+  g.spawn+=dt;
+  if(g.spawn>Math.max(.31,.83-g.elapsed*.014)){
+    g.spawn=0;
+    const roll=Math.random(),kind=roll<.12?"gold":roll<.27?"butterfly":"flower";
+    const el=document.createElement("div");
+    el.className="rain-item rain-"+kind;
+    el.textContent=kind==="gold"?"🌟":kind==="butterfly"?"🦋":["🌸","🌼","🌷"][Math.floor(Math.random()*3)];
+    field.appendChild(el);
+    g.items.push({x:.07+Math.random()*.86,y:-.12,speed:(.24+Math.random()*.12)*difficulty,kind,el});
+  }
+  const basket=document.getElementById("rainBasket");
+  const basketY=.87;
+  g.items=g.items.filter(item=>{
+    item.y+=item.speed*dt;
+    item.el.style.left=(item.x*100)+"%";
+    item.el.style.top=(item.y*100)+"%";
+    if(item.y>=basketY&&item.y<basketY+.075&&Math.abs(item.x-g.basket)<.115){
+      g.score+=item.kind==="gold"?5:item.kind==="butterfly"?-2:1;
+      g.score=Math.max(0,g.score);
+      item.el.remove();
+      basket.classList.remove("rain-caught");void basket.offsetWidth;basket.classList.add("rain-caught");
+      return false;
+    }
+    if(item.y>1.1){item.el.remove();return false;}
+    return true;
+  });
+  document.getElementById("rainScore").textContent="Очки: "+g.score+" · Время: "+Math.ceil(g.seconds)+" сек";
+  g.frame=requestAnimationFrame(tickCatch);
 }
 function playFlowerGame() {
   const reward = Math.floor(Math.random() * 21) + 10;
