@@ -783,11 +783,15 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 #flowerSplash.splash-dispersing .splash-cloud{transform:translate(var(--cloud-x),var(--cloud-y)) rotate(var(--cloud-turn)) scale(1.12);opacity:0}
 #flowerSplash.splash-dispersing .splash-inner,#flowerSplash.splash-dispersing .splash-version{transition:opacity .5s ease;opacity:0}
 @media(prefers-reduced-motion:reduce){#flowerSplash .splash-cloud{transition:none}#flowerSplash.splash-dispersing .splash-cloud{opacity:0}}
+
+/* Reveal the painted game behind the clouds, never a solid pink splash */
+#flowerSplash{transition:background-color 1.45s ease,opacity .65s ease,visibility .65s ease}
+#flowerSplash.splash-dispersing{background:transparent}
 </style>
 </head>
 
 <body>
-<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-clouds" aria-hidden="true"><img class="splash-cloud" src="./oblako_1_s_cvetami.png" style="--cloud-left:-22%;--cloud-top:-17%;--cloud-width:88%;--cloud-x:-120vw;--cloud-y:-120vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_2.png" style="--cloud-left:43%;--cloud-top:-14%;--cloud-width:90%;--cloud-x:140vw;--cloud-y:-120vh;--cloud-turn:15deg" alt=""><img class="splash-cloud" src="./oblako_3.png" style="--cloud-left:-31%;--cloud-top:13%;--cloud-width:86%;--cloud-x:-160vw;--cloud-y:-40vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_4.png" style="--cloud-left:35%;--cloud-top:16%;--cloud-width:89%;--cloud-x:170vw;--cloud-y:-25vh;--cloud-turn:15deg" alt=""><img class="splash-cloud" src="./oblako_5_s_cvetami.png" style="--cloud-left:-18%;--cloud-top:42%;--cloud-width:90%;--cloud-x:-130vw;--cloud-y:65vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_1_s_cvetami.png" style="--cloud-left:43%;--cloud-top:47%;--cloud-width:85%;--cloud-x:160vw;--cloud-y:70vh;--cloud-turn:15deg" alt=""><img class="splash-cloud" src="./oblako_2.png" style="--cloud-left:-26%;--cloud-top:72%;--cloud-width:88%;--cloud-x:-150vw;--cloud-y:170vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_3.png" style="--cloud-left:38%;--cloud-top:76%;--cloud-width:92%;--cloud-x:160vw;--cloud-y:170vh;--cloud-turn:15deg" alt=""><img class="splash-cloud" src="./oblako_4.png" style="--cloud-left:-12%;--cloud-top:-42%;--cloud-width:115%;--cloud-x:-100vw;--cloud-y:-180vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_5_s_cvetami.png" style="--cloud-left:38%;--cloud-top:-42%;--cloud-width:112%;--cloud-x:120vw;--cloud-y:-180vh;--cloud-turn:15deg" alt=""></div><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.2.4</div></div>
+<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-clouds" aria-hidden="true"><img class="splash-cloud" src="./oblako_1_s_cvetami.png" style="--cloud-left:-22%;--cloud-top:-17%;--cloud-width:88%;--cloud-x:-120vw;--cloud-y:-120vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_2.png" style="--cloud-left:43%;--cloud-top:-14%;--cloud-width:90%;--cloud-x:140vw;--cloud-y:-120vh;--cloud-turn:15deg" alt=""><img class="splash-cloud" src="./oblako_3.png" style="--cloud-left:-31%;--cloud-top:13%;--cloud-width:86%;--cloud-x:-160vw;--cloud-y:-40vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_4.png" style="--cloud-left:35%;--cloud-top:16%;--cloud-width:89%;--cloud-x:170vw;--cloud-y:-25vh;--cloud-turn:15deg" alt=""><img class="splash-cloud" src="./oblako_5_s_cvetami.png" style="--cloud-left:-18%;--cloud-top:42%;--cloud-width:90%;--cloud-x:-130vw;--cloud-y:65vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_1_s_cvetami.png" style="--cloud-left:43%;--cloud-top:47%;--cloud-width:85%;--cloud-x:160vw;--cloud-y:70vh;--cloud-turn:15deg" alt=""><img class="splash-cloud" src="./oblako_2.png" style="--cloud-left:-26%;--cloud-top:72%;--cloud-width:88%;--cloud-x:-150vw;--cloud-y:170vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_3.png" style="--cloud-left:38%;--cloud-top:76%;--cloud-width:92%;--cloud-x:160vw;--cloud-y:170vh;--cloud-turn:15deg" alt=""><img class="splash-cloud" src="./oblako_4.png" style="--cloud-left:-12%;--cloud-top:-42%;--cloud-width:115%;--cloud-x:-100vw;--cloud-y:-180vh;--cloud-turn:-15deg" alt=""><img class="splash-cloud" src="./oblako_5_s_cvetami.png" style="--cloud-left:38%;--cloud-top:-42%;--cloud-width:112%;--cloud-x:120vw;--cloud-y:-180vh;--cloud-turn:15deg" alt=""></div><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.2.5</div></div>
 <div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
 <div class="app">
 
@@ -886,6 +890,8 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
   retry.style.cssText="display:none;margin:16px auto 0;padding:12px 22px;border:2px solid white;border-radius:16px;background:#edb5c5;color:#7d4c61;font-weight:700;box-shadow:0 4px 0 #d49bab";
   splash.querySelector(".splash-inner").appendChild(retry);
   const ready=new Set();
+  const splashStarted=performance.now();
+  const minimumSplashMs=2800;
   let running=false;
   function loadImage(src){
     return new Promise(resolve=>{
@@ -920,7 +926,16 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
     }
     caption.textContent="Всё готово!";
     progress.style.width="100%";
-    await new Promise(resolve=>setTimeout(resolve,350));
+    // Loading a PNG is not the same as having its pixels decoded and painted.
+    // Decode the actual main-screen images before removing the splash.
+    const critical=assets.slice(0,7);
+    await Promise.all(critical.map(async src=>{
+      const img=new Image();img.src=src;
+      try{if(img.decode)await img.decode();}catch(e){}
+    }));
+    const remaining=Math.max(0,minimumSplashMs-(performance.now()-splashStarted));
+    if(remaining)await new Promise(resolve=>setTimeout(resolve,remaining));
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     splash.classList.add("splash-dispersing");
     const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches||localStorage.getItem("flowerReduceMotion")==="1";
     setTimeout(()=>{
@@ -1087,7 +1102,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.2.4"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.2.5"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
