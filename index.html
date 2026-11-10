@@ -532,6 +532,23 @@ body{width:100%;min-height:100dvh;overflow-x:hidden}
 @media(min-width:521px){.shop .cat[src]{width:88px !important}}
 @media(max-height:650px){.modal-card{max-height:85dvh}}
 
+
+/* Anchor the cat to the artwork, not to the responsive shop spacer. */
+.shop{position:static}
+.shop .cat[src]{
+ position:absolute !important;
+ top:calc(min(100vw, 520px) * .88) !important;
+ left:43% !important;
+ right:auto !important;
+ bottom:auto !important;
+ width:clamp(60px,18vw,88px) !important;
+ max-width:none !important;
+ height:auto !important;
+ animation:none !important;
+ transform:none !important;
+ pointer-events:none;
+}
+
 </style>
 </head>
 
