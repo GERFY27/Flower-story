@@ -760,11 +760,17 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 .match-tile.selected{background:#fff3ad;outline:3px solid #dc98aa}
 .memory-tile{font-size:clamp(24px,7vw,38px)}
 .catch-cell{font-size:40px;background:#f2e9d7}
+/* Sparkles and drifting petals when flowers match */
+.match-sparkle-layer{position:fixed;inset:0;pointer-events:none;z-index:110;overflow:hidden}
+.match-sparkle{position:absolute;color:#f4b1cc;font-size:18px;line-height:1;text-shadow:0 1px 2px #fff,0 0 5px #fff6;animation:match-sparkle-float 680ms ease-out forwards;will-change:transform,opacity}
+.match-sparkle:nth-child(3n){color:#f6d38d;font-size:14px}
+.match-sparkle:nth-child(4n){color:#e4a7d7;font-size:21px}
+@keyframes match-sparkle-float{0%{opacity:0;transform:translate(-50%,-50%) scale(.35) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--spark-x)),calc(-50% + var(--spark-y))) scale(.8) rotate(85deg)}}
 </style>
 </head>
 
 <body>
-<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.2.1</div></div>
+<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.2.2</div></div>
 <div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
 <div class="app">
 
@@ -1055,7 +1061,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.2.1"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.2.2"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1338,7 +1344,34 @@ async function animateMatchSwap(i,j){
   second.style.transform="translate("+(-dx)+"px,"+(-dy)+"px)";
   await matchPause(260);
 }
+function matchSparkles(indices){
+  if(localStorage.getItem("flowerReduceMotion")==="1")return;
+  const tiles=matchTiles();
+  const layer=document.createElement("div");
+  layer.className="match-sparkle-layer";
+  document.body.appendChild(layer);
+  const symbols=["✦","✧","❀","✿"];
+  indices.forEach((index)=>{
+    const tile=tiles[index];if(!tile)return;
+    const rect=tile.getBoundingClientRect();
+    const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
+    for(let k=0;k<5;k++){
+      const particle=document.createElement("span");
+      particle.className="match-sparkle";
+      particle.textContent=symbols[(index+k)%symbols.length];
+      particle.style.left=cx+"px";particle.style.top=cy+"px";
+      const angle=(Math.PI*2*k/5)+(index%3)*.35;
+      const distance=22+Math.random()*28;
+      particle.style.setProperty("--spark-x",Math.cos(angle)*distance+"px");
+      particle.style.setProperty("--spark-y",Math.sin(angle)*distance-12+"px");
+      particle.style.animationDelay=(k*35)+"ms";
+      layer.appendChild(particle);
+    }
+  });
+  setTimeout(()=>layer.remove(),900);
+}
 async function animateMatchRemoval(indices){
+  matchSparkles(indices);
   const tiles=matchTiles();
   if(localStorage.getItem("flowerReduceMotion")==="1")return;
   indices.forEach(i=>{
