@@ -747,7 +747,7 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 </head>
 
 <body>
-<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version">Версия 0.1.0</div></div>
+<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.1.0</div></div>
 <div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
 <div class="app">
 
@@ -1009,7 +1009,9 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.1.0";
+const GAME_VERSION="0.1.0"; // Change this value when publishing a new game release.
+const splashVersionElement=document.getElementById("splashVersion");
+if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
 let gameSoundEnabled=localStorage.getItem("flowerSoundEnabled")!=="0";
 let gameVolume=Math.max(0,Math.min(100,Number(localStorage.getItem("flowerVolume")??"45")||0));
