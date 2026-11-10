@@ -648,6 +648,19 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
  margin:0 !important;
 }
 @media(max-width:350px){.money .daily.gift-trigger{top:calc(100% + 10px) !important}}
+
+/* Gentle floating animation for the illustrated game title */
+@keyframes flowerTitleFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+.game-title-art{
+  animation:flowerTitleFloat 3.6s ease-in-out infinite;
+  will-change:transform;
+}
+@media(prefers-reduced-motion:reduce){
+  .game-title-art{animation:none}
+}
 </style>
 </head>
 
