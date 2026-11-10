@@ -752,7 +752,7 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 </head>
 
 <body>
-<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.1.5</div></div>
+<div id="flowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.1.6</div></div>
 <div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
 <div class="app">
 
@@ -831,24 +831,62 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 (function(){
   const splash=document.getElementById("flowerSplash");
   const progress=document.getElementById("splashProgress");
-  const started=Date.now();
-  let completed=false;
-  const setProgress=n=>{if(progress)progress.style.width=n+"%";};
-  setProgress(12);
-  const interval=setInterval(()=>{if(!completed)setProgress(Math.min(88,12+(Date.now()-started)/24));},120);
-  function finish(){
-    if(completed)return;
-    completed=true;
-    clearInterval(interval);
-    setProgress(100);
-    setTimeout(()=>{splash.classList.add("splash-hidden");setTimeout(()=>splash.remove(),750);},300);
+  const caption=splash.querySelector(".splash-caption");
+  const assets=[
+    "./%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png",
+    "./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png",
+    "./%D0%BC%D0%BE%D0%BD%D0%B5%D1%82%D0%B0.png",
+    "./%D0%B0%D0%BB%D0%BC%D0%B0%D0%B7.png",
+    "./%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8.png",
+    "./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png",
+    "./cat.png"
+  ];
+  const retry=document.createElement("button");
+  retry.type="button";retry.textContent="Повторить загрузку";
+  retry.style.cssText="display:none;margin:16px auto 0;padding:12px 22px;border:2px solid white;border-radius:16px;background:#edb5c5;color:#7d4c61;font-weight:700;box-shadow:0 4px 0 #d49bab";
+  splash.querySelector(".splash-inner").appendChild(retry);
+  const ready=new Set();
+  let running=false;
+  function loadImage(src){
+    return new Promise(resolve=>{
+      const img=new Image();
+      let done=false;
+      const timer=setTimeout(()=>finish(false),12000);
+      function finish(ok){if(done)return;done=true;clearTimeout(timer);img.onload=null;img.onerror=null;resolve(ok);}
+      img.onload=()=>finish(img.naturalWidth>0);
+      img.onerror=()=>finish(false);
+      img.src=src;
+      if(img.complete&&img.naturalWidth>0)finish(true);
+    });
   }
-  const assets=["./%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png","./cat.png","./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png","./%D0%BC%D0%BE%D0%BD%D0%B5%D1%82%D0%B0.png","./%D0%B0%D0%BB%D0%BC%D0%B0%D0%B7.png"];
-  const ready=Promise.all(assets.map(src=>new Promise(resolve=>{const img=new Image();img.onload=resolve;img.onerror=resolve;img.src=src;})));
-  Promise.all([ready,new Promise(resolve=>setTimeout(resolve,1100))]).then(finish);
-  setTimeout(finish,5000);
+  async function load(){
+    if(running)return;
+    running=true;retry.style.display="none";
+    caption.textContent="Загружаем цветочную лавку...";
+    const missing=assets.filter(src=>!ready.has(src));
+    await Promise.all(missing.map(async src=>{
+      // Retry transient failures; do not treat an image error as success.
+      for(let attempt=0;attempt<3;attempt++){
+        if(await loadImage(src)){ready.add(src);break;}
+        if(attempt<2)await new Promise(resolve=>setTimeout(resolve,650*(attempt+1)));
+      }
+      progress.style.width=Math.round(ready.size/assets.length*100)+"%";
+    }));
+    running=false;
+    if(ready.size!==assets.length){
+      caption.textContent="Не все изображения загрузились. Проверь подключение к интернету.";
+      retry.style.display="block";
+      return;
+    }
+    caption.textContent="Всё готово!";
+    progress.style.width="100%";
+    await new Promise(resolve=>setTimeout(resolve,350));
+    splash.classList.add("splash-hidden");
+    setTimeout(()=>splash.remove(),750);
+  }
+  retry.addEventListener("click",load);
+  load();
 })();
-
 let coins = Number(localStorage.getItem("flowerCoins")) || 250;
 let today = new Date().toDateString();
 let giftTaken = localStorage.getItem("flowerGiftTaken") === today;
@@ -1014,7 +1052,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.1.5"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.1.6"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
