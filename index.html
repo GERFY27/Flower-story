@@ -603,6 +603,20 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 .daily-info p{display:none}
 .daily .claim{width:100%;font-size:clamp(10px,2.7vw,12px);padding:7px 5px;border-radius:11px}
 @media(max-width:350px){.daily{width:112px;top:116px}.daily .gift{width:32px}}
+
+/* Weekly gift: icon-only button and scrollable weekly calendar */
+.daily.gift-trigger{position:absolute !important;top:clamp(120px,30vw,155px);right:clamp(8px,2vw,14px);z-index:7;display:block;width:clamp(58px,16vw,76px) !important;height:clamp(58px,16vw,76px);min-width:0;padding:0 !important;background:transparent !important;border:0 !important;box-shadow:none !important;border-radius:0 !important;cursor:pointer}
+.daily.gift-trigger .gift{display:block;width:100% !important;height:100% !important;object-fit:contain}
+.daily.gift-trigger:active{transform:scale(.94)}
+@media(max-width:350px){.daily.gift-trigger{top:116px;width:56px !important;height:56px}}
+.weekly-hint{text-align:center;font-size:12px;line-height:1.45;margin:0 0 12px;color:#98717a}
+.weekly-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.weekly-day{min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 5px;border-radius:16px;background:#fff9f4;border:2px solid #f2d9d5;text-align:center;font-size:12px}
+.weekly-day.weekly-today{border-color:#d97d9a;background:#fff0f3}
+.weekly-day strong{color:#a75c75}.weekly-day small{font-weight:400}
+.weekly-day img{width:43px;height:43px;object-fit:contain}
+.weekly-claim{width:100%;min-height:32px;padding:5px 2px;border-radius:10px;background:#dd8fa5;color:white;font-size:11px;font-weight:700}
+.weekly-claim:disabled{background:#e5d5d7;color:#8b7880;cursor:default}
 </style>
 </head>
 
@@ -649,14 +663,7 @@ body{position:fixed;inset:0;width:100%;touch-action:none}
 
   
 
-  <div class="daily">
-    <img class="gift" src="./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png" alt="Подарок">
-    <div class="daily-info">
-      <b>Ежедневный подарок</b>
-      <p>Забери 50 монет для своей лавки!</p>
-    </div>
-    <button class="claim" onclick="gift()">Забрать</button>
-  </div>
+  <button class="daily gift-trigger" onclick="openWeeklyGifts()" aria-label="Открыть подарки на неделю"><img class="gift" src="./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png" alt="Подарки недели"></button>
 
 </div>
 
@@ -846,6 +853,34 @@ function updateCoins() {
   localStorage.setItem("flowerCoins", coins);
 }
 
+function localDateKey(date) {
+  const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
+  return y+"-"+m+"-"+d;
+}
+function openWeeklyGifts() {
+  const now=new Date();
+  const monday=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
+  const claimed=JSON.parse(localStorage.getItem("flowerWeeklyGifts")||"{}");
+  const oldClaim=localStorage.getItem("flowerGiftTaken")===now.toDateString();
+  const names=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+  let cards="";
+  for(let i=0;i<7;i++){
+    const date=new Date(monday);date.setDate(monday.getDate()+i);
+    const key=localDateKey(date),isToday=key===localDateKey(now);
+    const isClaimed=!!claimed[key]||(isToday&&oldClaim);
+    const isFuture=date>now&&!isToday;
+    const label=isClaimed?"Получено":isToday?"Забрать +50":"Недоступно";
+    cards+=`<div class="weekly-day ${isToday?"weekly-today":""}">
+      <strong>${names[i]} <small>${date.getDate()}.${String(date.getMonth()+1).padStart(2,"0")}</small></strong>
+      <img src="./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png" alt="">
+      <span>50 монет</span>
+      <button class="weekly-claim" ${isToday&&!isClaimed?'onclick="gift()"':"disabled"}>${label}</button>
+    </div>`;
+  }
+  document.getElementById("modalContent").innerHTML='<div class="modal-title">Подарки этой недели</div><p class="weekly-hint">Каждый день — 50 монет. Пропущенные дни нельзя забрать позже.</p><div class="weekly-grid">'+cards+'</div>';
+  document.getElementById("gameModal").classList.add("show");
+}
 function gift() {
   if (giftTaken) {
     message("Ты уже забрала подарок сегодня! 💗");
@@ -856,7 +891,11 @@ function gift() {
   giftTaken = true;
 
   localStorage.setItem("flowerGiftTaken", today);
+  const claimed=JSON.parse(localStorage.getItem("flowerWeeklyGifts")||"{}");
+  claimed[localDateKey(new Date())]=true;
+  localStorage.setItem("flowerWeeklyGifts",JSON.stringify(claimed));
   updateCoins();
+  openWeeklyGifts();
   message("Получено 50 монет! ✨");
 }
 
