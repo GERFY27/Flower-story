@@ -1428,7 +1428,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.9.1-beta"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.9.2-beta"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION+" · BETA";
 const GAME_DEVELOPER="GERFY27";
@@ -1726,7 +1726,7 @@ const MERGE_SIZE=49;
 const MERGE_GENERATOR_ICONS=["💐","🧺","🎁","🎀","🧸"];
 const MERGE_GENERATOR_NAMES=["Цветочная корзина","Корзина флориста","Подарочная коробка","Рулон упаковки","Коробка с игрушками"];
 const MERGE_GENERATOR_POSITIONS=[1,5,21,43,47];
-const MERGE_CHARGES=10,MERGE_COOLDOWN=5*60*1000;
+const MERGE_CHARGES=[15,14,13,12,11],MERGE_COOLDOWN=5*60*1000;
 const MERGE_CHAINS=[
  ["🌱","🌿","🌷","🌹","💐","💐","🌺","👑","💎"],
  ["🌰","🌾","🌼","🌻","🪴","🎍","🏵️","🎁","👑"],
@@ -1763,7 +1763,7 @@ function mergeInstallGenerators(){
      mergeState.board[index]={g:c};
    }
    const gen=mergeState.generators[c];
-   if(!gen||!Number.isFinite(gen.charges))mergeState.generators[c]={charges:MERGE_CHARGES,readyAt:0};
+   if(!gen||!Number.isFinite(gen.charges))mergeState.generators[c]={charges:MERGE_CHARGES[c],readyAt:0};
  }
 }
 mergeInstallGenerators();
@@ -1811,8 +1811,8 @@ function mergeDeliver(id){
 }
 function mergeRefreshGenerators(){
  let changed=false;
- for(const gen of Object.values(mergeState.generators)){
-   if(gen.charges<=0&&gen.readyAt&&Date.now()>=gen.readyAt){gen.charges=MERGE_CHARGES;gen.readyAt=0;changed=true;}
+ for(const [type,gen] of Object.entries(mergeState.generators)){
+   if(gen.charges<=0&&gen.readyAt&&Date.now()>=gen.readyAt){gen.charges=MERGE_CHARGES[Number(type)];gen.readyAt=0;changed=true;}
  }
  if(changed)mergeSave();
 }
@@ -1874,10 +1874,10 @@ function drawMerge(){
    const generator=item&&item.g!==undefined;
    const gen=generator?mergeState.generators[item.g]:null;
    const cooling=gen&&gen.charges===0;
-   const badge=generator?'<span class="merge-generator-badge">'+(cooling?'⏳':gen.charges+'/'+MERGE_CHARGES)+'</span>':'';
+   const badge=generator&&cooling?'<span class="merge-generator-badge">⏳</span>':'';
    return '<button class="merge-cell '+(item?'':'empty')+(generator?' merge-generator':'')+(cooling?' cooling':'')+(i===mergeState.selected?' selected':'')+'" onclick="mergeTap('+i+')" aria-label="'+(item?mergeName(item):'Пустая клетка')+'">'+(item?mergeIcon(item):'')+badge+'</button>';
  }).join("");
- document.getElementById("mergeScreenContent").innerHTML='<div class="merge-head"><span>🌸 Цветочная мастерская</span><span>⚡ '+energy+'/'+ENERGY_MAX+'</span></div><div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div><div class="merge-tools"><button onclick="mergeState.selected=-1;drawMerge()">Снять выбор</button></div><p class="merge-hint">Нажимай на генераторы на поле: 10 предметов, затем 5 минут перезарядки. Каждое создание стоит ⚡1. Перетаскивай предметы пальцем или выбирай клетки нажатием. Объединяй одинаковые предметы и выполняй заказы.</p>';
+ document.getElementById("mergeScreenContent").innerHTML='<div class="merge-head"><span>🌸 Цветочная мастерская</span><span>⚡ '+energy+'/'+ENERGY_MAX+'</span></div><div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div><div class="merge-tools"><button onclick="mergeState.selected=-1;drawMerge()">Снять выбор</button></div><p class="merge-hint">Нажимай на генераторы на поле: цветы — 15, корзинки — 14, подарки — 13, упаковка — 12, игрушки — 11 предметов, затем 5 минут перезарядки. Каждое создание стоит ⚡1. Перетаскивай предметы пальцем или выбирай клетки нажатием. Объединяй одинаковые предметы и выполняй заказы.</p>';
 }
 setInterval(()=>{if(!flowerDrag&&document.getElementById("mergeScreen")?.classList.contains("show"))drawMerge();},1000);
 
