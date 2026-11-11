@@ -527,7 +527,7 @@ body{width:100%;min-height:100dvh;overflow-x:hidden}
 .daily-info b{font-size:clamp(11px,3vw,14px)}
 .daily-info p{font-size:clamp(9px,2.4vw,11px)}
 .claim{padding:clamp(8px,2.5vw,11px);font-size:clamp(11px,3vw,14px);flex-shrink:0}
-.navigation{width:100%;max-width:520px;grid-template-columns:repeat(4,minmax(0,1fr));padding:8px 5px calc(8px + env(safe-area-inset-bottom,0px))}
+.navigation{width:100%;max-width:520px;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 5px calc(8px + env(safe-area-inset-bottom,0px))}
 .nav-button{min-width:0;min-height:52px;font-size:clamp(9px,2.5vw,12px);padding:6px 1px}
 .nav-button span{font-size:clamp(21px,6vw,27px)}
 .modal{padding:12px}
@@ -885,6 +885,25 @@ body{display:flex;align-items:flex-start;justify-content:center}
 /* Energy counter: positioned independently from the crowded top bar. */
 .energy-pill{position:absolute;top:clamp(54px,13cqw,76px);left:3%;z-index:12;display:flex;align-items:center;gap:5px;padding:5px 9px;border:2px solid #fff9f1;border-radius:18px;background:linear-gradient(#fffaf2,#ffe6db);box-shadow:0 3px 0 #d7a8a5;color:#986675;font-size:clamp(10px,2.7cqw,13px);font-weight:800}
 .energy-symbol{font-size:17px;color:#e9a13e}.energy-timer{font-size:10px;font-weight:600;color:#b48c88}
+
+/* Flower workshop: compact portrait merge board and customer orders. */
+.merge-modal-card{max-width:520px!important;max-height:91dvh!important;padding:10px!important}
+.merge-head{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:4px 0 9px;color:#986675;font-weight:800;font-size:13px}
+.merge-orders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:8px}
+.merge-order{background:#fffaf4;border:2px solid #f0d2ce;border-radius:13px;padding:6px 3px;text-align:center;min-width:0;color:#8d6570;font-size:10px}
+.merge-order b{display:block;font-size:11px;margin-bottom:3px}
+.merge-order .order-items{font-size:20px;line-height:1.3}
+.merge-order button{display:block;width:100%;background:#e7a1ad;color:#fff;border-radius:9px;padding:5px 1px;margin-top:5px;font-size:10px;font-weight:800}
+.merge-order button:disabled{opacity:.45}
+.merge-board{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;background:#e9c6b7;border:4px solid #fff6e9;border-radius:16px;padding:5px;touch-action:manipulation}
+.merge-cell{aspect-ratio:1;border-radius:9px;background:#fff4e6;border:1px solid #e9d6c7;font-size:clamp(20px,5.6vw,31px);display:flex;align-items:center;justify-content:center;min-width:0;padding:0;touch-action:manipulation}
+.merge-cell.selected{outline:3px solid #e884a2;outline-offset:-2px;background:#ffe4e8}
+.merge-cell.ready{background:#f9e8c3}
+.merge-cell.empty{background:#f5dfce}
+.merge-tools{display:flex;gap:7px;align-items:center;margin:9px 0 4px}
+.merge-tools button{background:linear-gradient(#fff8ec,#f4d6c8);border:2px solid #fff;border-radius:13px;padding:9px 8px;font-weight:800;color:#9b6770;flex:1;font-size:12px}
+.merge-hint{font-size:11px;color:#9d7c79;text-align:center;margin:5px 0}
+@media(max-width:360px){.merge-cell{font-size:19px}.merge-order{font-size:9px}.merge-order .order-items{font-size:18px}}
 </style>
 </head>
 
@@ -905,7 +924,7 @@ body{display:flex;align-items:flex-start;justify-content:center}
     </div>
   </div>
 
-  <button class="energy-pill" type="button" onclick="showEnergyInfo()" aria-label="Энергия и восстановление"><span class="energy-symbol">⚡</span><span id="energyValue">30/30</span><span class="energy-timer" id="energyTimer">Полная</span></button>
+  <button class="energy-pill" type="button" onclick="showEnergyInfo()" aria-label="Энергия и восстановление"><span class="energy-symbol">⚡</span><span id="energyValue">100/100</span><span class="energy-timer" id="energyTimer">Полная</span></button>
 
   <div class="logo">
     <img class="game-title-art" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история">
@@ -947,6 +966,7 @@ body{display:flex;align-items:flex-start;justify-content:center}
   <button class="nav-button active" onclick="tab(this,'Лавка')">
     <span>🏡</span>Лавка
   </button>
+  <button class="nav-button" onclick="tab(this,'Мастерская')"><span>🌱</span>Мастерская</button>
   <button class="nav-button" onclick="tab(this,'Букеты')">
     <span>💐</span>Букеты
   </button>
@@ -1048,9 +1068,10 @@ body{display:flex;align-items:flex-start;justify-content:center}
   load();
 })();
 let coins = Number(localStorage.getItem("flowerCoins")) || 250;
-const ENERGY_MAX=30, ENERGY_REGEN_MS=5*60*1000, ENERGY_GAME_COST=5;
+const ENERGY_MAX=100, ENERGY_REGEN_MS=5*60*1000, ENERGY_GAME_COST=5;
 let energy=Number(localStorage.getItem("flowerEnergy"));
 if(!Number.isFinite(energy))energy=ENERGY_MAX;
+if(localStorage.getItem("flowerEnergyCapacityMigrated")!=="1"){energy=Math.min(ENERGY_MAX,energy+70);localStorage.setItem("flowerEnergyCapacityMigrated","1");}
 energy=Math.max(0,Math.min(ENERGY_MAX,Math.floor(energy)));
 let energyTimestamp=Number(localStorage.getItem("flowerEnergyTimestamp"))||Date.now();
 function saveEnergy(){localStorage.setItem("flowerEnergy",String(energy));localStorage.setItem("flowerEnergyTimestamp",String(energyTimestamp));}
@@ -1064,7 +1085,7 @@ function refreshEnergy(){
   if(timer){const remaining=ENERGY_REGEN_MS-Math.max(0,now-energyTimestamp)%ENERGY_REGEN_MS;timer.textContent=energy===ENERGY_MAX?"Полная":Math.ceil(remaining/60000)+" мин";}
 }
 function spendEnergy(amount=ENERGY_GAME_COST){refreshEnergy();if(energy<amount){message("Недостаточно энергии! Подожди восстановления.");return false;}energy-=amount;energyTimestamp=energy===ENERGY_MAX-amount?Date.now():energyTimestamp;refreshEnergy();return true;}
-function showEnergyInfo(){refreshEnergy();message("⚡ "+energy+"/"+ENERGY_MAX+" · +1 энергия каждые 5 минут · мини-игра: −5");}
+function showEnergyInfo(){refreshEnergy();message("⚡ "+energy+"/"+ENERGY_MAX+" · +1 энергия каждые 5 минут · генератор: −1 · мини-игра: −5");}
 refreshEnergy();setInterval(refreshEnergy,15000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshEnergy();});
 let today = new Date().toDateString();
@@ -1092,11 +1113,13 @@ function message(text) {
 }
 
 function closePanel() {
+  document.querySelector(".modal-card").classList.remove("merge-modal-card");
   arcadeStop();
   document.getElementById("gameModal").classList.remove("show");
 }
 
 function openPanel(name) {
+  document.querySelector(".modal-card").classList.remove("merge-modal-card");
   const modal = document.getElementById("gameModal");
   const content = document.getElementById("modalContent");
 
@@ -1187,6 +1210,7 @@ function openPanel(name) {
     `
   };
 
+  if(name==="merge"){openMerge();return;}
   if(name==="games")arcadeStop();
   content.innerHTML = screens[name] || "";
   modal.classList.add("show");
@@ -1201,6 +1225,7 @@ function tab(button, name) {
 
   const pages = {
     "Лавка": null,
+    "Мастерская": "merge",
     "Букеты": "bouquets",
     "Мини-игры": "games",
     "Украшения": "decorations"
@@ -1222,7 +1247,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.4.1"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.5.0"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1449,6 +1474,84 @@ function makeBouquet() {
 }
 
 
+
+/* Persistent merge workshop. Two equal adjacent or distant items can be combined by tapping. */
+const MERGE_SIZE=49;
+const MERGE_CHAINS=[
+  ["🌱","🌿","🌷","🌹","💐","🧺","🌺","👑"],
+  ["🌰","🌾","🌼","🌻","🪴","🎍","🏵️","🎁"]
+];
+const MERGE_NAMES=[
+  ["Росток","Зелень","Тюльпан","Роза","Букет","Корзина","Композиция","Королевский букет"],
+  ["Семечко","Побег","Ромашка","Подсолнух","Горшок","Цветочная кадка","Венок","Подарок"]
+];
+function mergeNewGame(){const board=Array(MERGE_SIZE).fill(null);board[10]={c:0,l:0};board[11]={c:0,l:0};board[24]={c:1,l:0};board[25]={c:1,l:0};return {board,orders:[],nextOrder:1,selected:-1};}
+let mergeState;
+try{mergeState=JSON.parse(localStorage.getItem("flowerMergeState")||"null");}catch(e){mergeState=null;}
+if(!mergeState||!Array.isArray(mergeState.board)||mergeState.board.length!==MERGE_SIZE)mergeState=mergeNewGame();
+mergeState.selected=-1;
+function mergeSave(){localStorage.setItem("flowerMergeState",JSON.stringify({board:mergeState.board,orders:mergeState.orders,nextOrder:mergeState.nextOrder}));}
+function mergeOrder(){
+  const n=mergeState.nextOrder++;
+  const tier=n<=3?1:n<=7?2:n<=13?3:n<=22?4:Math.min(6,4+Math.floor((n-22)/12));
+  const c=n%3===0?1:0;
+  const l=Math.max(1,Math.min(6,tier));
+  const second=n>5&&n%3===1?{c:1-c,l:Math.max(1,l-1)}:null;
+  const reward=l<=2?5+2*l:l<=4?15+(l-3)*8:l<=5?35:60+Math.min(20,(l-6)*10);
+  return {id:n,items:[{c,l},...(second?[second]:[])],reward};
+}
+while(mergeState.orders.length<3)mergeState.orders.push(mergeOrder());
+mergeSave();
+function mergeIcon(item){return MERGE_CHAINS[item.c][item.l];}
+function mergeName(item){return MERGE_NAMES[item.c][item.l];}
+function mergeInventory(order){
+  const used=new Set();
+  return order.items.every(item=>{
+    const idx=mergeState.board.findIndex((v,i)=>!used.has(i)&&v&&v.c===item.c&&v.l===item.l);
+    if(idx<0)return false;used.add(idx);return true;
+  });
+}
+function mergeDeliver(id){
+  const order=mergeState.orders.find(o=>o.id===id);
+  if(!order||!mergeInventory(order)){message("Сначала собери все предметы заказа");return;}
+  for(const item of order.items){const idx=mergeState.board.findIndex(v=>v&&v.c===item.c&&v.l===item.l);mergeState.board[idx]=null;}
+  coins+=order.reward;updateCoins();
+  mergeState.orders=mergeState.orders.filter(o=>o.id!==id);mergeState.orders.push(mergeOrder());
+  mergeState.selected=-1;mergeSave();drawMerge();message("Заказ выполнен! +"+order.reward+" монет");
+}
+function mergeTap(index){
+  const board=mergeState.board,selected=mergeState.selected,target=board[index];
+  if(selected===index){mergeState.selected=-1;drawMerge();return;}
+  if(selected<0){if(target)mergeState.selected=index;drawMerge();return;}
+  const from=board[selected];
+  if(!from){mergeState.selected=-1;drawMerge();return;}
+  if(target&&target.c===from.c&&target.l===from.l&&target.l<7){
+    board[index]={c:target.c,l:target.l+1};board[selected]=null;
+    mergeState.selected=-1;mergeSave();drawMerge();return;
+  }
+  if(!target){board[index]=from;board[selected]=null;mergeState.selected=-1;mergeSave();drawMerge();return;}
+  mergeState.selected=index;drawMerge();
+}
+function mergeGenerate(){
+  if(!mergeState.board.includes(null)){message("На поле нет свободных клеток");return;}
+  if(!spendEnergy(1))return;
+  const index=mergeState.board.indexOf(null);
+  mergeState.board[index]={c:Math.random()<.7?0:1,l:0};
+  mergeSave();drawMerge();
+}
+function openMerge(){
+  arcadeStop();
+  const modal=document.getElementById("gameModal");
+  modal.querySelector(".modal-card").classList.add("merge-modal-card");
+  modal.classList.add("show");drawMerge();
+}
+function drawMerge(){
+  if(!document.getElementById("gameModal").classList.contains("show"))return;
+  const orders=mergeState.orders.map(o=>'<div class="merge-order"><b>Заказ №'+o.id+'</b><div class="order-items">'+o.items.map(mergeIcon).join(" ")+'</div><div>+'+o.reward+' 🪙</div><button '+(mergeInventory(o)?"":"disabled")+' onclick="mergeDeliver('+o.id+')">Отдать</button></div>').join("");
+  const cells=mergeState.board.map((item,i)=>'<button class="merge-cell '+(item?'':'empty')+(i===mergeState.selected?' selected':'')+'" onclick="mergeTap('+i+')" aria-label="'+(item?mergeName(item):'Пустая клетка')+'">'+(item?mergeIcon(item):'')+'</button>').join("");
+  document.getElementById("modalContent").innerHTML='<div class="merge-head"><span>🌸 Цветочная мастерская</span><span>⚡ '+energy+'/'+ENERGY_MAX+'</span></div><div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div><div class="merge-tools"><button onclick="mergeGenerate()">🌱 Получить предмет · ⚡1</button><button onclick="mergeState.selected=-1;drawMerge()">Снять выбор</button></div><p class="merge-hint">Нажми на предмет, затем на такой же — объедини. Нажми на пустую клетку — перемести.</p>';
+}
+
 /* Three playable arcade mini-games */
 let arcade=null,arcadeTimer=null;
 function arcadeStop(){if(arcadeTimer){clearInterval(arcadeTimer);arcadeTimer=null;}if(arcade&&arcade.type==="catch"&&arcade.frame)cancelAnimationFrame(arcade.frame);arcade=null;}
@@ -1458,7 +1561,8 @@ function arcadeView(html){
 }
 function arcadeReward(amount){
   coins+=amount;updateCoins();
-  message("Награда: +"+amount+" монет!");
+  if(Math.random()<.05){refreshEnergy();const gained=Math.min(5,ENERGY_MAX-energy);energy+=gained;refreshEnergy();message("Награда: +"+amount+" монет"+(gained?" и ⚡+"+gained:"")+"!");}
+  else message("Награда: +"+amount+" монет!");
 }
 function arcadeBack(){arcadeStop();openPanel("games");}
 const flowerIcons=[
@@ -1606,7 +1710,7 @@ async function tapMatch(i){
   }
   g.busy=false;
   if(g.moves===0){
-    const reward=Math.min(100,Math.max(10,Math.floor(g.score/30)));
+    const reward=Math.min(3,Math.max(1,Math.floor(g.score/220)));
     arcadeReward(reward);
     arcadeView('<div class="modal-title">Игра окончена!</div><p class="arcade-info">Очки: '+g.score+' · Получено монет: '+reward+'</p><button class="game-action" onclick="startMatch3()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
     return;
@@ -1632,7 +1736,7 @@ function tapMemory(i){
     if(g.cards[g.opened[0]]===g.cards[g.opened[1]]){
       g.matched.push(...g.opened);g.opened=[];
       if(g.matched.length===12){
-        const reward=Math.max(15,65-g.attempts*3);arcadeReward(reward);
+        const reward=Math.max(1,Math.min(3,4-Math.floor(g.attempts/5)));arcadeReward(reward);
         arcadeView('<div class="modal-title">Все пары найдены!</div><p class="arcade-info">Попытки: '+g.attempts+' · Награда: '+reward+' монет</p><button class="game-action" onclick="startMemory()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');return;
       }
     }else{
@@ -1669,7 +1773,7 @@ function tickCatch(time){
   if(!field)return;
   if(g.seconds<=0){
     g.active=false;
-    const reward=Math.max(0,Math.min(100,Math.floor(g.score*2)));
+    const reward=Math.max(2,Math.min(4,Math.floor(g.score/15)));
     arcadeReward(reward);
     arcadeView('<div class="modal-title">Цветочный дождь завершён!</div><p class="arcade-info">Очки: '+g.score+' · Награда: '+reward+' монет</p><button class="game-action" onclick="startCatch()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
     return;
