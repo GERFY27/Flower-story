@@ -1037,6 +1037,11 @@ input,textarea,[contenteditable="true"]{
   user-select:text!important;
   -webkit-touch-callout:default!important;
 }
+
+/* Generator tiles: charges and live recharge countdown. */
+.merge-cell.merge-generator{position:relative;background:linear-gradient(145deg,#fff1cf,#e8c7f2)!important;border:2px solid #b789c4!important;font-size:clamp(18px,5cqw,29px)!important;overflow:hidden}
+.merge-cell.merge-generator.cooling{filter:saturate(.65)}
+.merge-generator-badge{position:absolute;bottom:1px;left:1px;right:1px;font-size:clamp(8px,2cqw,11px);line-height:1.15;border-radius:5px;background:#fff9f1e8;color:#704b77;font-weight:800;white-space:nowrap}
 </style>
 </head>
 
@@ -1376,7 +1381,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.7.8"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.8.0"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1671,88 +1676,153 @@ requestAnimationFrame(alignDianaWithNavigation);
 
 /* Persistent merge workshop. Two equal adjacent or distant items can be combined by tapping. */
 const MERGE_SIZE=49;
+const MERGE_GENERATOR_ICONS=["💐","🧺","🎁","🎀","🧸"];
+const MERGE_GENERATOR_NAMES=["Цветочная корзина","Корзина флориста","Подарочная коробка","Рулон упаковки","Коробка с игрушками"];
+const MERGE_GENERATOR_POSITIONS=[1,5,21,43,47];
+const MERGE_CHARGES=10,MERGE_COOLDOWN=5*60*1000;
 const MERGE_CHAINS=[
-  ["🌱","🌿","🌷","🌹","💐","🧺","🌺","👑"],
-  ["🌰","🌾","🌼","🌻","🪴","🎍","🏵️","🎁"]
+ ["🌱","🌿","🌷","🌹","💐","💐","🌺","👑","💎"],
+ ["🌰","🌾","🌼","🌻","🪴","🎍","🏵️","🎁","👑"],
+ ["🎀","🎁","🎁","💝","🎀","🎁","💎","👑","🌟"],
+ ["📄","📜","🎀","🎗️","🎁","💝","✨","🌟","👑"],
+ ["🧵","🧸","🐻","🐰","🧸","🐼","🦄","👑","💎"]
 ];
 const MERGE_NAMES=[
-  ["Росток","Зелень","Тюльпан","Роза","Букет","Корзина","Композиция","Королевский букет"],
-  ["Семечко","Побег","Ромашка","Подсолнух","Горшок","Цветочная кадка","Венок","Подарок"]
+ ["Росток","Зелень","Тюльпан","Роза","Букет","Пышный букет","Цветочная композиция","Королевский букет","Легендарный букет"],
+ ["Основа корзинки","Плетение","Ромашки","Подсолнухи","Цветочная корзинка","Праздничная корзина","Цветочный венок","Подарочная корзина","Роскошная корзина"],
+ ["Лента","Маленький подарок","Подарок","Подарок с сердцем","Праздничный подарок","Подарочный набор","Драгоценный подарок","Королевский подарок","Легендарный подарок"],
+ ["Лист бумаги","Упаковочная бумага","Лента для упаковки","Украшенная бумага","Подарочная упаковка","Нарядная упаковка","Блестящая упаковка","Премиальная упаковка","Королевская упаковка"],
+ ["Нитки","Плюшевая заготовка","Мишка","Зайчик","Мягкая игрушка","Плюшевый медведь","Панда","Волшебная игрушка","Коллекционная игрушка"]
 ];
-function mergeNewGame(){const board=Array(MERGE_SIZE).fill(null);board[10]={c:0,l:0};board[11]={c:0,l:0};board[24]={c:1,l:0};board[25]={c:1,l:0};return {board,orders:[],nextOrder:1,selected:-1};}
+function mergeNewGame(){
+ const board=Array(MERGE_SIZE).fill(null);
+ board[10]={c:0,l:0};board[11]={c:0,l:0};board[24]={c:1,l:0};board[25]={c:1,l:0};
+ return {board,orders:[],nextOrder:1,selected:-1};
+}
 let mergeState;
 try{mergeState=JSON.parse(localStorage.getItem("flowerMergeState")||"null");}catch(e){mergeState=null;}
 if(!mergeState||!Array.isArray(mergeState.board)||mergeState.board.length!==MERGE_SIZE)mergeState=mergeNewGame();
 mergeState.selected=-1;
-function mergeSave(){localStorage.setItem("flowerMergeState",JSON.stringify({board:mergeState.board,orders:mergeState.orders,nextOrder:mergeState.nextOrder}));}
-function mergeOrder(){
-  const n=mergeState.nextOrder++;
-  const tier=n<=3?1:n<=7?2:n<=13?3:n<=22?4:Math.min(6,4+Math.floor((n-22)/12));
-  const c=n%3===0?1:0;
-  const l=Math.max(1,Math.min(6,tier));
-  const second=n>5&&n%3===1?{c:1-c,l:Math.max(1,l-1)}:null;
-  const reward=l<=2?5+2*l:l<=4?15+(l-3)*8:l<=5?35:60+Math.min(20,(l-6)*10);
-  return {id:n,items:[{c,l},...(second?[second]:[])],reward};
+function mergeInstallGenerators(){
+ if(!mergeState.generators||typeof mergeState.generators!=="object")mergeState.generators={};
+ for(let c=0;c<5;c++){
+   let index=mergeState.board.findIndex(v=>v&&v.g===c);
+   if(index<0){
+     index=MERGE_GENERATOR_POSITIONS[c];
+     if(mergeState.board[index]!==null){
+       index=mergeState.board.findIndex((v,i)=>v===null&&!MERGE_GENERATOR_POSITIONS.includes(i));
+       if(index<0){index=mergeState.board.findIndex(v=>v&&v.g===undefined);if(index<0)continue;mergeState.board[index]=null;}
+     }
+     mergeState.board[index]={g:c};
+   }
+   const gen=mergeState.generators[c];
+   if(!gen||!Number.isFinite(gen.charges))mergeState.generators[c]={charges:MERGE_CHARGES,readyAt:0};
+ }
 }
+mergeInstallGenerators();
+function mergeSave(){localStorage.setItem("flowerMergeState",JSON.stringify({board:mergeState.board,orders:mergeState.orders,nextOrder:mergeState.nextOrder,generators:mergeState.generators}));}
+function mergeOrder(){
+ const n=mergeState.nextOrder++;
+ const tier=n<=3?1:n<=7?2:n<=13?3:n<=22?4:Math.min(7,4+Math.floor((n-22)/12));
+ const c=(n-1)%5;
+ const l=Math.max(1,Math.min(7,tier));
+ const second=n>5&&n%3===1?{c:(c+1)%5,l:Math.max(1,l-1)}:null;
+ const reward=l<=2?5+2*l:l<=4?15+(l-3)*8:l<=5?35:60+Math.min(30,(l-6)*10);
+ return {id:n,items:[{c,l},...(second?[second]:[])],reward};
+}
+if(!Array.isArray(mergeState.orders))mergeState.orders=[];
 while(mergeState.orders.length<3)mergeState.orders.push(mergeOrder());
 mergeSave();
-function mergeIcon(item){return MERGE_CHAINS[item.c][item.l];}
-function mergeName(item){return MERGE_NAMES[item.c][item.l];}
+function mergeIcon(item){return item.g!==undefined?MERGE_GENERATOR_ICONS[item.g]:MERGE_CHAINS[item.c]?.[item.l]||"🌸";}
+function mergeName(item){return item.g!==undefined?MERGE_GENERATOR_NAMES[item.g]:MERGE_NAMES[item.c]?.[item.l]||"Предмет";}
 function mergeInventory(order){
-  const used=new Set();
-  return order.items.every(item=>{
-    const idx=mergeState.board.findIndex((v,i)=>!used.has(i)&&v&&v.c===item.c&&v.l===item.l);
-    if(idx<0)return false;used.add(idx);return true;
-  });
+ const used=new Set();
+ return order.items.every(item=>{
+   const idx=mergeState.board.findIndex((v,i)=>!used.has(i)&&v&&v.g===undefined&&v.c===item.c&&v.l===item.l);
+   if(idx<0)return false;used.add(idx);return true;
+ });
 }
 function mergeDeliver(id){
-  const order=mergeState.orders.find(o=>o.id===id);
-  if(!order||!mergeInventory(order)){message("Сначала собери все предметы заказа");return;}
-  for(const item of order.items){const idx=mergeState.board.findIndex(v=>v&&v.c===item.c&&v.l===item.l);mergeState.board[idx]=null;}
-  coins+=order.reward;updateCoins();
-  mergeState.orders=mergeState.orders.filter(o=>o.id!==id);mergeState.orders.push(mergeOrder());
-  mergeState.selected=-1;mergeSave();drawMerge();message("Заказ выполнен! +"+order.reward+" монет");
+ const order=mergeState.orders.find(o=>o.id===id);if(!order||!mergeInventory(order))return;
+ const used=new Set();
+ for(const item of order.items){
+   const idx=mergeState.board.findIndex((v,i)=>!used.has(i)&&v&&v.g===undefined&&v.c===item.c&&v.l===item.l);
+   used.add(idx);mergeState.board[idx]=null;
+ }
+ coins+=order.reward;updateCoins();
+ mergeState.orders=mergeState.orders.filter(o=>o.id!==id);mergeState.orders.push(mergeOrder());
+ mergeSave();drawMerge();message("Заказ выполнен! +"+order.reward+" монет");
+}
+function mergeRefreshGenerators(){
+ let changed=false;
+ for(const gen of Object.values(mergeState.generators)){
+   if(gen.charges<=0&&gen.readyAt&&Date.now()>=gen.readyAt){gen.charges=MERGE_CHARGES;gen.readyAt=0;changed=true;}
+ }
+ if(changed)mergeSave();
+}
+function mergeNearbyEmpty(index){
+ const row=Math.floor(index/7),col=index%7;
+ const neighbors=[];
+ for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+   if(!dr&&!dc)continue;
+   const r=row+dr,c=col+dc;if(r>=0&&r<7&&c>=0&&c<7){const i=r*7+c;if(mergeState.board[i]===null)neighbors.push(i);}
+ }
+ return neighbors[0]??-1;
+}
+function mergeUseGenerator(index){
+ mergeRefreshGenerators();
+ const item=mergeState.board[index];if(!item||item.g===undefined)return;
+ const gen=mergeState.generators[item.g];
+ if(gen.charges<=0){message("Генератор перезаряжается");drawMerge();return;}
+ const empty=mergeNearbyEmpty(index);
+ if(empty<0){message("Рядом с генератором нет свободной клетки");return;}
+ if(!spendEnergy(1))return;
+ mergeState.board[empty]={c:item.g,l:0};
+ gen.charges--;
+ if(gen.charges===0)gen.readyAt=Date.now()+MERGE_COOLDOWN;
+ mergeState.selected=-1;mergeSave();drawMerge();
 }
 function mergeTap(index){
-  const board=mergeState.board,selected=mergeState.selected,target=board[index];
-  if(selected===index){mergeState.selected=-1;drawMerge();return;}
-  if(selected<0){if(target)mergeState.selected=index;drawMerge();return;}
-  const from=board[selected];
-  if(!from){mergeState.selected=-1;drawMerge();return;}
-  if(target&&target.c===from.c&&target.l===from.l&&target.l<7){
-    board[index]={c:target.c,l:target.l+1};board[selected]=null;
-    mergeState.selected=-1;mergeSave();drawMerge();return;
-  }
-  if(!target){board[index]=from;board[selected]=null;mergeState.selected=-1;mergeSave();drawMerge();return;}
-  mergeState.selected=index;drawMerge();
+ const board=mergeState.board,selected=mergeState.selected,target=board[index];
+ if(target&&target.g!==undefined){mergeUseGenerator(index);return;}
+ if(selected===index){mergeState.selected=-1;drawMerge();return;}
+ if(selected<0){if(target)mergeState.selected=index;drawMerge();return;}
+ const from=board[selected];
+ if(!from||from.g!==undefined){mergeState.selected=-1;drawMerge();return;}
+ if(target&&target.g===undefined&&target.c===from.c&&target.l===from.l&&target.l<8){
+   board[index]={c:target.c,l:target.l+1};board[selected]=null;
+   mergeState.selected=-1;mergeSave();drawMerge();return;
+ }
+ if(!target){board[index]=from;board[selected]=null;mergeState.selected=-1;mergeSave();drawMerge();return;}
+ mergeState.selected=index;drawMerge();
 }
-function mergeGenerate(){
-  if(!mergeState.board.includes(null)){message("На поле нет свободных клеток");return;}
-  if(!spendEnergy(1))return;
-  const index=mergeState.board.indexOf(null);
-  mergeState.board[index]={c:Math.random()<.7?0:1,l:0};
-  mergeSave();drawMerge();
-}
+function mergeGenerate(){message("Нажми на генератор прямо на поле");}
 function openMerge(){
-  arcadeStop();
-  document.getElementById("gameModal").classList.remove("show");
-  const screen=document.getElementById("mergeScreen");
-  screen.classList.add("show");screen.setAttribute("aria-hidden","false");
-  drawMerge();
+ arcadeStop();document.getElementById("gameModal").classList.remove("show");
+ const screen=document.getElementById("mergeScreen");
+ screen.classList.add("show");screen.setAttribute("aria-hidden","false");drawMerge();
 }
 function closeMerge(){
-  const screen=document.getElementById("mergeScreen");
-  screen.classList.remove("show");screen.setAttribute("aria-hidden","true");
-  document.querySelectorAll(".nav-button").forEach(b=>b.classList.toggle("active",b.textContent.trim().includes("Лавка")));
+ const screen=document.getElementById("mergeScreen");
+ screen.classList.remove("show");screen.setAttribute("aria-hidden","true");
+ document.querySelectorAll(".nav-button").forEach(b=>b.classList.toggle("active",b.textContent.trim().includes("Лавка")));
 }
+function mergeCountdown(ms){const seconds=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");}
 function drawMerge(){
-  if(!document.getElementById("mergeScreen").classList.contains("show"))return;
-  refreshEnergy();
-  document.getElementById("mergeScreenEnergy").textContent="⚡ "+energy+"/"+ENERGY_MAX;
-  const orders=mergeState.orders.map(o=>'<div class="merge-order"><b>Заказ №'+o.id+'</b><div class="order-items">'+o.items.map(mergeIcon).join(" ")+'</div><div>+'+o.reward+' 🪙</div><button '+(mergeInventory(o)?"":"disabled")+' onclick="mergeDeliver('+o.id+')">Отдать</button></div>').join("");
-  const cells=mergeState.board.map((item,i)=>'<button class="merge-cell '+(item?'':'empty')+(i===mergeState.selected?' selected':'')+'" onclick="mergeTap('+i+')" aria-label="'+(item?mergeName(item):'Пустая клетка')+'">'+(item?mergeIcon(item):'')+'</button>').join("");
-  document.getElementById("mergeScreenContent").innerHTML='<div class="merge-head"><span>🌸 Цветочная мастерская</span><span>⚡ '+energy+'/'+ENERGY_MAX+'</span></div><div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div><div class="merge-tools"><button onclick="mergeGenerate()">🌱 Получить предмет · ⚡1</button><button onclick="mergeState.selected=-1;drawMerge()">Снять выбор</button></div><p class="merge-hint">Нажми на предмет, затем на такой же — объедини. Нажми на пустую клетку — перемести.</p>';
+ if(!document.getElementById("mergeScreen").classList.contains("show"))return;
+ refreshEnergy();mergeRefreshGenerators();
+ document.getElementById("mergeScreenEnergy").textContent="⚡ "+energy+"/"+ENERGY_MAX;
+ const orders=mergeState.orders.map(o=>'<div class="merge-order"><b>Заказ №'+o.id+'</b><div class="order-items">'+o.items.map(mergeIcon).join(" ")+'</div><div>+'+o.reward+' 🪙</div><button '+(mergeInventory(o)?"":"disabled")+' onclick="mergeDeliver('+o.id+')">Отдать</button></div>').join("");
+ const cells=mergeState.board.map((item,i)=>{
+   const generator=item&&item.g!==undefined;
+   const gen=generator?mergeState.generators[item.g]:null;
+   const cooling=gen&&gen.charges===0;
+   const badge=generator?'<span class="merge-generator-badge">'+(cooling?'⏳ '+mergeCountdown(gen.readyAt-Date.now()):gen.charges+'/'+MERGE_CHARGES)+'</span>':'';
+   return '<button class="merge-cell '+(item?'':'empty')+(generator?' merge-generator':'')+(cooling?' cooling':'')+(i===mergeState.selected?' selected':'')+'" onclick="mergeTap('+i+')" aria-label="'+(item?mergeName(item):'Пустая клетка')+'">'+(item?mergeIcon(item):'')+badge+'</button>';
+ }).join("");
+ document.getElementById("mergeScreenContent").innerHTML='<div class="merge-head"><span>🌸 Цветочная мастерская</span><span>⚡ '+energy+'/'+ENERGY_MAX+'</span></div><div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div><div class="merge-tools"><button onclick="mergeState.selected=-1;drawMerge()">Снять выбор</button></div><p class="merge-hint">Нажимай на генераторы на поле: 10 предметов, затем 5 минут перезарядки. Каждое создание стоит ⚡1. Объединяй одинаковые предметы, перемещай их и выполняй заказы.</p>';
 }
+setInterval(()=>{if(document.getElementById("mergeScreen")?.classList.contains("show"))drawMerge();},1000);
 
 /* Three playable arcade mini-games */
 let arcade=null,arcadeTimer=null;
