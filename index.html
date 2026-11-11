@@ -1353,7 +1353,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.7.4"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.7.5"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1370,7 +1370,7 @@ function positionDianaSpeech(){
   if(!app||!diana||!bubble)return;
   const a=app.getBoundingClientRect(),d=diana.getBoundingClientRect();
   const bubbleWidth=Math.min(260,Math.max(160,a.width*.52));
-  const x=Math.max(4,Math.min(a.width-bubbleWidth-4,d.left-a.left+d.width*.18+a.width*.40));
+  const x=Math.max(4,Math.min(a.width-bubbleWidth-4,d.left-a.left+d.width*.18+a.width*.50));
   const y=Math.max(12,d.top-a.top+d.height*.08-bubbleWidth*.43+a.height*.10);
   app.style.setProperty("--diana-speech-x",x+"px");
   app.style.setProperty("--diana-speech-y",y+"px");
