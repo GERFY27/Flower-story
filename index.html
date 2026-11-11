@@ -1347,7 +1347,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.6.9"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.7.0"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1981,11 +1981,9 @@ function updateCatMat(){
   
 }
 function renderCatMatShop(){
-  return Array.from({length:CAT_MAT_MAX_LEVEL},(_,i)=>{
-    const level=i+1,owned=level===catMatLevel,old=level<catMatLevel,next=level===catMatLevel+1;
-    const label=owned?"Установлен":old?"Заменён":next?"Купить":"Сначала предыдущий";
-    return '<div class="cat-mat-option '+(owned?'current':next?'':'locked')+'"><img loading="lazy" src="'+catMatImage(level)+'" alt="Коврик уровня '+level+'"><b>Уровень '+level+'</b><small>'+CAT_MAT_PRICES[level]+' монет</small><button '+(next?'':'disabled')+' onclick="buyCatMat('+level+')">'+label+'</button></div>';
-  }).join("");
+  const level=catMatLevel+1;
+  if(level>CAT_MAT_MAX_LEVEL)return '<div class="cat-mat-option current">Все улучшения куплены! Коврик уровня 9 установлен.</div>';
+  return '<div class="cat-mat-option"><img loading="lazy" src="'+catMatImage(level)+'" alt="Коврик уровня '+level+'"><b>Следующий коврик — уровень '+level+'</b><small>'+CAT_MAT_PRICES[level]+' монет</small><button onclick="buyCatMat('+level+')">Купить</button></div>';
 }
 function buyCatMat(level){
   if(!Number.isInteger(level)||level!==catMatLevel+1||level>CAT_MAT_MAX_LEVEL){message("Коврики улучшаются по порядку!");return;}
