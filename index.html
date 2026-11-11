@@ -926,6 +926,7 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .merge-screen .merge-tools button{padding:13px 8px;font-size:clamp(11px,3vw,14px)}
 .merge-screen .merge-hint{font-size:clamp(11px,2.8vw,13px);margin-top:11px}
 @media(max-height:620px){.merge-screen-content{justify-content:flex-start}.merge-screen .merge-orders{margin-bottom:7px}.merge-screen .merge-tools{margin-top:7px}}
+.home-shortcut-icon{display:block;width:clamp(30px,9cqw,48px);height:clamp(30px,9cqw,48px);object-fit:contain;margin:0 auto 3px;pointer-events:none}
 </style>
 </head>
 
@@ -971,10 +972,10 @@ body{display:flex;align-items:flex-start;justify-content:center}
 
   <div class="buttons">
     <button class="big-button" onclick="openPanel('achievements')">
-      <span>🏆</span>Достижения
+      <img class="home-shortcut-icon" src="./%D0%BA%D1%83%D0%B1%D0%BE%D0%BA.png" alt="">Достижения
     </button>
     <button class="big-button" onclick="openPanel('events')">
-      <span>🎀</span>События
+      <img class="home-shortcut-icon" src="./%D0%BA%D0%B0%D0%BB%D0%B5%D0%BD%D0%B4%D0%B0%D1%80%D1%8C.png" alt="">События
     </button>
   </div>
 
@@ -1271,7 +1272,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.5.2"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.5.3"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
