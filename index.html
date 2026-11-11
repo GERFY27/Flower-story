@@ -1077,6 +1077,8 @@ input,textarea,[contenteditable="true"]{
 .merge-art img{display:block;max-width:94%;max-height:94%;width:100%;height:100%;object-fit:contain;pointer-events:none}
 .merge-art-fallback{font-size:clamp(18px,5vw,30px)}
 .merge-generator-badge{z-index:2}
+.workshop-nav-wrap{display:inline-flex;align-items:center;justify-content:center}
+.workshop-nav-icon{width:1.5em;height:1.5em;object-fit:contain;vertical-align:middle}
 </style>
 </head>
 
@@ -1135,7 +1137,7 @@ input,textarea,[contenteditable="true"]{
   <button class="nav-button active" onclick="tab(this,'Лавка')">
     <span>🏡</span>Лавка
   </button>
-  <button class="nav-button" onclick="tab(this,'Мастерская')"><span>🌱</span>Мастерская</button>
+  <button class="nav-button" onclick="tab(this,'Мастерская')"><span class="workshop-nav-wrap"><img class="workshop-nav-icon" src="https://raw.githubusercontent.com/GERFY27/Flower-story/main/_secateurs_paper_masterskaya.png" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'inline\'"><span class="workshop-nav-fallback" style="display:none">🌱</span></span>Мастерская</button>
   <button class="nav-button" onclick="tab(this,'Букеты')">
     <span>💐</span>Букеты
   </button>
@@ -1416,7 +1418,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.8.3"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.8.4"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
