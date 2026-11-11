@@ -1,0 +1,2183 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<base href="/Flower-story/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f8e9e8">
+<title>Цветочная история — Бета</title>
+<link rel="manifest" href="manifest.webmanifest?v=2">
+<link rel="apple-touch-icon" href="./%D0%B8%D0%BA%D0%BE%D0%BD%D0%BA%D0%B0%20%D0%BD%D0%B0%20%D1%80%D0%B0%D0%B1%D0%BE%D1%87%D0%B5%D0%BC%20%D1%81%D1%82%D0%BE%D0%BB%D0%B5.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<style>
+* {
+  box-sizing: border-box;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  color: #76565b;
+  background: #f7e5e2;
+}
+
+button {
+  font: inherit;
+  border: 0;
+  cursor: pointer;
+}
+
+.app {
+  width: 100%;
+  max-width: 500px;
+  min-height: 100dvh;
+  margin: auto;
+  padding: 15px 15px 110px;
+  background: linear-gradient(180deg,#f8e5e4,#fff3e7);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.player {
+  background: linear-gradient(145deg,#fff,#fff1e9);
+  padding: 9px 13px;
+  border-radius: 18px;
+  box-shadow: 0 4px 0 #e8c8c3;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.money {
+  display: flex;
+  gap: 7px;
+}
+
+.money-item {
+  background: #fff;
+  padding: 9px 11px;
+  border-radius: 16px;
+  box-shadow: 0 4px 0 #e8c8c3;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.logo {
+  text-align: center;
+  margin: 20px 0 17px;
+}
+
+.logo h1 {
+  font-family: Georgia,serif;
+  font-size: 30px;
+  color: #bc7381;
+  margin: 0;
+  text-shadow: 1px 2px #fff;
+}
+
+.logo p {
+  color: #a98982;
+  font-size: 12px;
+  margin: 6px 0 0;
+  letter-spacing: 1px;
+}
+
+.shop {
+  position: relative;
+  height: 375px;
+  border: 6px solid #fff9ee;
+  border-radius: 29px;
+  overflow: hidden;
+  background: linear-gradient(160deg,#f9d8d0,#f8e6ce 55%,#dce8d0);
+  box-shadow: 0 8px 0 #e3c3b9, 0 13px 25px #b98c7b22;
+}
+
+.shop::before {
+  content: "✿";
+  position: absolute;
+  left: 15px;
+  top: 60px;
+  color: #fff8e9;
+  font-size: 50px;
+  opacity: .6;
+}
+
+.shop::after {
+  content: "✿";
+  position: absolute;
+  right: 10px;
+  top: 95px;
+  color: #fff8e9;
+  font-size: 42px;
+  opacity: .6;
+}
+
+.sign {
+  position: absolute;
+  z-index: 2;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: linear-gradient(#fffaf0,#fce7d8);
+  border: 3px solid #e7b7a8;
+  border-radius: 19px;
+  padding: 10px 20px;
+  color: #a66c71;
+  font-family: Georgia,serif;
+  font-size: 17px;
+  font-weight: bold;
+  box-shadow: 0 4px 0 #d5a393;
+}
+
+.window {
+  position: absolute;
+  top: 83px;
+  left: 7%;
+  width: 86%;
+  height: 185px;
+  border: 8px solid #d9a58f;
+  border-radius: 21px;
+  background: linear-gradient(180deg,#fff9eb,#f9e7d8);
+  box-shadow: inset 0 0 0 3px #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.flower {
+  font-size: 53px;
+  filter: drop-shadow(0 5px 3px #9b756633);
+  animation: sway 3s ease-in-out infinite;
+}
+
+.flower:nth-child(2) { animation-delay: .5s; }
+.flower:nth-child(3) { animation-delay: 1s; }
+
+@keyframes sway {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+
+.shelf {
+  position: absolute;
+  top: 218px;
+  left: 9%;
+  width: 82%;
+  height: 13px;
+  background: #c58c77;
+  border-radius: 8px;
+}
+
+.counter {
+  position: absolute;
+  bottom: 45px;
+  left: 12%;
+  width: 76%;
+  height: 54px;
+  background: linear-gradient(#d7a18b,#bb806f);
+  border: 5px solid #f4d6bd;
+  border-radius: 16px;
+  box-shadow: 0 7px 0 #a96e63;
+}
+
+.counter::before {
+  content: "🌷  💐  🌼  🌹";
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: -38px;
+  font-size: 26px;
+}
+
+.plant {
+  position: absolute;
+  left: 10px;
+  bottom: 12px;
+  font-size: 49px;
+}
+
+.cat {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  font-size: 57px;
+  filter: drop-shadow(0 4px 2px #795c4b44);
+  animation: catmove 3s ease-in-out infinite;
+}
+
+@keyframes catmove {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.heart {
+  position: absolute;
+  right: 28px;
+  top: 66px;
+  font-size: 20px;
+  animation: heart 2s infinite;
+}
+
+@keyframes heart {
+  50% { transform: scale(1.3); }
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.big-button {
+  min-height: 66px;
+  border-radius: 20px;
+  background: linear-gradient(145deg,#fff,#fff0e9);
+  color: #98666d;
+  box-shadow: 0 6px 0 #e4c5bd, 0 8px 15px #b98c7b20;
+  font-weight: 800;
+  font-size: 14px;
+  transition: .15s;
+}
+
+.big-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #e4c5bd;
+}
+
+.big-button span {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.heading {
+  font-family: Georgia,serif;
+  color: #b66e7c;
+  font-size: 21px;
+  margin: 23px 0 12px;
+}
+
+.daily {
+  background: linear-gradient(130deg,#fffaf0,#ffe9e3);
+  border: 2px solid #fff;
+  border-radius: 22px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  box-shadow: 0 5px 0 #e9d0c5;
+}
+
+.gift {
+  font-size: 40px;
+}
+
+.daily-info {
+  flex: 1;
+}
+
+.daily-info b {
+  font-size: 14px;
+}
+
+.daily-info p {
+  font-size: 11px;
+  color: #ad8b83;
+  margin: 5px 0 0;
+}
+
+.claim {
+  background: linear-gradient(#f4b0b2,#df8999);
+  color: white;
+  border-radius: 14px;
+  padding: 11px 13px;
+  font-weight: 800;
+  box-shadow: 0 4px 0 #c87583;
+}
+
+.claim:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #c87583;
+}
+
+.navigation {
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  background: #fffaf3;
+  padding: 10px 5px calc(10px + env(safe-area-inset-bottom));
+  box-shadow: 0 -5px 20px #9e777522;
+}
+
+.nav-button {
+  background: transparent;
+  color: #a98a83;
+  font-size: 11px;
+  font-weight: bold;
+  border-radius: 16px;
+  padding: 7px 1px;
+}
+
+.nav-button span {
+  display: block;
+  font-size: 25px;
+  margin-bottom: 4px;
+}
+
+.nav-button.active {
+  color: #c46f80;
+  background: #fbe6e5;
+}
+
+.toast {
+  position: fixed;
+  z-index: 60;
+  left: 50%;
+  bottom: 100px;
+  transform: translateX(-50%);
+  display: none;
+  width: max-content;
+  max-width: 90%;
+  background: #805c65;
+  color: white;
+  padding: 13px 18px;
+  border-radius: 17px;
+  font-size: 13px;
+  text-align: center;
+  box-shadow: 0 5px 15px #0002;
+}
+
+/* Игровые окна */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #65464c88;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 420px;
+  max-height: 80dvh;
+  overflow-y: auto;
+  background: linear-gradient(145deg,#fffaf1,#fce7e4);
+  border: 4px solid white;
+  border-radius: 25px;
+  padding: 20px;
+  box-shadow: 0 8px 25px #53343b44;
+}
+
+.modal-title {
+  font-family: Georgia,serif;
+  color: #b66e7c;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.game-item {
+  background: white;
+  border-radius: 17px;
+  padding: 14px;
+  margin: 10px 0;
+  box-shadow: 0 4px 0 #ead2c9;
+}
+
+.game-item p {
+  font-size: 13px;
+  color: #a7837e;
+}
+
+.game-action {
+  width: 100%;
+  padding: 13px;
+  margin-top: 8px;
+  background: linear-gradient(#f4b0b2,#df8999);
+  color: white;
+  font-weight: bold;
+  border-radius: 14px;
+  box-shadow: 0 4px 0 #c87583;
+}
+
+.close-modal {
+  display: block;
+  margin: 15px auto 0;
+  padding: 10px 25px;
+  border-radius: 14px;
+  background: #f1ded7;
+  color: #805c65;
+  font-weight: bold;
+}
+
+/* Иллюстрированный главный экран — обновление оформления */
+body{background:radial-gradient(circle at 20% 5%,#fff4e8,#f3d7da 55%,#e8c8ce);font-family:Trebuchet MS,-apple-system,Arial,sans-serif}
+.app{max-width:520px;background:linear-gradient(180deg,#f8e1e6 0%,#fff0e5 45%,#f7e2d5 100%);box-shadow:0 0 50px #a86c7830;position:relative;overflow:hidden}
+.app:before{content:"✿  ✧  ✿";position:absolute;top:72px;left:0;width:100%;text-align:center;font-size:32px;letter-spacing:75px;color:#e6b7bf80;pointer-events:none}
+.top{position:relative;z-index:2}
+.player,.money-item{border:2px solid #fff9f1;background:linear-gradient(#fffaf4,#ffe7e0);box-shadow:0 4px 0 #d7a8a5,0 6px 12px #8b5e5b26;color:#9e6674}
+.logo{position:relative;z-index:1;margin:20px 0 14px}
+.logo h1{font-size:clamp(28px,7vw,38px);color:#ad647b;text-shadow:0 2px #fff,0 4px 8px #9c6d7c44}
+.logo p{font-size:10px;letter-spacing:2px}
+.shop{height:400px;border:7px solid #fff8e9;border-radius:30px;background:linear-gradient(#f5d8df 0 38%,#fce4c9 38% 73%,#c5d8b2 73% 100%);box-shadow:0 8px 0 #d5adb0,0 15px 25px #8c64703a}
+.shop:before{content:"✿";left:5%;top:24%;font-size:62px;color:#fff5e0}
+.shop:after{content:"✿";right:2%;top:18%;font-size:54px;color:#fff5e0}
+.shop .sign{top:24px;z-index:5;background:linear-gradient(#fffdf2,#f6e0c9);border:4px solid #d9a28d;box-shadow:0 5px 0 #b87c77;font-size:17px;padding:10px 14px}
+.shop .window{top:112px;height:190px;left:12%;width:76%;border:10px solid #b98073;border-radius:17px;background:linear-gradient(125deg,#fdf2d8,#f5d8d0);box-shadow:inset 0 0 0 5px #f9e6d4,0 5px 0 #ab756a}
+.shop .window:before{content:"";position:absolute;left:49%;top:0;height:100%;width:9px;background:#bc8879}
+.shop .window:after{content:"";position:absolute;top:50%;left:0;width:100%;height:8px;background:#bc8879}
+.shop .flower{font-size:clamp(42px,10vw,62px);z-index:1}
+.shop .shelf{top:272px;z-index:2;background:#b77d71}
+.shop .counter{bottom:33px;height:65px;background:linear-gradient(#e1b29d,#b67d72);border-color:#f6ddc4;z-index:3}
+.shop .plant{z-index:4;font-size:60px;bottom:15px}
+.shop .cat{z-index:5;font-size:64px;bottom:12px}
+.shop .heart{z-index:5}
+.shop .awning{position:absolute;top:82px;left:5%;width:90%;height:55px;z-index:4;border-radius:12px 12px 20px 20px;border:4px solid #fff3e8;background:repeating-linear-gradient(90deg,#e9a4ae 0 35px,#fff2e6 35px 70px);box-shadow:0 8px 0 #b87f82,0 11px 10px #8f6a6330;clip-path:polygon(0 0,100% 0,100% 83%,96% 100%,88% 83%,80% 100%,72% 83%,64% 100%,56% 83%,48% 100%,40% 83%,32% 100%,24% 83%,16% 100%,8% 83%,0 100%)}
+.buttons{margin:20px 0 12px}
+.big-button{border:3px solid #fff8f1;background:linear-gradient(#fce9e4,#efc5c5);box-shadow:0 6px 0 #ce9ca0,0 9px 13px #ad777d35;color:#9e6070;font-size:15px}
+.big-button span{font-size:29px}
+.heading{text-align:center;margin:18px 0 12px}
+.daily{border:3px solid #fffaf0;box-shadow:0 6px 0 #d9b2ae;background:linear-gradient(120deg,#fffaf1,#f8d9d5)}
+.claim,.game-action{background:linear-gradient(#efaeb9,#d77d96);box-shadow:0 4px 0 #b8657d;border:2px solid #ffdce0}
+.navigation{max-width:520px;background:linear-gradient(#fff9f1,#f9e5df);border-top:3px solid #fff;box-shadow:0 -6px 18px #9d69702a}
+.nav-button{font-size:12px}
+.nav-button.active{background:#f6d7df;color:#ad5d78;box-shadow:inset 0 0 0 2px #fff}
+.modal-card{box-shadow:0 12px 35px #53343b55}
+@media(min-width:700px){.app{border-radius:0 0 30px 30px}}
+
+.cat[src]{width:130px;height:auto;object-fit:contain;right:7px;bottom:17px;max-width:37%;font-size:initial;}
+.shop .cat[src]{animation:none !important;transform:none !important;}
+
+/* Фон главного экрана из загруженного файла */
+body{background:#f5dce3}
+.app{background-image:url("./%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png");background-position:center top;background-repeat:no-repeat;background-size:100% 100%;min-height:100dvh}
+.app:before{display:none}
+.shop{background:transparent;border-color:transparent;box-shadow:none}
+.shop:before,.shop:after,.shop .sign,.shop .awning,.shop .window,.shop .shelf,.shop .counter,.shop .plant,.shop .heart{display:none}
+.shop .cat[src]{display:block;right:12%;bottom:8%;z-index:6}
+
+.shop .cat[src]{width:88px !important;max-width:24% !important;height:auto !important;right:14% !important;bottom:17% !important;animation:none !important;transform:none !important;}
+.shop .cat[src]{right:19% !important;bottom:13% !important;}
+.shop .cat[src]{right:29% !important;bottom:13% !important;}
+.shop .cat[src]{right:39% !important;bottom:13% !important;}
+.money-item{display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}.currency-icon{display:inline-block;width:24px;height:24px;object-fit:contain;vertical-align:middle;flex-shrink:0}
+
+/* Responsive mobile layout: preserve artwork proportions and gameplay */
+html{width:100%;min-height:100%;overflow-x:hidden}
+body{width:100%;min-height:100dvh;overflow-x:hidden}
+.app{
+  width:100%;max-width:520px;min-height:100dvh;
+  margin-inline:auto;
+  padding:clamp(9px,2.8vw,15px) clamp(9px,2.8vw,15px) calc(112px + env(safe-area-inset-bottom,0px));
+  background-color:#f5dce3;
+  background-image:url("./%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png");
+  background-size:100% auto;
+  background-position:center top;
+  background-repeat:no-repeat;
+}
+.top{gap:clamp(3px,1.5vw,8px);min-width:0}
+.player{font-size:clamp(10px,2.7vw,13px);padding:clamp(6px,1.7vw,9px);white-space:nowrap;flex-shrink:1}
+.money{gap:clamp(3px,1.2vw,7px);min-width:0}
+.money-item{font-size:clamp(10px,2.7vw,13px);padding:clamp(5px,1.7vw,9px);gap:3px;min-width:0}
+.currency-icon{width:clamp(17px,5vw,24px);height:clamp(17px,5vw,24px)}
+.logo{margin:clamp(14px,4vw,20px) 0 clamp(12px,3.5vw,17px)}
+.logo h1{font-size:clamp(23px,7vw,36px);line-height:1.12}
+.logo p{font-size:clamp(8px,2.1vw,11px);letter-spacing:clamp(0px,.2vw,1px)}
+.shop{height:auto;aspect-ratio:1.17/1;min-height:0;overflow:visible}
+.shop .cat[src]{
+  width:clamp(60px,18vw,88px) !important;
+  max-width:24% !important;
+  height:auto !important;
+  right:39% !important;
+  bottom:13% !important;
+  animation:none !important;
+  transform:none !important;
+}
+.buttons{gap:clamp(7px,2.4vw,12px);margin:clamp(10px,3vw,20px) 0 12px}
+.big-button{min-height:clamp(58px,16vw,70px);font-size:clamp(11px,3.2vw,15px);padding:7px 4px}
+.big-button span{font-size:clamp(22px,6vw,29px)}
+.heading{font-size:clamp(17px,4.5vw,21px);margin:clamp(12px,3vw,18px) 0 10px}
+.daily{padding:clamp(9px,2.7vw,14px);gap:clamp(6px,2vw,11px)}
+.gift{font-size:clamp(28px,9vw,40px)}
+.daily-info{min-width:0}
+.daily-info b{font-size:clamp(11px,3vw,14px)}
+.daily-info p{font-size:clamp(9px,2.4vw,11px)}
+.claim{padding:clamp(8px,2.5vw,11px);font-size:clamp(11px,3vw,14px);flex-shrink:0}
+.navigation{width:100%;max-width:520px;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 5px calc(8px + env(safe-area-inset-bottom,0px))}
+.nav-button{min-width:0;min-height:52px;font-size:clamp(9px,2.5vw,12px);padding:6px 1px}
+.nav-button span{font-size:clamp(21px,6vw,27px)}
+.modal{padding:12px}
+.modal-card{max-width:min(420px,100%);max-height:calc(100dvh - 40px - env(safe-area-inset-bottom,0px))}
+@media(max-width:360px){.app{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}.shop{aspect-ratio:1.2/1}.daily{border-width:2px}.claim{padding:8px}}
+@media(min-width:521px){.shop .cat[src]{width:88px !important}}
+@media(max-height:650px){.modal-card{max-height:85dvh}}
+
+
+/* Anchor the cat to the artwork, not to the responsive shop spacer. */
+.shop{position:static}
+.shop .cat[src]{
+ position:absolute !important;
+ top:calc(min(100vw, 520px) * .88) !important;
+ left:43% !important;
+ right:auto !important;
+ bottom:auto !important;
+ width:clamp(60px,18vw,88px) !important;
+ max-width:none !important;
+ height:auto !important;
+ animation:none !important;
+ transform:none !important;
+ pointer-events:none;
+}
+
+
+/* App-like touch behavior: lock the scene, allow scrolling inside dialogs. */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{position:fixed;inset:0;width:100%;touch-action:none}
+.app{height:100dvh;min-height:0;overflow:hidden;overscroll-behavior:none;touch-action:none}
+.navigation{touch-action:manipulation}
+button{touch-action:manipulation}
+.modal{overscroll-behavior:contain;touch-action:none}
+.modal-card{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+
+
+/* Lock the main scene in place on touch devices (no page dragging/bounce). */
+html,body{height:100%;height:100dvh;overflow:hidden !important;overscroll-behavior:none}
+body{position:fixed;inset:0;width:100%;touch-action:none}
+.app{height:100dvh;min-height:0 !important;overflow:hidden !important;overscroll-behavior:none;touch-action:none}
+.app button,.navigation button{touch-action:manipulation}
+.navigation{touch-action:none}
+.modal{overscroll-behavior:contain;touch-action:none}
+.modal-card{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+
+
+/* Landscape guard: browser orientation cannot be forcibly locked. */
+#portraitGuard{display:none;position:fixed;inset:0;z-index:9999;background:#f7e1e8;color:#98566f;align-items:center;justify-content:center;text-align:center;padding:24px;font:700 22px/1.5 -apple-system,BlinkMacSystemFont,Arial,sans-serif}
+@media (orientation:landscape) and (pointer:coarse){#portraitGuard{display:flex}}
+/* Cat aligned to marked point on the flower shop shelf */
+.shop .cat[src]{top:calc(min(100vw, 520px) * .80) !important;left:43% !important;right:auto !important;bottom:auto !important;animation:none !important;transform:none !important;}
+.game-title-art{display:block;width:100%;max-width:440px;height:auto;max-height:clamp(58px,18vw,105px);object-fit:contain;margin:0 auto;filter:none}.logo{display:flex;flex-direction:column;align-items:center;gap:2px}.logo p{margin:0}
+.game-title-art{width:108% !important;max-width:475px !important;max-height:clamp(66px,20vw,115px) !important;}
+
+/* Compact daily reward card in the upper-right of the scene */
+.app{position:relative}
+.daily{
+ position:absolute !important;
+ top:clamp(120px,30vw,155px);
+ right:clamp(8px,2vw,14px);
+ z-index:7;
+ width:clamp(116px,33vw,150px);
+ padding:7px !important;
+ gap:4px !important;
+ border-radius:14px !important;
+ flex-wrap:wrap;
+ justify-content:center;
+ text-align:center;
+ box-shadow:0 3px 0 #e9d0c5 !important;
+}
+.daily .gift{width:clamp(33px,10vw,47px);height:auto;object-fit:contain;flex-shrink:0}
+.daily-info{flex:1 1 60px;min-width:0}
+.daily-info b{display:block;font-size:clamp(9px,2.3vw,11px);line-height:1.15}
+.daily-info p{display:none}
+.daily .claim{width:100%;font-size:clamp(10px,2.7vw,12px);padding:7px 5px;border-radius:11px}
+@media(max-width:350px){.daily{width:112px;top:116px}.daily .gift{width:32px}}
+
+/* Weekly gift: icon-only button and scrollable weekly calendar */
+.daily.gift-trigger{position:absolute !important;top:clamp(120px,30vw,155px);right:clamp(8px,2vw,14px);z-index:7;display:block;width:clamp(58px,16vw,76px) !important;height:clamp(58px,16vw,76px);min-width:0;padding:0 !important;background:transparent !important;border:0 !important;box-shadow:none !important;border-radius:0 !important;cursor:pointer}
+.daily.gift-trigger .gift{display:block;width:100% !important;height:100% !important;object-fit:contain}
+.daily.gift-trigger:active{transform:scale(.94)}
+@media(max-width:350px){.daily.gift-trigger{top:116px;width:56px !important;height:56px}}
+.weekly-hint{text-align:center;font-size:12px;line-height:1.45;margin:0 0 12px;color:#98717a}
+.weekly-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.weekly-day{min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 5px;border-radius:16px;background:#fff9f4;border:2px solid #f2d9d5;text-align:center;font-size:12px}
+.weekly-day.weekly-today{border-color:#d97d9a;background:#fff0f3}
+.weekly-day strong{color:#a75c75}.weekly-day small{font-weight:400}
+.weekly-day img{width:43px;height:43px;object-fit:contain}
+.weekly-claim{width:100%;min-height:32px;padding:5px 2px;border-radius:10px;background:#dd8fa5;color:white;font-size:11px;font-weight:700}
+.weekly-claim:disabled{background:#e5d5d7;color:#8b7880;cursor:default}
+
+/* Gift icon: slightly higher, with a matching pastel button backing */
+.daily.gift-trigger{
+ top:clamp(103px,26vw,137px) !important;
+ background:linear-gradient(145deg,#fffaf4,#f7d8dd) !important;
+ border:2px solid #fffaf2 !important;
+ border-radius:18px !important;
+ box-shadow:0 4px 0 #d8a7ae,0 6px 12px #9d697026 !important;
+ padding:5px !important;
+}
+.daily.gift-trigger .gift{width:100% !important;height:100% !important;object-fit:contain}
+@media(max-width:350px){.daily.gift-trigger{top:100px !important}}
+
+/* Gift button directly beneath the diamond counter */
+.daily.gift-trigger{top:clamp(58px,14vw,75px) !important;right:clamp(8px,2vw,14px) !important}
+@media(max-width:350px){.daily.gift-trigger{top:58px !important}}
+
+/* Slightly smaller weekly gift button */
+.daily.gift-trigger{width:clamp(49px,13vw,63px) !important;height:clamp(49px,13vw,63px) !important}
+@media(max-width:350px){.daily.gift-trigger{width:48px !important;height:48px !important}}
+
+/* Align gift with diamond counter: shared right edge, fixed vertical gap */
+.money{position:relative}
+.money .daily.gift-trigger{
+ position:absolute !important;
+ top:calc(100% + 12px) !important;
+ right:0 !important;
+ left:auto !important;
+ margin:0 !important;
+}
+@media(max-width:350px){.money .daily.gift-trigger{top:calc(100% + 10px) !important}}
+
+/* Gentle floating animation for the illustrated game title */
+@keyframes flowerTitleFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+.game-title-art{
+  animation:flowerTitleFloat 5.2s cubic-bezier(.45,0,.55,1) infinite;
+  will-change:transform;
+}
+@media(prefers-reduced-motion:reduce){
+  .game-title-art{animation:none}
+}
+
+/* Keep the illustrated title truly centered on narrow phone screens */
+.logo{width:100%;display:flex;align-items:center;justify-content:center}
+.logo .game-title-art{
+ display:block;
+ width:108% !important;
+ max-width:475px !important;
+ flex-shrink:0;
+ margin-left:0 !important;
+ margin-right:0 !important;
+ object-position:center center;
+}
+
+/* Top bar: currency and settings aligned in a single row */
+.top{display:flex;align-items:center;justify-content:space-between;gap:clamp(3px,1vw,6px)}
+.top .player{flex:0 1 auto;min-width:0;padding:clamp(5px,1.4vw,8px)}
+.top .money{display:flex;align-items:stretch;justify-content:flex-end;gap:clamp(3px,1vw,6px);margin-left:auto;flex:0 1 auto;min-width:0}
+.top .money-item,.top .settings-trigger{height:clamp(36px,10vw,45px);box-sizing:border-box}
+.top .money-item{padding:4px clamp(4px,1.4vw,9px)}
+.top .settings-trigger{
+ flex:0 0 clamp(36px,10vw,45px);
+ display:flex;align-items:center;justify-content:center;
+ padding:5px;border:2px solid #fff9f1;
+ border-radius:16px;
+ background:linear-gradient(#fffaf4,#ffe7e0);
+ box-shadow:0 4px 0 #d7a8a5,0 6px 12px #8b5e5b26;
+ cursor:pointer;
+}
+.top .settings-trigger img{display:block;width:100%;height:100%;object-fit:contain}
+.top .settings-trigger:active{transform:translateY(2px);box-shadow:0 2px 0 #d7a8a5}
+.reduce-game-motion .game-title-art,.reduce-game-motion .cat{animation:none !important}
+@media(max-width:360px){
+ .top .player{font-size:9px;padding:5px 4px}
+ .top .money-item{font-size:10px;padding:4px 3px;gap:2px}
+ .top .settings-trigger{padding:4px}
+}
+
+/* Minimal pastel startup screen */
+#flowerSplash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(165deg,#fff8f5 0%,#fce5e9 55%,#f8dce4 100%);transition:opacity .65s ease,visibility .65s ease;overflow:hidden}
+#flowerSplash.splash-hidden{opacity:0;visibility:hidden;pointer-events:none}
+.splash-inner{width:min(84vw,390px);display:flex;flex-direction:column;align-items:center;text-align:center;gap:24px}
+.splash-title{width:100%;max-width:360px;height:auto;object-fit:contain;animation:splashFloat 5s ease-in-out infinite}
+.splash-flower{position:relative;width:48px;height:48px;animation:splashFloat 3.6s ease-in-out infinite}
+.splash-petal{position:absolute;left:18px;top:3px;width:13px;height:22px;border-radius:100% 100% 65% 65%;background:linear-gradient(#ffd6e3,#ec9dbb);transform-origin:6.5px 21px}
+.splash-petal:nth-child(2){transform:rotate(72deg)}.splash-petal:nth-child(3){transform:rotate(144deg)}.splash-petal:nth-child(4){transform:rotate(216deg)}.splash-petal:nth-child(5){transform:rotate(288deg)}
+.splash-center{position:absolute;top:19px;left:19px;width:12px;height:12px;border-radius:50%;background:#f7cb6d;border:2px solid #fff0b7}
+.splash-loading{width:min(65vw,250px);height:10px;padding:2px;border-radius:999px;background:#fff9f6;box-shadow:0 2px 10px #c97e9926}
+.splash-progress{width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#efb1c4,#d987a8);transition:width .35s ease}
+.splash-caption{margin-top:-12px;font-size:12px;letter-spacing:1px;color:#b78296}
+@keyframes splashFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media(prefers-reduced-motion:reduce){.splash-title,.splash-flower{animation:none}#flowerSplash{transition:none}}
+
+/* Gift is anchored directly to the settings button, not to currency */
+.top .right-controls{position:relative;flex:0 0 clamp(36px,10vw,45px);width:clamp(36px,10vw,45px);height:clamp(36px,10vw,45px)}
+.top .right-controls .settings-trigger{width:100%;height:100%;display:flex}
+.top .right-controls .daily.gift-trigger{
+ position:absolute !important;
+ top:calc(100% + 12px) !important;
+ right:0 !important;
+ left:auto !important;
+ width:100% !important;
+ height:auto !important;
+ aspect-ratio:1/1;
+ min-width:0 !important;
+ margin:0 !important;
+ padding:4px !important;
+}
+@media(max-width:350px){.top .right-controls .daily.gift-trigger{top:calc(100% + 10px) !important;width:100% !important;height:auto !important}}
+
+/* Game settings: audio controls and app information */
+.settings-section{background:#fff9f5;border:2px solid #f3d9d9;border-radius:18px;padding:15px;display:flex;flex-direction:column;gap:14px}
+.settings-line{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;font-size:14px;color:#a36b7b}
+.settings-switch{min-width:105px;padding:10px 12px;border-radius:13px;background:linear-gradient(#f4b0c0,#df8ca5);color:#fff;font-weight:700;box-shadow:0 3px 0 #c57990}
+.settings-switch[aria-checked="false"]{background:linear-gradient(#d9cdd0,#c4b5bc);box-shadow:0 3px 0 #ab9aa2}
+.settings-volume-label{display:flex;justify-content:space-between;align-items:center;font-weight:700;color:#a36b7b;font-size:14px}
+.settings-volume{width:100%;accent-color:#d88fa7;touch-action:pan-x;height:24px;margin:0}
+.settings-footer{text-align:center;margin-top:22px;padding-top:15px;border-top:1px solid #ebd1d2;color:#a58a91;font-size:12px;line-height:1.9}
+.settings-footer div:first-child{font-weight:700;color:#b8748c}
+
+/* Version at the bottom center of the startup screen */
+.splash-version{position:absolute;left:0;right:0;bottom:calc(20px + env(safe-area-inset-bottom));text-align:center;color:#b78a9b;font-size:12px;font-weight:600;letter-spacing:.5px;pointer-events:none}
+
+/* Cat can be petted without changing its position */
+.shop .cat[src]{pointer-events:auto !important;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.shop .cat[src]:active{filter:drop-shadow(0 4px 2px #795c4b44) brightness(1.06)}
+.shop .cat[src]:focus-visible{outline:2px solid #d889a4;outline-offset:3px;border-radius:12px}
+
+/* Pastel arcade boards */
+.arcade-info{text-align:center;font-weight:800;color:#aa6980;margin:10px 0 16px}
+.arcade-hint{text-align:center;font-size:12px;color:#9c7581}
+.match-grid,.memory-grid,.catch-grid{display:grid;gap:5px;margin:10px auto 16px;max-width:350px}
+.match-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+.memory-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.catch-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:300px}
+.match-tile,.memory-tile,.catch-cell{min-width:0;aspect-ratio:1;border-radius:12px;background:#f9dce4;border:2px solid #fffaf5;box-shadow:0 3px 0 #d9a8b4;font-size:clamp(19px,5vw,29px);padding:0;touch-action:manipulation}
+.match-tile.selected{background:#fff3ad;outline:3px solid #dc98aa}
+.memory-tile{font-size:clamp(24px,7vw,38px)}
+.catch-cell{font-size:40px;background:#f2e9d7}
+/* Sparkles and drifting petals when flowers match */
+.match-sparkle-layer{position:fixed;inset:0;pointer-events:none;z-index:110;overflow:hidden}
+.match-sparkle{position:absolute;color:#f4b1cc;font-size:18px;line-height:1;text-shadow:0 1px 2px #fff,0 0 5px #fff6;animation:match-sparkle-float 680ms ease-out forwards;will-change:transform,opacity}
+.match-sparkle:nth-child(3n){color:#f6d38d;font-size:14px}
+.match-sparkle:nth-child(4n){color:#e4a7d7;font-size:21px}
+@keyframes match-sparkle-float{0%{opacity:0;transform:translate(-50%,-50%) scale(.35) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--spark-x)),calc(-50% + var(--spark-y))) scale(.8) rotate(85deg)}}
+
+.flower-rain{position:relative;height:min(52vh,370px);min-height:260px;max-width:350px;margin:12px auto;border:3px solid #fff7ed;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#f9d9e8,#fff3e8 67%,#d9e8c7);touch-action:none;box-shadow:inset 0 0 22px #e7a9c455}
+.flower-rain:after{content:"✿  ✧  ✿  ✧  ✿";position:absolute;bottom:3px;left:0;right:0;text-align:center;color:#a8bc89;opacity:.6;pointer-events:none}
+.rain-basket{position:absolute;z-index:3;bottom:4%;left:50%;font-size:52px;line-height:1;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 4px 3px #b77d8244)}
+.rain-item{position:absolute;z-index:2;font-size:31px;line-height:1;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 2px 2px #fff8)}
+.rain-gold{filter:drop-shadow(0 0 8px #ffde69)}
+.rain-caught{animation:rain-bounce 180ms ease-out}
+@keyframes rain-bounce{50%{transform:translateX(-50%) scale(1.16)}}
+
+/* Full-screen layered clouds that drift apart after loading */
+#flowerSplash .splash-clouds{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+#flowerSplash .splash-cloud{position:absolute;left:var(--cloud-left);top:var(--cloud-top);width:var(--cloud-width);height:auto;max-width:none;object-fit:contain;opacity:.94;-webkit-mask-image:radial-gradient(ellipse 72% 65% at 50% 50%,#000 54%,transparent 100%);mask-image:radial-gradient(ellipse 72% 65% at 50% 50%,#000 54%,transparent 100%);transition:transform 1.55s cubic-bezier(.45,.04,.6,1),opacity 1.35s ease;will-change:transform,opacity}
+#flowerSplash .splash-inner{position:relative;z-index:2;padding:18px 10px;border-radius:28px;background:#fff9f2b8;box-shadow:0 10px 45px #e5a6bc30;backdrop-filter:blur(4px)}
+#flowerSplash .splash-version{z-index:2}
+#flowerSplash.splash-dispersing .splash-cloud{transform:translate(var(--cloud-x),var(--cloud-y)) rotate(var(--cloud-turn)) scale(1.12);opacity:0}
+#flowerSplash.splash-dispersing .splash-inner,#flowerSplash.splash-dispersing .splash-version{transition:opacity .5s ease;opacity:0}
+@media(prefers-reduced-motion:reduce){#flowerSplash .splash-cloud{transition:none}#flowerSplash.splash-dispersing .splash-cloud{opacity:0}}
+
+/* Reveal the painted game behind the clouds, never a solid pink splash */
+#flowerSplash{transition:background-color 1.45s ease,opacity .65s ease,visibility .65s ease}
+#flowerSplash.splash-dispersing{background:transparent}
+
+/* Consistent transparent PNG flowers across all arcade games */
+.flower-icon{display:block;width:85%;height:85%;max-width:100%;max-height:100%;margin:auto;object-fit:contain;pointer-events:none;user-select:none}
+.match-tile,.memory-tile{display:flex;align-items:center;justify-content:center}
+.rain-item .flower-icon{width:40px;height:40px;max-width:none;max-height:none}
+
+.rain-basket{width:72px;height:72px}.rain-basket img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}
+
+/* Subtle sleeping-cat breathing; no change to the cat's position */
+.shop .cat{animation:catBreathing 3.8s ease-in-out infinite;transform-origin:50% 75%}
+@keyframes catBreathing{
+  0%,100%{transform:scale(1,1)}
+  50%{transform:scale(1.018,1.035)}
+}
+.reduce-game-motion .shop .cat{animation:none !important}
+@media(prefers-reduced-motion:reduce){.shop .cat{animation:none !important}}
+
+/* Diana on the left of the home shop, without moving the cat */
+.shop .diana-home{position:absolute;left:0;bottom:3%;width:43%;height:72%;object-fit:contain;object-position:left bottom;z-index:4;pointer-events:none;user-select:none;filter:drop-shadow(0 5px 8px #85505a35)}
+@media(max-width:380px){.shop .diana-home{width:40%;height:66%}}
+
+/* Cat on the pavement below the flower counter. All offsets scale with
+   the artwork width (capped at the app width), not viewport height. */
+.shop .cat[src]{
+  top:calc(min(100vw, 520px) * 1.08) !important;
+  left:46% !important;
+  width:clamp(54px, 16vw, 82px) !important;
+  height:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  z-index:5;
+}
+
+/* Fixed 9:16 portrait playfield; letterbox on screens with other ratios. */
+html,body{height:100%;width:100%;margin:0}
+body{display:flex;align-items:flex-start;justify-content:center}
+.app{
+  width:min(100vw, calc(100dvh * 9 / 16), 520px) !important;
+  height:auto !important;
+  aspect-ratio:9 / 16;
+  min-height:0 !important;
+  max-height:100dvh;
+  margin:0 auto;
+  flex:0 0 auto;
+  background-size:100% 100% !important;
+  background-position:center center !important;
+}
+.navigation{
+  width:min(100vw, calc(100dvh * 9 / 16), 520px) !important;
+  left:50%;
+}
+
+/* Home characters are anchored to the 9:16 game canvas, not browser width. */
+.app{container-type:inline-size}
+.shop .diana-home{
+  left:-40% !important;
+  bottom:5% !important;
+  width:96.2% !important;
+  height:auto !important;
+  max-height:70.2% !important;
+  object-fit:contain;
+  object-position:left bottom;
+  z-index:3 !important;
+  transform-origin:35% 95%;
+  animation:dianaGentleSway 7s cubic-bezier(.45,0,.55,1) infinite;
+  will-change:transform;
+}
+@keyframes dianaGentleSway{
+  0%,100%{transform:rotate(-.65deg) translateY(0)}
+  25%{transform:rotate(0deg) translateY(-2px)}
+  50%{transform:rotate(.65deg) translateY(-4px)}
+  75%{transform:rotate(0deg) translateY(-2px)}
+}
+.app .buttons{position:relative;z-index:10}
+.shop .cat[src]{
+  top:102cqw !important;
+  left:57% !important;
+  width:clamp(54px,16cqw,82px) !important;
+  z-index:6 !important;
+}
+.reduce-game-motion .shop .diana-home{animation:none !important}
+@media(prefers-reduced-motion:reduce){.shop .diana-home{animation:none !important}}
+
+/* Subtle breathing for the sleeping cat; does not change its anchor. */
+.shop .cat[src]{
+  animation:catSoftBreathing 3.6s ease-in-out infinite !important;
+  transform-origin:50% 82%;
+}
+@keyframes catSoftBreathing{
+  0%,100%{transform:scale(1,1)}
+  50%{transform:scale(1.025,1.045)}
+}
+.reduce-game-motion .shop .cat[src]{animation:none !important}
+@media(prefers-reduced-motion:reduce){.shop .cat[src]{animation:none !important}}
+
+/* Energy counter: positioned independently from the crowded top bar. */
+.energy-pill{position:absolute;top:clamp(54px,13cqw,76px);left:3%;z-index:12;display:flex;align-items:center;gap:5px;padding:5px 9px;border:2px solid #fff9f1;border-radius:18px;background:linear-gradient(#fffaf2,#ffe6db);box-shadow:0 3px 0 #d7a8a5;color:#986675;font-size:clamp(10px,2.7cqw,13px);font-weight:800}
+.energy-symbol{font-size:17px;color:#e9a13e}.energy-timer{font-size:10px;font-weight:600;color:#b48c88}
+
+/* Diana's feet align with the top edge of the bottom navigation panel. */
+.shop .diana-home{bottom:var(--diana-nav-bottom, 6%) !important}
+/* Flower workshop: compact portrait merge board and customer orders. */
+.merge-modal-card{max-width:520px!important;max-height:91dvh!important;padding:10px!important}
+.merge-head{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:4px 0 9px;color:#986675;font-weight:800;font-size:13px}
+.merge-orders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:8px}
+.merge-order{background:#fffaf4;border:2px solid #f0d2ce;border-radius:13px;padding:6px 3px;text-align:center;min-width:0;color:#8d6570;font-size:10px}
+.merge-order b{display:block;font-size:11px;margin-bottom:3px}
+.merge-order .order-items{font-size:20px;line-height:1.3}
+.merge-order button{display:block;width:100%;background:#e7a1ad;color:#fff;border-radius:9px;padding:5px 1px;margin-top:5px;font-size:10px;font-weight:800}
+.merge-order button:disabled{opacity:.45}
+.merge-board{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;background:#e9c6b7;border:4px solid #fff6e9;border-radius:16px;padding:5px;touch-action:manipulation}
+.merge-cell{aspect-ratio:1;border-radius:9px;background:#fff4e6;border:1px solid #e9d6c7;font-size:clamp(20px,5.6vw,31px);display:flex;align-items:center;justify-content:center;min-width:0;padding:0;touch-action:manipulation}
+.merge-cell.selected{outline:3px solid #e884a2;outline-offset:-2px;background:#ffe4e8}
+.merge-cell.ready{background:#f9e8c3}
+.merge-cell.empty{background:#f5dfce}
+.merge-tools{display:flex;gap:7px;align-items:center;margin:9px 0 4px}
+.merge-tools button{background:linear-gradient(#fff8ec,#f4d6c8);border:2px solid #fff;border-radius:13px;padding:9px 8px;font-weight:800;color:#9b6770;flex:1;font-size:12px}
+.merge-hint{font-size:11px;color:#9d7c79;text-align:center;margin:5px 0}
+@media(max-width:360px){.merge-cell{font-size:19px}.merge-order{font-size:9px}.merge-order .order-items{font-size:18px}}
+
+/* Dedicated full-playfield merge scene, not a dialog. */
+.merge-screen{display:none;position:fixed;z-index:45;top:50%;left:50%;transform:translate(-50%,-50%);width:min(100vw,calc(100dvh * 9 / 16),520px);height:min(100dvh,calc(100vw * 16 / 9));background:linear-gradient(180deg,#f8dce4,#fff0e5 44%,#f3d5c7);overflow:hidden;flex-direction:column;touch-action:manipulation}
+.merge-screen.show{display:flex}
+.merge-screen-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(13px + env(safe-area-inset-top,0px)) 12px 12px;background:linear-gradient(#fff8f0,#f7d7d8);border-bottom:3px solid #fff;color:#9b6173;font-size:clamp(12px,3vw,17px);flex-shrink:0}
+.merge-screen-header button{padding:9px 12px;background:#fff9f0;border:2px solid #e7bdc3;border-radius:14px;color:#a46577;font-weight:800;font-size:13px}
+.merge-screen-header span{white-space:nowrap;font-size:12px}
+.merge-screen-content{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow-y:auto;overscroll-behavior:contain;padding:12px 9px calc(18px + env(safe-area-inset-bottom,0px));touch-action:pan-y}
+.merge-screen .merge-head{font-size:clamp(14px,3.6vw,19px);margin:0 0 12px}
+.merge-screen .merge-orders{gap:7px;margin-bottom:clamp(12px,3vh,24px)}
+.merge-screen .merge-order{padding:10px 4px;font-size:clamp(10px,2.7vw,13px)}
+.merge-screen .merge-order b{font-size:clamp(11px,2.8vw,14px)}
+.merge-screen .merge-order .order-items{font-size:clamp(24px,6vw,33px)}
+.merge-screen .merge-order button{padding:8px 2px;font-size:12px}
+.merge-screen .merge-board{gap:clamp(3px,.8vw,6px);padding:clamp(5px,1.4vw,9px);border-radius:18px}
+.merge-screen .merge-cell{font-size:clamp(23px,6vw,36px);border-radius:11px}
+.merge-screen .merge-tools{margin-top:clamp(13px,3vh,26px)}
+.merge-screen .merge-tools button{padding:13px 8px;font-size:clamp(11px,3vw,14px)}
+.merge-screen .merge-hint{font-size:clamp(11px,2.8vw,13px);margin-top:11px}
+@media(max-height:620px){.merge-screen-content{justify-content:flex-start}.merge-screen .merge-orders{margin-bottom:7px}.merge-screen .merge-tools{margin-top:7px}}
+.home-shortcut-icon{display:block;width:clamp(30px,9cqw,48px);height:clamp(30px,9cqw,48px);object-fit:contain;margin:0 auto 3px;pointer-events:none}
+/* Home right rail: four matching square icon buttons on one vertical axis. */
+.top .right-controls .home-side-shortcut{position:absolute!important;right:0!important;left:auto!important;width:100%!important;height:100%!important;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:4px;border:2px solid #fff9f1;border-radius:16px;background:linear-gradient(#fffaf4,#ffe7e0);box-shadow:0 4px 0 #d7a8a5,0 6px 12px #8b5e5b26;cursor:pointer;z-index:11}
+.top .right-controls .achievement-shortcut{top:calc(200% + 24px)!important}
+.top .right-controls .event-shortcut{top:calc(300% + 36px)!important}
+.top .right-controls .home-side-shortcut img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
+@media(max-width:350px){.top .right-controls .achievement-shortcut{top:calc(200% + 20px)!important}.top .right-controls .event-shortcut{top:calc(300% + 30px)!important}}
+
+/* Unified right-hand vertical toolbar: exact equal square buttons and gaps. */
+.top .right-controls{--rail-gap:clamp(8px,2.2vw,12px);width:clamp(36px,10vw,45px)!important;height:clamp(36px,10vw,45px)!important;flex:0 0 clamp(36px,10vw,45px)!important;position:relative!important}
+.top .right-controls > button{position:absolute!important;left:0!important;right:auto!important;display:flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;aspect-ratio:1/1!important;margin:0!important;padding:4px!important;border:2px solid #fff9f1!important;border-radius:14px!important;background:linear-gradient(#fffaf4,#ffe7e0)!important;box-shadow:0 4px 0 #d7a8a5,0 6px 12px #8b5e5b26!important;transform:none!important}
+.top .right-controls > .settings-trigger{top:0!important}
+.top .right-controls > .daily.gift-trigger{top:calc(100% + var(--rail-gap))!important}
+.top .right-controls > .achievement-shortcut{top:calc(200% + 2 * var(--rail-gap))!important}
+.top .right-controls > .event-shortcut{top:calc(300% + 3 * var(--rail-gap))!important}
+.top .right-controls > button > img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;margin:0!important;pointer-events:none}
+
+/* iPhone workshop: cover the entire visual viewport instead of a 9:16 centered frame. */
+html body .merge-screen{position:fixed!important;inset:0!important;top:0!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:none!important;height:100vh!important;height:100dvh!important;min-height:0!important;max-height:none!important;margin:0!important;border-radius:0!important;z-index:100!important}
+html body .merge-screen.show{display:flex!important}
+.merge-screen-header{padding-top:calc(12px + env(safe-area-inset-top,0px))!important}
+.merge-screen-content{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
+
+/* Responsive layout: use available viewport, preserve artwork aspect ratio. */
+:root{--scene-width:min(100vw,520px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+html,body{width:100%;height:100%;height:100dvh;overflow:hidden}
+body{margin:0;display:flex;justify-content:center;align-items:stretch}
+.app{width:var(--scene-width)!important;max-width:520px!important;height:100dvh!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;margin:0 auto!important;padding:clamp(8px,2.5vw,15px) clamp(8px,2.5vw,15px) calc(78px + var(--safe-bottom))!important;background-size:cover!important;background-position:center center!important;position:relative;container-type:inline-size}
+.navigation{width:var(--scene-width)!important;max-width:520px!important;bottom:0!important;left:50%!important;transform:translateX(-50%)!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;padding:clamp(4px,1.5vw,8px) 4px calc(5px + var(--safe-bottom))!important}
+.nav-button{min-width:0!important;min-height:clamp(44px,8dvh,57px)!important;font-size:clamp(9px,2.3cqw,12px)!important}
+.nav-button span{font-size:clamp(18px,5cqw,26px)!important}
+.shop .diana-home{max-height:min(70%,calc(100dvh - 160px))!important}
+.shop .cat[src]{top:clamp(250px,102cqw,calc(100dvh - 170px))!important}
+.modal{inset:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) 10px calc(8px + var(--safe-bottom))!important}
+.modal-card{width:min(100%,520px)!important;max-width:520px!important;max-height:calc(100dvh - 20px - env(safe-area-inset-top,0px) - var(--safe-bottom))!important;overflow-y:auto!important}
+.merge-screen{width:100vw!important;height:100dvh!important;max-width:none!important}
+.merge-screen-content{min-height:0;overflow-y:auto}
+.merge-screen .merge-board{width:100%;max-width:min(100%,min(56dvh,520px));margin-left:auto;margin-right:auto}
+.merge-screen .merge-cell{font-size:clamp(17px,5.5vw,36px)}
+@media(max-height:650px){.merge-screen-content{justify-content:flex-start!important}.merge-screen .merge-orders{margin-bottom:6px}.merge-screen .merge-tools{margin-top:6px}.merge-screen .merge-hint{margin-top:4px}}
+@media(min-width:700px){.app{box-shadow:0 0 45px #a86c7830}.merge-screen-content{max-width:700px;width:100%;margin:0 auto}.merge-screen .merge-board{max-width:min(58dvh,560px)}}
+
+/* Diana's lower edge sits slightly behind the top of the bottom navigation. */
+.shop .diana-home{bottom:calc(var(--diana-nav-bottom, 6%) - 28px)!important}
+
+/* Anchor the cat to a fixed point on the cover-scaled background artwork. */
+.shop .cat[src]{left:var(--cat-art-x,57%)!important;top:var(--cat-art-y,102cqw)!important;width:clamp(54px,16cqw,82px)!important;right:auto!important;bottom:auto!important}
+
+/* Equipped cat mat follows the same artwork anchor as the cat. */
+.shop .cat-mat-home{position:absolute!important;display:block;width:clamp(100px,29cqw,160px)!important;height:auto!important;left:calc(var(--cat-art-x,57%) - clamp(22px,6cqw,35px))!important;top:calc(var(--cat-art-y,102cqw) + clamp(38px,11cqw,61px))!important;z-index:5!important;pointer-events:none!important;object-fit:contain}
+.shop .cat-mat-home[hidden]{display:none!important}
+.shop .cat[src]{z-index:6!important}
+.cat-mat-shop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.cat-mat-option{min-width:0;text-align:center;border:2px solid #efd5df;border-radius:14px;padding:7px 4px;background:#fff8f3;color:#986675}
+.cat-mat-option.current{border-color:#b681bf;background:#f9effc}
+.cat-mat-option.locked{opacity:.65}
+.cat-mat-option img{width:100%;aspect-ratio:1;object-fit:contain}
+.cat-mat-option b,.cat-mat-option small{display:block}
+.cat-mat-option button{width:100%;margin-top:6px;padding:7px 2px;border:0;border-radius:9px;background:#cc8fb6;color:white;font-weight:700;font-size:11px}
+.cat-mat-option button:disabled{background:#d7c7d1;color:#765e70}
+
+/* Place the cat visually on the mat; mat is underneath the cat, not below it. */
+.shop .cat-mat-home{left:var(--cat-mat-left,calc(var(--cat-art-x,57%) - 28px))!important;top:var(--cat-mat-top,calc(var(--cat-art-y,102cqw) + 26px))!important;width:var(--cat-mat-width,clamp(105px,28cqw,150px))!important;z-index:5!important}
+.shop .cat[src]{z-index:6!important}
+
+/* Cat and mat form one anchored unit; both use the same local coordinate system. */
+.shop .cat-rest-spot{position:absolute;left:var(--cat-art-x,57%);top:var(--cat-art-y,102cqw);width:clamp(54px,16cqw,82px);height:clamp(54px,16cqw,82px);z-index:6;pointer-events:none}
+.shop .cat-rest-spot .cat[src]{position:absolute!important;left:0!important;top:0!important;right:auto!important;bottom:auto!important;width:100%!important;max-width:none!important;height:auto!important;z-index:2!important;pointer-events:auto}
+.shop .cat-rest-spot .cat-mat-home{position:absolute!important;left:-37.5%!important;top:0%!important;width:175%!important;height:auto!important;max-width:none!important;z-index:1!important;pointer-events:none!important}
+.shop .cat-rest-spot .cat-mat-home[hidden]{display:none!important}
+
+/* Keep the cat directly over the center of its mat in one fixed local frame. */
+.shop .cat-rest-spot{isolation:isolate!important;transform:none!important}
+.shop .cat-rest-spot .cat-mat-home{position:absolute!important;left:50%!important;top:55%!important;transform:translateX(-50%)!important;width:190%!important;height:auto!important;z-index:0!important;object-fit:contain!important}
+.shop .cat-rest-spot .cat[src]{position:absolute!important;left:0!important;top:0!important;transform-origin:50% 82%;z-index:2!important}
+
+/* Cat and mat share the same exact center in their anchored container. */
+.shop .cat-rest-spot{position:absolute!important;isolation:isolate!important}
+.shop .cat-rest-spot .cat-mat-home{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:190%!important;height:190%!important;object-fit:contain!important;z-index:0!important;pointer-events:none!important}
+.shop .cat-rest-spot .cat[src]{position:absolute!important;left:50%!important;top:50%!important;width:100%!important;height:100%!important;object-fit:contain!important;transform:translate(-50%,-50%)!important;animation:none!important;z-index:2!important;pointer-events:auto!important}
+
+/* Slight downward adjustment while keeping mat centered beneath the cat. */
+.shop .cat-rest-spot .cat-mat-home{top:59%!important}
+
+/* Diana's rare dialogue: use uploaded transparent speech bubble artwork. */
+.shop .diana-home{pointer-events:auto!important;cursor:pointer;touch-action:manipulation}
+.shop .diana-speech{position:absolute;left:var(--diana-speech-x,10px);top:var(--diana-speech-y,90px);width:clamp(160px,52cqw,260px);aspect-ratio:1720/845;background:url("./%D0%BE%D0%B1%D0%BB%D0%B0%D1%87%D0%BA%D0%BE%20%D0%B4%D0%B8%D0%B0%D0%BB%D0%BE%D0%B3%D0%B0.png") center/contain no-repeat;z-index:15;display:flex;align-items:center;justify-content:center;padding:12% 12% 16%;pointer-events:none;text-align:center;color:#80518d;font-size:clamp(12px,3.1cqw,17px);font-weight:800;line-height:1.2;text-shadow:0 1px #fff}
+.shop .diana-speech[hidden]{display:none!important}
+
+/* Compact full-width cat mat offer: artwork left, details and purchase right. */
+.cat-mat-shop{display:block!important;margin:10px 0 2px!important;width:100%!important}
+.cat-mat-shop .cat-mat-option{display:grid!important;grid-template-columns:minmax(88px,40%) minmax(0,1fr)!important;align-items:center!important;gap:12px!important;width:100%!important;box-sizing:border-box!important;padding:10px!important;text-align:left!important}
+.cat-mat-shop .cat-mat-option img{display:block!important;width:100%!important;max-height:135px!important;aspect-ratio:1!important;object-fit:contain!important}
+.cat-mat-details{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:7px;min-width:0}
+.cat-mat-details b{font-size:clamp(15px,3.7cqw,20px);line-height:1.25}
+.cat-mat-details small{font-size:clamp(13px,3cqw,16px)}
+.cat-mat-details button{font-size:clamp(13px,3cqw,16px)!important;padding:10px 8px!important;margin-top:4px!important}
+.cat-mat-complete{padding:12px;text-align:center;color:#986675;font-weight:700}
+
+/* PWA game UI: disable browser text/image selection and iOS touch callouts. */
+html,body,.app,.modal,.merge-screen,.game-item,button,img{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+img{-webkit-user-drag:none!important;user-drag:none!important}
+input,textarea,[contenteditable="true"]{
+  -webkit-user-select:text!important;
+  user-select:text!important;
+  -webkit-touch-callout:default!important;
+}
+
+/* Generator tiles: charges and live recharge countdown. */
+.merge-cell.merge-generator{position:relative;background:linear-gradient(145deg,#fff1cf,#e8c7f2)!important;border:2px solid #b789c4!important;font-size:clamp(18px,5cqw,29px)!important;overflow:hidden}
+.merge-cell.merge-generator.cooling{filter:saturate(.65)}
+.merge-generator-badge{position:absolute;bottom:1px;left:1px;right:1px;font-size:clamp(8px,2cqw,11px);line-height:1.15;border-radius:5px;background:#fff9f1e8;color:#704b77;font-weight:800;white-space:nowrap}
+
+.beta-version-label{position:fixed;top:4px;left:50%;transform:translateX(-50%);z-index:99999;background:#8f5aa4;color:white;border-radius:12px;padding:3px 12px;font:700 11px Arial;pointer-events:none;opacity:.9}
+</style>
+</head>
+
+<body>
+<div class="beta-version-label">БЕТА · тестовая версия</div>
+<div id="betaFlowerSplash" role="status" aria-label="Загрузка игры" aria-live="polite"><div class="splash-clouds" aria-hidden="true"><img class="splash-cloud" src="./oblako_1_s_cvetami.png" style="--cloud-left:1%;--cloud-top:2%;--cloud-width:66%;--cloud-x:-110vw;--cloud-y:-90vh;--cloud-turn:-9deg" alt=""><img class="splash-cloud" src="./oblako_2.png" style="--cloud-left:37%;--cloud-top:7%;--cloud-width:62%;--cloud-x:110vw;--cloud-y:-90vh;--cloud-turn:9deg" alt=""><img class="splash-cloud" src="./oblako_3.png" style="--cloud-left:0%;--cloud-top:26%;--cloud-width:60%;--cloud-x:-120vw;--cloud-y:-35vh;--cloud-turn:-9deg" alt=""><img class="splash-cloud" src="./oblako_4.png" style="--cloud-left:41%;--cloud-top:29%;--cloud-width:58%;--cloud-x:120vw;--cloud-y:-30vh;--cloud-turn:9deg" alt=""><img class="splash-cloud" src="./oblako_5_s_cvetami.png" style="--cloud-left:2%;--cloud-top:51%;--cloud-width:65%;--cloud-x:-120vw;--cloud-y:35vh;--cloud-turn:-9deg" alt=""><img class="splash-cloud" src="./oblako_2.png" style="--cloud-left:38%;--cloud-top:53%;--cloud-width:62%;--cloud-x:120vw;--cloud-y:45vh;--cloud-turn:9deg" alt=""><img class="splash-cloud" src="./oblako_4.png" style="--cloud-left:0%;--cloud-top:75%;--cloud-width:62%;--cloud-x:-120vw;--cloud-y:110vh;--cloud-turn:-9deg" alt=""><img class="splash-cloud" src="./oblako_3.png" style="--cloud-left:40%;--cloud-top:77%;--cloud-width:60%;--cloud-x:120vw;--cloud-y:110vh;--cloud-turn:9deg" alt=""></div><div class="splash-inner"><img class="splash-title" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история"><div class="splash-flower" aria-hidden="true"><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-petal"></i><i class="splash-center"></i></div><div class="splash-loading"><div class="splash-progress" id="splashProgress"></div></div><div class="splash-caption">Расцветает волшебство...</div></div><div class="splash-version" id="splashVersion">Версия 0.4.0</div></div>
+<div id="portraitGuard" role="status" aria-live="polite">Поверни телефон вертикально, чтобы продолжить игру</div>
+<div class="app">
+
+  <div class="top">
+    <div class="player">⭐ Уровень 1</div>
+    <div class="money">
+      <div class="money-item"><img class="currency-icon" src="./%D0%BC%D0%BE%D0%BD%D0%B5%D1%82%D0%B0.png" alt="Монеты"> <span id="coins">250</span></div>
+      <div class="money-item"><img class="currency-icon" src="./%D0%B0%D0%BB%D0%BC%D0%B0%D0%B7.png" alt="Алмазы"> <span>15</span></div>
+    </div>
+    <div class="right-controls">
+      <button class="settings-trigger" onclick="openSettings()" aria-label="Настройки"><img src="./%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8.png" alt=""></button>
+      <button class="daily gift-trigger" onclick="openWeeklyGifts()" aria-label="Открыть подарки на неделю"><img class="gift" src="./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png" alt="Подарки недели"></button>
+      <button class="home-side-shortcut achievement-shortcut" onclick="openPanel('achievements')" aria-label="Достижения" title="Достижения"><img src="./%D0%BA%D1%83%D0%B1%D0%BE%D0%BA.png" alt=""></button>
+      <button class="home-side-shortcut event-shortcut" onclick="openPanel('events')" aria-label="События" title="События"><img src="./%D0%BA%D0%B0%D0%BB%D0%B5%D0%BD%D0%B4%D0%B0%D1%80%D1%8C.png" alt=""></button>
+    </div>
+  </div>
+
+  <button class="energy-pill" type="button" onclick="showEnergyInfo()" aria-label="Энергия и восстановление"><span class="energy-symbol">⚡</span><span id="energyValue">100/100</span><span class="energy-timer" id="energyTimer">Полная</span></button>
+
+  <div class="logo">
+    <img class="game-title-art" src="./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png" alt="Цветочная история">
+    
+  </div>
+
+  <div class="shop">
+    <div class="awning" aria-hidden="true"></div>
+    <div class="sign">🌷 Цветочная лавка 🌷</div>
+    <div class="window">
+      <div class="flower">🌹</div>
+      <div class="flower">🌻</div>
+      <div class="flower">🌷</div>
+    </div>
+    <div class="shelf"></div>
+    <div class="counter"></div>
+    <div class="plant">🪴</div>
+    <img class="diana-home" role="button" tabindex="0" aria-label="Поговорить с Дианой" onclick="tapDiana()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();tapDiana()}" src="./Diana_%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9_%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png" alt="Diana — флорист" draggable="false">
+    <div id="dianaSpeech" class="diana-speech" aria-live="polite" hidden><span>Андерван- это круто</span></div>
+    <div class="cat-rest-spot"><img class="cat-mat-home" id="catMatHome" alt="Коврик котика" hidden><img class="cat" src="cat.png" alt="Спящий котик" role="button" tabindex="0" aria-label="Погладить котика" onclick="petCat()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();petCat()}"></div>
+    <div class="heart">💗</div>
+  </div>
+
+
+
+  
+
+  
+
+</div>
+
+<nav class="navigation">
+  <button class="nav-button active" onclick="tab(this,'Лавка')">
+    <span>🏡</span>Лавка
+  </button>
+  <button class="nav-button" onclick="tab(this,'Мастерская')"><span>🌱</span>Мастерская</button>
+  <button class="nav-button" onclick="tab(this,'Букеты')">
+    <span>💐</span>Букеты
+  </button>
+  <button class="nav-button" onclick="tab(this,'Мини-игры')">
+    <span>🎮</span>Мини-игры
+  </button>
+  <button class="nav-button" onclick="tab(this,'Украшения')">
+    <span>🎀</span>Украшения
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<section id="mergeScreen" class="merge-screen" aria-label="Цветочная мастерская" aria-hidden="true"><header class="merge-screen-header"><button type="button" onclick="closeMerge()">← Назад</button><strong>🌸 Мастерская</strong><span id="mergeScreenEnergy">⚡ 100/100</span></header><div id="mergeScreenContent" class="merge-screen-content"></div></section>
+<div class="modal" id="gameModal">
+  <div class="modal-card">
+    <div id="modalContent"></div>
+    <button class="close-modal" onclick="closePanel()">Закрыть</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const splash=document.getElementById("betaFlowerSplash");
+  const progress=document.getElementById("splashProgress");
+  const caption=splash.querySelector(".splash-caption");
+  const assets=[
+    "./%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png",
+    "./%D1%86%D0%B2%D0%B5%D1%82%D0%BE%D1%87%D0%BD%D0%B0%D1%8F%20%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F%20%D0%B3%D0%BB%D0%B0%D0%B2%20%D0%BC%D0%B5%D0%BD%D1%8E.png",
+    "./%D0%BC%D0%BE%D0%BD%D0%B5%D1%82%D0%B0.png",
+    "./%D0%B0%D0%BB%D0%BC%D0%B0%D0%B7.png",
+    "./%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8.png",
+    "./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png",
+    "./cat.png",
+    "./oblako_1_s_cvetami.png",
+    "./oblako_2.png",
+    "./oblako_3.png",
+    "./oblako_4.png",
+    "./oblako_5_s_cvetami.png"
+  ];
+  const retry=document.createElement("button");
+  retry.type="button";retry.textContent="Повторить загрузку";
+  retry.style.cssText="display:none;margin:16px auto 0;padding:12px 22px;border:2px solid white;border-radius:16px;background:#edb5c5;color:#7d4c61;font-weight:700;box-shadow:0 4px 0 #d49bab";
+  splash.querySelector(".splash-inner").appendChild(retry);
+  const ready=new Set();
+  const splashStarted=performance.now();
+  const minimumSplashMs=2800;
+  let running=false;
+  function loadImage(src){
+    return new Promise(resolve=>{
+      const img=new Image();
+      let done=false;
+      const timer=setTimeout(()=>finish(false),12000);
+      function finish(ok){if(done)return;done=true;clearTimeout(timer);img.onload=null;img.onerror=null;resolve(ok);}
+      img.onload=()=>finish(img.naturalWidth>0);
+      img.onerror=()=>finish(false);
+      img.src=src;
+      if(img.complete&&img.naturalWidth>0)finish(true);
+    });
+  }
+  async function load(){
+    if(running)return;
+    running=true;retry.style.display="none";
+    caption.textContent="Загружаем цветочную лавку...";
+    const missing=assets.filter(src=>!ready.has(src));
+    await Promise.all(missing.map(async src=>{
+      // Retry transient failures; do not treat an image error as success.
+      for(let attempt=0;attempt<3;attempt++){
+        if(await loadImage(src)){ready.add(src);break;}
+        if(attempt<2)await new Promise(resolve=>setTimeout(resolve,650*(attempt+1)));
+      }
+      progress.style.width=Math.round(ready.size/assets.length*100)+"%";
+    }));
+    running=false;
+    if(ready.size!==assets.length){
+      caption.textContent="Не все изображения загрузились. Проверь подключение к интернету.";
+      retry.style.display="block";
+      return;
+    }
+    caption.textContent="Всё готово!";
+    progress.style.width="100%";
+    // Loading a PNG is not the same as having its pixels decoded and painted.
+    // Decode the actual main-screen images before removing the splash.
+    const critical=assets.slice(0,7);
+    await Promise.all(critical.map(async src=>{
+      const img=new Image();img.src=src;
+      try{if(img.decode)await img.decode();}catch(e){}
+    }));
+    const remaining=Math.max(0,minimumSplashMs-(performance.now()-splashStarted));
+    if(remaining)await new Promise(resolve=>setTimeout(resolve,remaining));
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    splash.classList.add("splash-dispersing");
+    const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches||localStorage.getItem("betaFlowerReduceMotion")==="1";
+    setTimeout(()=>{
+      splash.classList.add("splash-hidden");
+      setTimeout(()=>splash.remove(),reduced?100:650);
+    },reduced?0:1550);
+  }
+  retry.addEventListener("click",load);
+  load();
+})();
+let coins = Number(localStorage.getItem("betaFlowerCoins")) || 250;
+const ENERGY_MAX=100, ENERGY_REGEN_MS=5*60*1000, ENERGY_GAME_COST=5;
+let energy=Number(localStorage.getItem("betaFlowerEnergy"));
+if(!Number.isFinite(energy))energy=ENERGY_MAX;
+if(localStorage.getItem("betaFlowerEnergyCapacityMigrated")!=="1"){energy=Math.min(ENERGY_MAX,energy+70);localStorage.setItem("betaFlowerEnergyCapacityMigrated","1");}
+energy=Math.max(0,Math.min(ENERGY_MAX,Math.floor(energy)));
+let energyTimestamp=Number(localStorage.getItem("betaFlowerEnergyTimestamp"))||Date.now();
+function saveEnergy(){localStorage.setItem("betaFlowerEnergy",String(energy));localStorage.setItem("betaFlowerEnergyTimestamp",String(energyTimestamp));}
+function refreshEnergy(){
+  const now=Date.now();
+  if(energy>=ENERGY_MAX){energy=ENERGY_MAX;energyTimestamp=now;}
+  else if(now>energyTimestamp){const gained=Math.floor((now-energyTimestamp)/ENERGY_REGEN_MS);if(gained){energy=Math.min(ENERGY_MAX,energy+gained);energyTimestamp=energy>=ENERGY_MAX?now:energyTimestamp+gained*ENERGY_REGEN_MS;}}
+  saveEnergy();
+  const value=document.getElementById("energyValue"),timer=document.getElementById("energyTimer");
+  if(value)value.textContent=energy+"/"+ENERGY_MAX;
+  if(timer){const remaining=ENERGY_REGEN_MS-Math.max(0,now-energyTimestamp)%ENERGY_REGEN_MS;timer.textContent=energy===ENERGY_MAX?"Полная":Math.ceil(remaining/60000)+" мин";}
+}
+function spendEnergy(amount=ENERGY_GAME_COST){refreshEnergy();if(energy<amount){message("Недостаточно энергии! Подожди восстановления.");return false;}energy-=amount;energyTimestamp=energy===ENERGY_MAX-amount?Date.now():energyTimestamp;refreshEnergy();return true;}
+function showEnergyInfo(){refreshEnergy();message("⚡ "+energy+"/"+ENERGY_MAX+" · +1 энергия каждые 5 минут · генератор: −1 · мини-игра: −5");}
+refreshEnergy();setInterval(refreshEnergy,15000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshEnergy();});
+let today = new Date().toDateString();
+let giftTaken = localStorage.getItem("betaFlowerGiftTaken") === today;
+
+let decorations = JSON.parse(
+  localStorage.getItem("betaFlowerDecorations") || "[]"
+);
+
+let bouquetCount = Number(
+  localStorage.getItem("betaFlowerBouquets") || 0
+);
+
+document.getElementById("coins").textContent = coins;
+
+function message(text) {
+  let toast = document.getElementById("toast");
+  toast.textContent = text;
+  toast.style.display = "block";
+
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
+    toast.style.display = "none";
+  }, 2300);
+}
+
+function closePanel() {
+  document.querySelector(".modal-card").classList.remove("merge-modal-card");
+  arcadeStop();
+  document.getElementById("gameModal").classList.remove("show");
+}
+
+function openPanel(name) {
+  document.querySelector(".modal-card").classList.remove("merge-modal-card");
+  const modal = document.getElementById("gameModal");
+  const content = document.getElementById("modalContent");
+
+  const screens = {
+    achievements: `
+      <div class="modal-title">🏆 Достижения</div>
+      <div class="game-item">
+        🌷 Первые шаги
+        <p>Добро пожаловать в свою цветочную лавку!</p>
+      </div>
+      <div class="game-item">
+        💐 Начинающий флорист
+        <p>Создано букетов: ${bouquetCount}</p>
+      </div>
+      <div class="game-item">
+        🎀 Коллекционер
+        <p>Куплено украшений: ${decorations.length}</p>
+      </div>
+      <div class="game-item">
+        <img class="currency-icon" src="./%D0%BC%D0%BE%D0%BD%D0%B5%D1%82%D0%B0.png" alt=""> Копилка
+        <p>Сейчас у тебя ${coins} монет</p>
+      </div>
+    `,
+
+    events: `
+      <div class="modal-title">🎀 События</div>
+      <div class="game-item">
+        🌸 Цветочная неделя
+        <p>Создавай букеты и украшай свою лавку!</p>
+        <b>Награда: 100 монет</b>
+        <button class="game-action" onclick="eventReward()">
+          Получить награду
+        </button>
+      </div>
+      <div class="game-item">
+        🐈 День котика
+        <p>Скоро в твоей лавке появится особое событие.</p>
+      </div>
+    `,
+
+    bouquets: `
+      <div class="modal-title">💐 Мастерская букетов</div>
+      <div class="game-item">
+        🌹 Розовый букет
+        <p>Собери красивый букет из трёх цветов.</p>
+        <button class="game-action" onclick="makeBouquet()">
+          🌷 Собрать букет
+        </button>
+      </div>
+      <div class="game-item">
+        Всего создано букетов: ${bouquetCount}
+      </div>
+    `,
+
+    games: `
+      <div class="modal-title">Цветочные мини-игры</div>
+      <div class="game-item">🌷 Три в ряд<p>Меняй соседние цветы местами. Собирай три одинаковых в линию за 15 ходов.</p><button class="game-action" onclick="startMatch3()">Играть · ⚡5</button></div>
+      <div class="game-item">🦋 Найди пару<p>Открой все одинаковые цветочные карточки за меньшее число попыток.</p><button class="game-action" onclick="startMemory()">Играть · ⚡5</button></div>
+      <div class="game-item">🌸 Цветочный дождь<p>Лови падающие цветы корзинкой, собирай золотые цветы и избегай бабочек.</p><button class="game-action" onclick="startCatch()">Играть · ⚡5</button></div>
+    `,
+
+    decorations: `
+      <div class="modal-title">🎀 Украшения</div>
+      <div class="game-item">
+        🪴 Красивое растение
+        <p>Цена: 50 монет</p>
+        <button class="game-action" onclick="buyDecoration('Растение',50)">
+          Купить
+        </button>
+      </div>
+      <div class="game-item">
+        🧶 Мягкий коврик для котика
+        
+        <div class="cat-mat-shop">${renderCatMatShop()}</div>
+      </div>
+      <div class="game-item">
+        🪧 Вывеска лавки
+        <p>Цена: 150 монет</p>
+        <button class="game-action" onclick="buyDecoration('Вывеска',150)">
+          Купить
+        </button>
+      </div>
+      <div class="game-item">
+        Куплено украшений: ${decorations.length}
+      </div>
+    `
+  };
+
+  if(name==="merge"){openMerge();return;}
+  if(name==="games")arcadeStop();
+  content.innerHTML = screens[name] || "";
+  modal.classList.add("show");
+}
+
+function tab(button, name) {
+  document.querySelectorAll(".nav-button").forEach(item => {
+    item.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
+  const pages = {
+    "Лавка": null,
+    "Мастерская": "merge",
+    "Букеты": "bouquets",
+    "Мини-игры": "games",
+    "Украшения": "decorations"
+  };
+
+  if(name!=="Мастерская")closeMerge();
+  if (pages[name] === null) {
+    closePanel();
+  } else {
+    openPanel(pages[name]);
+  }
+}
+
+function updateCoins() {
+  document.getElementById("coins").textContent = coins;
+  localStorage.setItem("betaFlowerCoins", coins);
+}
+
+function localDateKey(date) {
+  const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
+  return y+"-"+m+"-"+d;
+}
+const GAME_VERSION="0.8.0"; // Change this value when publishing a new game release.
+const splashVersionElement=document.getElementById("splashVersion");
+if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
+const GAME_DEVELOPER="GERFY27";
+let gameSoundEnabled=localStorage.getItem("betaFlowerSoundEnabled")!=="0";
+let gameVolume=Math.max(0,Math.min(100,Number(localStorage.getItem("betaFlowerVolume")??"45")||0));
+let gameAudioContext=null;
+let catPurrCooldown=0;
+
+let dianaTapCount=0;
+let dianaTapTarget=27+Math.floor(Math.random()*26);
+let dianaSpeechTimer=null;
+function positionDianaSpeech(){
+  const app=document.querySelector(".app"),diana=document.querySelector(".shop .diana-home"),bubble=document.getElementById("dianaSpeech");
+  if(!app||!diana||!bubble)return;
+  const a=app.getBoundingClientRect(),d=diana.getBoundingClientRect();
+  const bubbleWidth=Math.min(260,Math.max(160,a.width*.52));
+  const x=Math.max(4,Math.min(a.width-bubbleWidth-4,d.left-a.left+d.width*.18+a.width*.50));
+  const y=Math.max(12,d.top-a.top+d.height*.08-bubbleWidth*.43+a.height*.10);
+  app.style.setProperty("--diana-speech-x",x+"px");
+  app.style.setProperty("--diana-speech-y",y+"px");
+}
+function tapDiana(){
+  if(navigator.vibrate)navigator.vibrate(35);
+  dianaTapCount++;
+  if(dianaTapCount<dianaTapTarget)return;
+  dianaTapCount=0;
+  dianaTapTarget=27+Math.floor(Math.random()*26);
+  const bubble=document.getElementById("dianaSpeech");
+  if(!bubble)return;
+  positionDianaSpeech();
+  bubble.hidden=false;
+  clearTimeout(dianaSpeechTimer);
+  dianaSpeechTimer=setTimeout(()=>{bubble.hidden=true;},3000);
+}
+window.addEventListener("resize",positionDianaSpeech);
+window.addEventListener("orientationchange",positionDianaSpeech);
+function petCat(){
+  if(Date.now()-catPurrCooldown<950)return;
+  catPurrCooldown=Date.now();
+  if(!gameSoundEnabled||gameVolume<=0)return;
+  try{
+    const Context=window.AudioContext||window.webkitAudioContext;
+    if(!Context)return;
+    if(!gameAudioContext)gameAudioContext=new Context();
+    if(gameAudioContext.state==="suspended")gameAudioContext.resume().catch(()=>{});
+    const ctx=gameAudioContext,start=ctx.currentTime,duration=.78;
+    const envelope=ctx.createGain(),filter=ctx.createBiquadFilter();
+    filter.type="lowpass";filter.frequency.value=1650;filter.Q.value=.65;
+    const level=Math.max(.0001,gameVolume/100*.15);
+    envelope.gain.setValueAtTime(.0001,start);
+    envelope.gain.exponentialRampToValueAtTime(level,start+.075);
+    envelope.gain.setValueAtTime(level*.9,start+.29);
+    envelope.gain.exponentialRampToValueAtTime(level*.5,start+.48);
+    envelope.gain.exponentialRampToValueAtTime(.0001,start+duration);
+    filter.connect(envelope);envelope.connect(ctx.destination);
+    // A gentle two-part "mew": pitch rises, then falls like a kitten's call.
+    [[1,.72],[2,.19],[3,.075]].forEach(([harmonic,amplitude])=>{
+      const osc=ctx.createOscillator(),gain=ctx.createGain();
+      osc.type="sine";
+      osc.frequency.setValueAtTime(480*harmonic,start);
+      osc.frequency.linearRampToValueAtTime(660*harmonic,start+.18);
+      osc.frequency.linearRampToValueAtTime(590*harmonic,start+.37);
+      osc.frequency.exponentialRampToValueAtTime(360*harmonic,start+duration);
+      gain.gain.value=amplitude;
+      osc.connect(gain);gain.connect(filter);
+      osc.start(start);osc.stop(start+duration+.02);
+    });
+  }catch(e){}
+}
+function playGameClick(kind="tap"){
+  if(!gameSoundEnabled||gameVolume<=0)return;
+  try{
+    const Context=window.AudioContext||window.webkitAudioContext;
+    if(!Context)return;
+    if(!gameAudioContext)gameAudioContext=new Context();
+    if(gameAudioContext.state==="suspended")gameAudioContext.resume().catch(()=>{});
+    const now=gameAudioContext.currentTime;
+    const notes=kind==="reward"?[659.25,987.77]:kind==="close"?[523.25]:[783.99,1046.5];
+    notes.forEach((frequency,index)=>{
+      const osc=gameAudioContext.createOscillator();
+      const gain=gameAudioContext.createGain();
+      const start=now+index*.055;
+      const level=Math.max(.0001,(gameVolume/100)*.16);
+      osc.type="sine";
+      osc.frequency.setValueAtTime(frequency,start);
+      osc.frequency.exponentialRampToValueAtTime(frequency*1.035,start+.075);
+      gain.gain.setValueAtTime(.0001,start);
+      gain.gain.exponentialRampToValueAtTime(level,start+.012);
+      gain.gain.exponentialRampToValueAtTime(.0001,start+.15);
+      osc.connect(gain);gain.connect(gameAudioContext.destination);
+      osc.start(start);osc.stop(start+.16);
+    });
+  }catch(e){}
+}
+document.addEventListener("pointerdown",event=>{
+  const button=event.target.closest("button");
+  if(!button||button.disabled||button.id==="soundToggle")return;
+  playGameClick(button.classList.contains("close-modal")?"close":button.classList.contains("weekly-claim")?"reward":"tap");
+},{passive:true});
+
+/* Original gentle flower-shop lullaby, synthesized locally (no third-party track). */
+let gameMusicEnabled=localStorage.getItem("betaFlowerMusicEnabled")!=="0";
+let musicTimer=null,musicNextTime=0,musicStep=0,musicGain=null;
+const musicMelody=[392,440,523.25,440,392,329.63,349.23,392,440,523.25,587.33,523.25,440,392,349.23,329.63,
+  349.23,392,440,392,349.23,293.66,329.63,349.23,392,440,493.88,440,392,349.23,329.63,293.66];
+const musicChords=[[261.63,329.63,392],[220,261.63,329.63],[174.61,220,261.63],[196,246.94,293.66]];
+function ensureMusicAudio(){
+  const Context=window.AudioContext||window.webkitAudioContext;
+  if(!Context)return false;
+  if(!gameAudioContext)gameAudioContext=new Context();
+  if(!musicGain){
+    musicGain=gameAudioContext.createGain();
+    musicGain.gain.value=0;
+    musicGain.connect(gameAudioContext.destination);
+  }
+  return true;
+}
+function musicNote(freq,start,duration,level){
+  const ctx=gameAudioContext;
+  const osc=ctx.createOscillator(),gain=ctx.createGain();
+  osc.type="sine";osc.frequency.setValueAtTime(freq,start);
+  gain.gain.setValueAtTime(.0001,start);
+  gain.gain.exponentialRampToValueAtTime(Math.max(.0002,level),start+.06);
+  gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+  osc.connect(gain);gain.connect(musicGain);
+  osc.start(start);osc.stop(start+duration+.02);
+}
+function scheduleMusic(){
+  if(!gameMusicEnabled||!gameSoundEnabled||document.hidden||!gameAudioContext||gameAudioContext.state!=="running")return;
+  const ctx=gameAudioContext;
+  const beat=.46;
+  while(musicNextTime<ctx.currentTime+.6){
+    const index=musicStep%musicMelody.length;
+    const start=musicNextTime;
+    musicNote(musicMelody[index],start,.37,.34);
+    if(index%8===0){
+      const chord=musicChords[Math.floor(index/8)%musicChords.length];
+      chord.forEach((freq,i)=>musicNote(freq/2,start,3.2,.07/(i+1)));
+    }
+    musicNextTime+=beat;
+    musicStep++;
+  }
+}
+function updateMusic(){
+  const shouldPlay=gameMusicEnabled&&gameSoundEnabled&&gameVolume>0&&!document.hidden;
+  if(!shouldPlay){
+    if(musicTimer!==null){clearInterval(musicTimer);musicTimer=null;}
+    if(musicGain&&gameAudioContext)musicGain.gain.setTargetAtTime(0,gameAudioContext.currentTime,.08);
+    return;
+  }
+  if(!ensureMusicAudio())return;
+  if(gameAudioContext.state==="suspended")gameAudioContext.resume().catch(()=>{});
+  musicGain.gain.setTargetAtTime((gameVolume/100)*.13,gameAudioContext.currentTime,.2);
+  if(musicTimer===null){
+    musicNextTime=gameAudioContext.currentTime+.08;
+    musicTimer=setInterval(scheduleMusic,180);
+    scheduleMusic();
+  }
+}
+function toggleGameMusic(){
+  gameMusicEnabled=!gameMusicEnabled;
+  localStorage.setItem("betaFlowerMusicEnabled",gameMusicEnabled?"1":"0");
+  const button=document.getElementById("musicToggle");
+  if(button){button.textContent=gameMusicEnabled?"Включена":"Выключена";button.setAttribute("aria-checked",String(gameMusicEnabled));}
+  updateMusic();
+}
+document.addEventListener("pointerdown",()=>{if(gameMusicEnabled&&gameSoundEnabled)updateMusic();},{once:true,passive:true});
+document.addEventListener("visibilitychange",updateMusic);
+function openSettings() {
+  document.getElementById("modalContent").innerHTML =
+    '<div class="modal-title">Настройки</div>'+
+    '<div class="settings-section">'+
+      '<div class="settings-line"><span>Звук игры</span><button id="soundToggle" class="settings-switch" type="button" role="switch" aria-checked="'+gameSoundEnabled+'" onclick="toggleGameSound()">'+(gameSoundEnabled?'Включён':'Выключен')+'</button></div>'+
+      '<div class="settings-line"><span>Фоновая музыка</span><button id="musicToggle" class="settings-switch" type="button" role="switch" aria-checked="'+gameMusicEnabled+'" onclick="toggleGameMusic()">'+(gameMusicEnabled?'Включена':'Выключена')+'</button></div>'+
+      '<label class="settings-volume-label" for="gameVolume">Громкость <output id="gameVolumeValue">'+gameVolume+'%</output></label>'+
+      '<input id="gameVolume" class="settings-volume" type="range" min="0" max="100" step="1" value="'+gameVolume+'" oninput="setGameVolume(this.value)" aria-label="Громкость игры">'+
+      '<button class="game-action" onclick="toggleGameMotion()">Анимация: <span id="motionSettingLabel">'+(localStorage.getItem("betaFlowerReduceMotion")==="1"?'выключена':'включена')+'</span></button>'+
+    '</div>'+
+    '<div class="settings-footer"><div>Цветочная история</div><div>Версия '+GAME_VERSION+'</div><div>Разработчик: '+GAME_DEVELOPER+'</div></div>';
+  document.getElementById("gameModal").classList.add("show");
+}
+function toggleGameSound(){
+  gameSoundEnabled=!gameSoundEnabled;
+  localStorage.setItem("betaFlowerSoundEnabled",gameSoundEnabled?"1":"0");
+  const btn=document.getElementById("soundToggle");
+  if(btn){btn.textContent=gameSoundEnabled?"Включён":"Выключен";btn.setAttribute("aria-checked",String(gameSoundEnabled));}
+  if(gameSoundEnabled)playGameClick();
+  updateMusic();
+}
+function setGameVolume(value){
+  gameVolume=Math.max(0,Math.min(100,Number(value)||0));
+  localStorage.setItem("betaFlowerVolume",String(gameVolume));
+  const out=document.getElementById("gameVolumeValue");
+  if(out)out.textContent=gameVolume+"%";
+  updateMusic();
+  if(gameSoundEnabled&&gameVolume>0)playGameClick();
+}
+function toggleGameMotion(){
+  const disabled=localStorage.getItem("betaFlowerReduceMotion")!=="1";
+  localStorage.setItem("betaFlowerReduceMotion",disabled?"1":"0");
+  document.body.classList.toggle("reduce-game-motion",disabled);
+  const label=document.getElementById("motionSettingLabel");
+  if(label)label.textContent=disabled?"выключена":"включена";
+}
+document.body.classList.toggle("reduce-game-motion",localStorage.getItem("betaFlowerReduceMotion")==="1");
+function openWeeklyGifts() {
+  const now=new Date();
+  const monday=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
+  const claimed=JSON.parse(localStorage.getItem("betaFlowerWeeklyGifts")||"{}");
+  const oldClaim=localStorage.getItem("betaFlowerGiftTaken")===now.toDateString();
+  const names=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+  let cards="";
+  for(let i=0;i<7;i++){
+    const date=new Date(monday);date.setDate(monday.getDate()+i);
+    const key=localDateKey(date),isToday=key===localDateKey(now);
+    const isClaimed=!!claimed[key]||(isToday&&oldClaim);
+    const isFuture=date>now&&!isToday;
+    const label=isClaimed?"Получено":isToday?"Забрать +50":"Недоступно";
+    cards+=`<div class="weekly-day ${isToday?"weekly-today":""}">
+      <strong>${names[i]} <small>${date.getDate()}.${String(date.getMonth()+1).padStart(2,"0")}</small></strong>
+      <img src="./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png" alt="">
+      <span>50 монет</span>
+      <button class="weekly-claim" ${isToday&&!isClaimed?'onclick="gift()"':"disabled"}>${label}</button>
+    </div>`;
+  }
+  document.getElementById("modalContent").innerHTML='<div class="modal-title">Подарки этой недели</div><p class="weekly-hint">Каждый день — 50 монет. Пропущенные дни нельзя забрать позже.</p><div class="weekly-grid">'+cards+'</div>';
+  document.getElementById("gameModal").classList.add("show");
+}
+function gift() {
+  if (giftTaken) {
+    message("Ты уже забрала подарок сегодня! 💗");
+    return;
+  }
+
+  coins += 50;
+  giftTaken = true;
+
+  localStorage.setItem("betaFlowerGiftTaken", today);
+  const claimed=JSON.parse(localStorage.getItem("betaFlowerWeeklyGifts")||"{}");
+  claimed[localDateKey(new Date())]=true;
+  localStorage.setItem("betaFlowerWeeklyGifts",JSON.stringify(claimed));
+  updateCoins();
+  openWeeklyGifts();
+  message("Получено 50 монет! ✨");
+}
+
+function makeBouquet() {
+  bouquetCount++;
+  localStorage.setItem("betaFlowerBouquets", bouquetCount);
+  message("Ты создала новый букет! 💐");
+  openPanel("bouquets");
+}
+
+
+
+/* Match Diana's lower edge to the navigation bar across screen sizes. */
+function alignDianaWithNavigation(){
+  const app=document.querySelector(".app"),nav=document.querySelector(".navigation");
+  if(!app||!nav)return;
+  const a=app.getBoundingClientRect(),n=nav.getBoundingClientRect();
+  app.style.setProperty("--diana-nav-bottom",Math.max(0,a.bottom-n.top)+"px");
+}
+window.addEventListener("resize",alignDianaWithNavigation);
+window.addEventListener("orientationchange",alignDianaWithNavigation);
+if(window.visualViewport)window.visualViewport.addEventListener("resize",alignDianaWithNavigation);
+if(typeof ResizeObserver!=="undefined"){const sceneObserver=new ResizeObserver(alignDianaWithNavigation);sceneObserver.observe(document.querySelector(".app"));sceneObserver.observe(document.querySelector(".navigation"));}
+requestAnimationFrame(alignDianaWithNavigation);
+
+/* Keep the cat attached to the same point of the background image when
+   background-size:cover crops differently on different screen ratios. */
+(function(){
+  const art=new Image();
+  art.src="./%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png";
+  function positionCatOnArtwork(){
+    const app=document.querySelector(".app");
+    if(!app||!art.naturalWidth||!art.naturalHeight)return;
+    const w=app.clientWidth,h=app.clientHeight;
+    const scale=Math.max(w/art.naturalWidth,h/art.naturalHeight);
+    const drawnWidth=art.naturalWidth*scale,drawnHeight=art.naturalHeight*scale;
+    const cropX=(w-drawnWidth)/2,cropY=(h-drawnHeight)/2;
+    app.style.setProperty("--cat-art-x",(cropX+drawnWidth*.57)+"px");
+    app.style.setProperty("--cat-art-y",(cropY+drawnWidth*1.02)+"px");
+  }
+  art.addEventListener("load",positionCatOnArtwork);
+  window.addEventListener("resize",positionCatOnArtwork);
+  window.addEventListener("orientationchange",positionCatOnArtwork);
+  if(window.visualViewport)window.visualViewport.addEventListener("resize",positionCatOnArtwork);
+  if(typeof ResizeObserver!=="undefined"){const app=document.querySelector(".app");if(app)new ResizeObserver(positionCatOnArtwork).observe(app);}
+  positionCatOnArtwork();
+})();
+
+/* Persistent merge workshop. Two equal adjacent or distant items can be combined by tapping. */
+const MERGE_SIZE=49;
+const MERGE_GENERATOR_ICONS=["💐","🧺","🎁","🎀","🧸"];
+const MERGE_GENERATOR_NAMES=["Цветочная корзина","Корзина флориста","Подарочная коробка","Рулон упаковки","Коробка с игрушками"];
+const MERGE_GENERATOR_POSITIONS=[1,5,21,43,47];
+const MERGE_CHARGES=10,MERGE_COOLDOWN=5*60*1000;
+const MERGE_CHAINS=[
+ ["🌱","🌿","🌷","🌹","💐","💐","🌺","👑","💎"],
+ ["🌰","🌾","🌼","🌻","🪴","🎍","🏵️","🎁","👑"],
+ ["🎀","🎁","🎁","💝","🎀","🎁","💎","👑","🌟"],
+ ["📄","📜","🎀","🎗️","🎁","💝","✨","🌟","👑"],
+ ["🧵","🧸","🐻","🐰","🧸","🐼","🦄","👑","💎"]
+];
+const MERGE_NAMES=[
+ ["Росток","Зелень","Тюльпан","Роза","Букет","Пышный букет","Цветочная композиция","Королевский букет","Легендарный букет"],
+ ["Основа корзинки","Плетение","Ромашки","Подсолнухи","Цветочная корзинка","Праздничная корзина","Цветочный венок","Подарочная корзина","Роскошная корзина"],
+ ["Лента","Маленький подарок","Подарок","Подарок с сердцем","Праздничный подарок","Подарочный набор","Драгоценный подарок","Королевский подарок","Легендарный подарок"],
+ ["Лист бумаги","Упаковочная бумага","Лента для упаковки","Украшенная бумага","Подарочная упаковка","Нарядная упаковка","Блестящая упаковка","Премиальная упаковка","Королевская упаковка"],
+ ["Нитки","Плюшевая заготовка","Мишка","Зайчик","Мягкая игрушка","Плюшевый медведь","Панда","Волшебная игрушка","Коллекционная игрушка"]
+];
+function mergeNewGame(){
+ const board=Array(MERGE_SIZE).fill(null);
+ board[10]={c:0,l:0};board[11]={c:0,l:0};board[24]={c:1,l:0};board[25]={c:1,l:0};
+ return {board,orders:[],nextOrder:1,selected:-1};
+}
+let mergeState;
+try{mergeState=JSON.parse(localStorage.getItem("betaFlowerMergeState")||"null");}catch(e){mergeState=null;}
+if(!mergeState||!Array.isArray(mergeState.board)||mergeState.board.length!==MERGE_SIZE)mergeState=mergeNewGame();
+mergeState.selected=-1;
+function mergeInstallGenerators(){
+ if(!mergeState.generators||typeof mergeState.generators!=="object")mergeState.generators={};
+ for(let c=0;c<5;c++){
+   let index=mergeState.board.findIndex(v=>v&&v.g===c);
+   if(index<0){
+     index=MERGE_GENERATOR_POSITIONS[c];
+     if(mergeState.board[index]!==null){
+       index=mergeState.board.findIndex((v,i)=>v===null&&!MERGE_GENERATOR_POSITIONS.includes(i));
+       if(index<0){index=mergeState.board.findIndex(v=>v&&v.g===undefined);if(index<0)continue;mergeState.board[index]=null;}
+     }
+     mergeState.board[index]={g:c};
+   }
+   const gen=mergeState.generators[c];
+   if(!gen||!Number.isFinite(gen.charges))mergeState.generators[c]={charges:MERGE_CHARGES,readyAt:0};
+ }
+}
+mergeInstallGenerators();
+function mergeSave(){localStorage.setItem("betaFlowerMergeState",JSON.stringify({board:mergeState.board,orders:mergeState.orders,nextOrder:mergeState.nextOrder,generators:mergeState.generators}));}
+function mergeOrder(){
+ const n=mergeState.nextOrder++;
+ const tier=n<=3?1:n<=7?2:n<=13?3:n<=22?4:Math.min(7,4+Math.floor((n-22)/12));
+ const c=(n-1)%5;
+ const l=Math.max(1,Math.min(7,tier));
+ const second=n>5&&n%3===1?{c:(c+1)%5,l:Math.max(1,l-1)}:null;
+ const reward=l<=2?5+2*l:l<=4?15+(l-3)*8:l<=5?35:60+Math.min(30,(l-6)*10);
+ return {id:n,items:[{c,l},...(second?[second]:[])],reward};
+}
+if(!Array.isArray(mergeState.orders))mergeState.orders=[];
+while(mergeState.orders.length<3)mergeState.orders.push(mergeOrder());
+mergeSave();
+function mergeIcon(item){return item.g!==undefined?MERGE_GENERATOR_ICONS[item.g]:MERGE_CHAINS[item.c]?.[item.l]||"🌸";}
+function mergeName(item){return item.g!==undefined?MERGE_GENERATOR_NAMES[item.g]:MERGE_NAMES[item.c]?.[item.l]||"Предмет";}
+function mergeInventory(order){
+ const used=new Set();
+ return order.items.every(item=>{
+   const idx=mergeState.board.findIndex((v,i)=>!used.has(i)&&v&&v.g===undefined&&v.c===item.c&&v.l===item.l);
+   if(idx<0)return false;used.add(idx);return true;
+ });
+}
+function mergeDeliver(id){
+ const order=mergeState.orders.find(o=>o.id===id);if(!order||!mergeInventory(order))return;
+ const used=new Set();
+ for(const item of order.items){
+   const idx=mergeState.board.findIndex((v,i)=>!used.has(i)&&v&&v.g===undefined&&v.c===item.c&&v.l===item.l);
+   used.add(idx);mergeState.board[idx]=null;
+ }
+ coins+=order.reward;updateCoins();
+ mergeState.orders=mergeState.orders.filter(o=>o.id!==id);mergeState.orders.push(mergeOrder());
+ mergeSave();drawMerge();message("Заказ выполнен! +"+order.reward+" монет");
+}
+function mergeRefreshGenerators(){
+ let changed=false;
+ for(const gen of Object.values(mergeState.generators)){
+   if(gen.charges<=0&&gen.readyAt&&Date.now()>=gen.readyAt){gen.charges=MERGE_CHARGES;gen.readyAt=0;changed=true;}
+ }
+ if(changed)mergeSave();
+}
+function mergeNearbyEmpty(index){
+ const row=Math.floor(index/7),col=index%7;
+ const neighbors=[];
+ for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+   if(!dr&&!dc)continue;
+   const r=row+dr,c=col+dc;if(r>=0&&r<7&&c>=0&&c<7){const i=r*7+c;if(mergeState.board[i]===null)neighbors.push(i);}
+ }
+ return neighbors[0]??-1;
+}
+function mergeUseGenerator(index){
+ mergeRefreshGenerators();
+ const item=mergeState.board[index];if(!item||item.g===undefined)return;
+ const gen=mergeState.generators[item.g];
+ if(gen.charges<=0){message("Генератор перезаряжается");drawMerge();return;}
+ const empty=mergeNearbyEmpty(index);
+ if(empty<0){message("Рядом с генератором нет свободной клетки");return;}
+ if(!spendEnergy(1))return;
+ mergeState.board[empty]={c:item.g,l:0};
+ gen.charges--;
+ if(gen.charges===0)gen.readyAt=Date.now()+MERGE_COOLDOWN;
+ mergeState.selected=-1;mergeSave();drawMerge();
+}
+function mergeTap(index){
+ const board=mergeState.board,selected=mergeState.selected,target=board[index];
+ if(target&&target.g!==undefined){mergeUseGenerator(index);return;}
+ if(selected===index){mergeState.selected=-1;drawMerge();return;}
+ if(selected<0){if(target)mergeState.selected=index;drawMerge();return;}
+ const from=board[selected];
+ if(!from||from.g!==undefined){mergeState.selected=-1;drawMerge();return;}
+ if(target&&target.g===undefined&&target.c===from.c&&target.l===from.l&&target.l<8){
+   board[index]={c:target.c,l:target.l+1};board[selected]=null;
+   mergeState.selected=-1;mergeSave();drawMerge();return;
+ }
+ if(!target){board[index]=from;board[selected]=null;mergeState.selected=-1;mergeSave();drawMerge();return;}
+ mergeState.selected=index;drawMerge();
+}
+function mergeGenerate(){message("Нажми на генератор прямо на поле");}
+function openMerge(){
+ arcadeStop();document.getElementById("gameModal").classList.remove("show");
+ const screen=document.getElementById("mergeScreen");
+ screen.classList.add("show");screen.setAttribute("aria-hidden","false");drawMerge();
+}
+function closeMerge(){
+ const screen=document.getElementById("mergeScreen");
+ screen.classList.remove("show");screen.setAttribute("aria-hidden","true");
+ document.querySelectorAll(".nav-button").forEach(b=>b.classList.toggle("active",b.textContent.trim().includes("Лавка")));
+}
+function mergeCountdown(ms){const seconds=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");}
+function drawMerge(){
+ if(!document.getElementById("mergeScreen").classList.contains("show"))return;
+ refreshEnergy();mergeRefreshGenerators();
+ document.getElementById("mergeScreenEnergy").textContent="⚡ "+energy+"/"+ENERGY_MAX;
+ const orders=mergeState.orders.map(o=>'<div class="merge-order"><b>Заказ №'+o.id+'</b><div class="order-items">'+o.items.map(mergeIcon).join(" ")+'</div><div>+'+o.reward+' 🪙</div><button '+(mergeInventory(o)?"":"disabled")+' onclick="mergeDeliver('+o.id+')">Отдать</button></div>').join("");
+ const cells=mergeState.board.map((item,i)=>{
+   const generator=item&&item.g!==undefined;
+   const gen=generator?mergeState.generators[item.g]:null;
+   const cooling=gen&&gen.charges===0;
+   const badge=generator?'<span class="merge-generator-badge">'+(cooling?'⏳ '+mergeCountdown(gen.readyAt-Date.now()):gen.charges+'/'+MERGE_CHARGES)+'</span>':'';
+   return '<button class="merge-cell '+(item?'':'empty')+(generator?' merge-generator':'')+(cooling?' cooling':'')+(i===mergeState.selected?' selected':'')+'" onclick="mergeTap('+i+')" aria-label="'+(item?mergeName(item):'Пустая клетка')+'">'+(item?mergeIcon(item):'')+badge+'</button>';
+ }).join("");
+ document.getElementById("mergeScreenContent").innerHTML='<div class="merge-head"><span>🌸 Цветочная мастерская</span><span>⚡ '+energy+'/'+ENERGY_MAX+'</span></div><div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div><div class="merge-tools"><button onclick="mergeState.selected=-1;drawMerge()">Снять выбор</button></div><p class="merge-hint">Нажимай на генераторы на поле: 10 предметов, затем 5 минут перезарядки. Каждое создание стоит ⚡1. Объединяй одинаковые предметы, перемещай их и выполняй заказы.</p>';
+}
+setInterval(()=>{if(document.getElementById("mergeScreen")?.classList.contains("show"))drawMerge();},1000);
+
+/* Three playable arcade mini-games */
+let arcade=null,arcadeTimer=null;
+function arcadeStop(){if(arcadeTimer){clearInterval(arcadeTimer);arcadeTimer=null;}if(arcade&&arcade.type==="catch"&&arcade.frame)cancelAnimationFrame(arcade.frame);arcade=null;}
+function arcadeView(html){
+  document.getElementById("modalContent").innerHTML=html;
+  document.getElementById("gameModal").classList.add("show");
+}
+function arcadeReward(amount){
+  coins+=amount;updateCoins();
+  if(Math.random()<.05){refreshEnergy();const gained=Math.min(5,ENERGY_MAX-energy);energy+=gained;refreshEnergy();message("Награда: +"+amount+" монет"+(gained?" и ⚡+"+gained:"")+"!");}
+  else message("Награда: +"+amount+" монет!");
+}
+function arcadeBack(){arcadeStop();openPanel("games");}
+const flowerIcons=[
+  ["🌷","02_тюльпан.png"],["🌼","04_ромашка.png"],["🌸","03_сакура.png"],
+  ["🌹","01_роза.png"],["🌻","05_подсолнух.png"],["🪻","06_сирень.png"]
+];
+const flowers=flowerIcons.map((entry,i)=>'<img class="flower-icon" src="./'+encodeURIComponent(entry[1])+'" alt="'+entry[0]+'" draggable="false">');
+function matchRuns(board){
+  const found=new Set();
+  for(let r=0;r<6;r++)for(let c=0;c<6;c++){
+    const p=r*6+c,v=board[p];
+    if(c<4&&v===board[p+1]&&v===board[p+2]){let j=c;while(j<6&&board[r*6+j]===v)found.add(r*6+j++);}
+    if(r<4&&v===board[p+6]&&v===board[p+12]){let j=r;while(j<6&&board[j*6+c]===v)found.add(j++*6+c);}
+  }
+  return [...found];
+}
+function freshBoard(){
+  const b=[];
+  for(let i=0;i<36;i++){
+    let choices=[0,1,2,3,4,5];
+    if(i%6>=2)choices=choices.filter(v=>!(b[i-1]===v&&b[i-2]===v));
+    if(i>=12)choices=choices.filter(v=>!(b[i-6]===v&&b[i-12]===v));
+    b.push(choices[Math.floor(Math.random()*choices.length)]);
+  }
+  return b;
+}
+function startMatch3(){
+  if(!spendEnergy())return;
+  arcadeStop();
+  arcade={type:"match",board:freshBoard(),moves:15,score:0,selected:-1,busy:false};
+  drawMatch3();
+}
+function drawMatch3(){
+  if(!arcade||arcade.type!=="match")return;
+  const g=arcade;
+  arcadeView('<div class="modal-title">🌷 Три в ряд</div><p class="arcade-info">Очки: '+g.score+' · Ходы: '+g.moves+'</p><div class="match-grid">'+g.board.map((v,i)=>'<button class="match-tile '+(i===g.selected?'selected':'')+'" onclick="tapMatch('+i+')" aria-label="Цветок '+(i+1)+'">'+flowers[v]+'</button>').join('')+'</div><p class="arcade-hint">Нажми на два соседних цветка, чтобы поменять их местами.</p><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+}
+const matchPause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+function matchTiles(){return [...document.querySelectorAll(".match-grid .match-tile")];}
+async function animateMatchSwap(i,j){
+  const tiles=matchTiles(),first=tiles[i],second=tiles[j];
+  if(!first||!second)return;
+  const r1=first.getBoundingClientRect(),r2=second.getBoundingClientRect();
+  const dx=r2.left-r1.left,dy=r2.top-r1.top;
+  if(localStorage.getItem("betaFlowerReduceMotion")==="1")return;
+  first.style.zIndex="3";second.style.zIndex="3";
+  first.style.transition=second.style.transition="transform 240ms cubic-bezier(.2,.8,.2,1)";
+  first.style.transform="translate("+dx+"px,"+dy+"px)";
+  second.style.transform="translate("+(-dx)+"px,"+(-dy)+"px)";
+  await matchPause(260);
+}
+function matchSparkles(indices){
+  if(localStorage.getItem("betaFlowerReduceMotion")==="1")return;
+  const tiles=matchTiles();
+  const layer=document.createElement("div");
+  layer.className="match-sparkle-layer";
+  document.body.appendChild(layer);
+  const symbols=["✦","✧","❀","✿"];
+  indices.forEach((index)=>{
+    const tile=tiles[index];if(!tile)return;
+    const rect=tile.getBoundingClientRect();
+    const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
+    for(let k=0;k<5;k++){
+      const particle=document.createElement("span");
+      particle.className="match-sparkle";
+      particle.textContent=symbols[(index+k)%symbols.length];
+      particle.style.left=cx+"px";particle.style.top=cy+"px";
+      const angle=(Math.PI*2*k/5)+(index%3)*.35;
+      const distance=22+Math.random()*28;
+      particle.style.setProperty("--spark-x",Math.cos(angle)*distance+"px");
+      particle.style.setProperty("--spark-y",Math.sin(angle)*distance-12+"px");
+      particle.style.animationDelay=(k*35)+"ms";
+      layer.appendChild(particle);
+    }
+  });
+  setTimeout(()=>layer.remove(),900);
+}
+async function animateMatchRemoval(indices){
+  matchSparkles(indices);
+  const tiles=matchTiles();
+  if(localStorage.getItem("betaFlowerReduceMotion")==="1")return;
+  indices.forEach(i=>{
+    const el=tiles[i];if(!el)return;
+    el.style.transition="transform 220ms ease-in, opacity 220ms ease-in";
+    el.style.transform="scale(.15) rotate(25deg)";
+    el.style.opacity="0";
+  });
+  await matchPause(240);
+}
+async function animateMatchFall(boardBefore,removed,g){
+  const marked=new Set(removed),incoming=Array(36).fill(null);
+  const next=Array(36);
+  for(let c=0;c<6;c++){
+    const kept=[];
+    for(let r=5;r>=0;r--)if(!marked.has(r*6+c))kept.push({value:boardBefore[r*6+c],from:r});
+    const missing=6-kept.length;
+    for(let k=0;k<missing;k++)kept.push({value:Math.floor(Math.random()*flowers.length),from:-1-(k)});
+    for(let r=5;r>=0;r--){
+      const item=kept[5-r],p=r*6+c;
+      next[p]=item.value;
+      incoming[p]=item.from<0?r+missing+1:r-item.from;
+    }
+  }
+  g.board=next;
+  drawMatch3();
+  if(localStorage.getItem("betaFlowerReduceMotion")==="1")return;
+  const tiles=matchTiles();
+  tiles.forEach((el,i)=>{
+    const rows=incoming[i];
+    if(rows<=0)return;
+    const step=el.getBoundingClientRect().height+5;
+    el.animate([{transform:"translateY("+(-rows*step)+"px)",opacity:rows>1?.45:1},{transform:"translateY(5px)",opacity:1,offset:.85},{transform:"translateY(0)",opacity:1}],{duration:330+Math.min(rows,6)*55,delay:(i%6)*25,easing:"cubic-bezier(.22,.75,.3,1)",fill:"both"});
+  });
+  await matchPause(720);
+}
+async function tapMatch(i){
+  const g=arcade;
+  if(!g||g.type!=="match"||g.busy||g.moves<=0)return;
+  if(g.selected<0){g.selected=i;drawMatch3();return;}
+  const j=g.selected;g.selected=-1;
+  if(i===j){drawMatch3();return;}
+  if(Math.abs(Math.floor(i/6)-Math.floor(j/6))+Math.abs(i%6-j%6)!==1){g.selected=i;drawMatch3();return;}
+  g.busy=true;
+  await animateMatchSwap(i,j);
+  if(arcade!==g)return;
+  [g.board[i],g.board[j]]=[g.board[j],g.board[i]];
+  let removed=matchRuns(g.board);
+  if(!removed.length){
+    drawMatch3();
+    await animateMatchSwap(i,j);
+    if(arcade!==g)return;
+    [g.board[i],g.board[j]]=[g.board[j],g.board[i]];
+    g.busy=false;drawMatch3();return;
+  }
+  g.moves--;
+  drawMatch3();
+  let chain=0;
+  while(removed.length&&chain<12){
+    await animateMatchRemoval(removed);
+    if(arcade!==g)return;
+    g.score+=removed.length*10;
+    await animateMatchFall(g.board.slice(),removed,g);
+    if(arcade!==g)return;
+    removed=matchRuns(g.board);chain++;
+  }
+  g.busy=false;
+  if(g.moves===0){
+    const reward=Math.min(3,Math.max(1,Math.floor(g.score/220)));
+    arcadeReward(reward);
+    arcadeView('<div class="modal-title">Игра окончена!</div><p class="arcade-info">Очки: '+g.score+' · Получено монет: '+reward+'</p><button class="game-action" onclick="startMatch3()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+    return;
+  }
+  drawMatch3();
+}
+function startMemory(){
+  if(!spendEnergy())return;
+  arcadeStop();
+  const cards=[0,0,1,1,2,2,3,3,4,4,5,5].sort(()=>Math.random()-.5);
+  arcade={type:"memory",cards,opened:[],matched:[],attempts:0,busy:false};
+  drawMemory();
+}
+function drawMemory(){
+  const g=arcade;if(!g||g.type!=="memory")return;
+  arcadeView('<div class="modal-title">🦋 Найди пару</div><p class="arcade-info">Пары: '+(g.matched.length/2)+'/6 · Попытки: '+g.attempts+'</p><div class="memory-grid">'+g.cards.map((v,i)=>'<button class="memory-tile" onclick="tapMemory('+i+')" aria-label="Карточка '+(i+1)+'">'+(g.opened.includes(i)||g.matched.includes(i)?flowers[v]:'❀')+'</button>').join('')+'</div><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+}
+function tapMemory(i){
+  const g=arcade;if(!g||g.type!=="memory"||g.busy||g.opened.includes(i)||g.matched.includes(i))return;
+  g.opened.push(i);
+  if(g.opened.length===2){
+    g.attempts++;
+    if(g.cards[g.opened[0]]===g.cards[g.opened[1]]){
+      g.matched.push(...g.opened);g.opened=[];
+      if(g.matched.length===12){
+        const reward=Math.max(1,Math.min(3,4-Math.floor(g.attempts/5)));arcadeReward(reward);
+        arcadeView('<div class="modal-title">Все пары найдены!</div><p class="arcade-info">Попытки: '+g.attempts+' · Награда: '+reward+' монет</p><button class="game-action" onclick="startMemory()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');return;
+      }
+    }else{
+      g.busy=true;
+      setTimeout(()=>{if(arcade!==g)return;g.opened=[];g.busy=false;drawMemory();},850);
+    }
+  }
+  drawMemory();
+}
+function startCatch(){
+  if(!spendEnergy())return;
+  arcadeStop();
+  arcade={type:"catch",score:0,seconds:30,basket:.5,items:[],spawn:0,last:0,elapsed:0,frame:0,active:true};
+  arcadeView('<div class="modal-title">🌸 Цветочный дождь</div><p class="arcade-info" id="rainScore">Очки: 0 · Время: 30 сек</p><div class="flower-rain" id="betaFlowerRain" aria-label="Лови цветы, перемещая корзинку"><div class="rain-basket" id="rainBasket"><img src="./%D0%BA%D0%BE%D1%80%D0%B7%D0%B8%D0%BD%D0%BA%D0%B0.png" alt="Корзинка" draggable="false"></div></div><p class="arcade-hint">Веди пальцем по полянке. 🌸 +1 · 🌟 +5 · 🦋 −2</p><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+  const field=document.getElementById("betaFlowerRain"),g=arcade;
+  const move=event=>{
+    if(arcade!==g||!g.active)return;
+    const rect=field.getBoundingClientRect();
+    g.basket=Math.max(.09,Math.min(.91,(event.clientX-rect.left)/rect.width));
+    document.getElementById("rainBasket").style.left=(g.basket*100)+"%";
+  };
+  field.addEventListener("pointerdown",event=>{field.setPointerCapture(event.pointerId);move(event);});
+  field.addEventListener("pointermove",move);
+  g.frame=requestAnimationFrame(tickCatch);
+}
+function tickCatch(time){
+  const g=arcade;
+  if(!g||g.type!=="catch"||!g.active)return;
+  if(!g.last)g.last=time;
+  const dt=Math.min(.05,(time-g.last)/1000);
+  g.last=time;g.elapsed+=dt;
+  g.seconds=Math.max(0,30-g.elapsed);
+  const field=document.getElementById("betaFlowerRain");
+  if(!field)return;
+  if(g.seconds<=0){
+    g.active=false;
+    const reward=Math.max(2,Math.min(4,Math.floor(g.score/15)));
+    arcadeReward(reward);
+    arcadeView('<div class="modal-title">Цветочный дождь завершён!</div><p class="arcade-info">Очки: '+g.score+' · Награда: '+reward+' монет</p><button class="game-action" onclick="startCatch()">Ещё раз</button><button class="game-action" onclick="arcadeBack()">К мини-играм</button>');
+    return;
+  }
+  const difficulty=1+g.elapsed/28;
+  g.spawn+=dt;
+  if(g.spawn>Math.max(.31,.83-g.elapsed*.014)){
+    g.spawn=0;
+    const roll=Math.random(),kind=roll<.12?"gold":roll<.27?"butterfly":"flower";
+    const el=document.createElement("div");
+    el.className="rain-item rain-"+kind;
+    if(kind==="flower")el.innerHTML=flowers[[0,1,2,3,4,5][Math.floor(Math.random()*6)]];
+    else el.textContent=kind==="gold"?"🌟":"🦋";
+    field.appendChild(el);
+    g.items.push({x:.07+Math.random()*.86,y:-.12,speed:(.24+Math.random()*.12)*difficulty,kind,el});
+  }
+  const basket=document.getElementById("rainBasket");
+  const basketY=.87;
+  g.items=g.items.filter(item=>{
+    item.y+=item.speed*dt;
+    item.el.style.left=(item.x*100)+"%";
+    item.el.style.top=(item.y*100)+"%";
+    if(item.y>=basketY&&item.y<basketY+.075&&Math.abs(item.x-g.basket)<.115){
+      g.score+=item.kind==="gold"?5:item.kind==="butterfly"?-2:1;
+      g.score=Math.max(0,g.score);
+      item.el.remove();
+      basket.classList.remove("rain-caught");void basket.offsetWidth;basket.classList.add("rain-caught");
+      return false;
+    }
+    if(item.y>1.1){item.el.remove();return false;}
+    return true;
+  });
+  document.getElementById("rainScore").textContent="Очки: "+g.score+" · Время: "+Math.ceil(g.seconds)+" сек";
+  g.frame=requestAnimationFrame(tickCatch);
+}
+function playFlowerGame() {
+  const reward = Math.floor(Math.random() * 21) + 10;
+  coins += reward;
+  updateCoins();
+  message("Ты выиграла " + reward + " монет! 🌸");
+}
+
+function playWalk() {
+  coins += 15;
+  updateCoins();
+  message("Ты собрала лепестки и получила 15 монет! 🌼");
+}
+
+
+const CAT_MAT_MAX_LEVEL=9;
+const CAT_MAT_PRICES=[0,100,150,225,325,450,600,800,1050,1350];
+let catMatLevel=Math.max(0,Math.min(CAT_MAT_MAX_LEVEL,Number(localStorage.getItem("betaFlowerCatMatLevel"))||0));
+/* Preserve an earlier purchase of the old single-level rug. */
+if(catMatLevel===0&&decorations.includes("Коврик")){catMatLevel=1;localStorage.setItem("betaFlowerCatMatLevel","1");}
+function catMatImage(level){return "./cat_mat_level_"+String(level).padStart(2,"0")+".png";}
+function updateCatMat(){
+  const mat=document.getElementById("catMatHome");
+  if(!mat)return;
+  mat.hidden=catMatLevel===0;
+  if(catMatLevel)mat.src=catMatImage(catMatLevel);
+  
+}
+function renderCatMatShop(){
+  const level=catMatLevel+1;
+  if(level>CAT_MAT_MAX_LEVEL)return '<div class="cat-mat-complete">Все коврики куплены · Уровень 9</div>';
+  return '<div class="cat-mat-option"><img loading="lazy" src="'+catMatImage(level)+'" alt="Коврик уровня '+level+'"><div class="cat-mat-details"><b>Уровень '+level+'</b><small>'+CAT_MAT_PRICES[level]+' монет</small><button onclick="buyCatMat('+level+')">Купить</button></div></div>';
+}
+function buyCatMat(level){
+  if(!Number.isInteger(level)||level!==catMatLevel+1||level>CAT_MAT_MAX_LEVEL){message("Коврики улучшаются по порядку!");return;}
+  const price=CAT_MAT_PRICES[level];
+  if(coins<price){message("Не хватает монет на коврик!");return;}
+  coins-=price;updateCoins();
+  catMatLevel=level;localStorage.setItem("betaFlowerCatMatLevel",String(level));
+  updateCatMat();
+  message("Коврик уровня "+level+" установлен!");
+  openPanel("decorations");
+}
+updateCatMat();
+
+function buyDecoration(name, price) {
+  if (decorations.includes(name)) {
+    message("Это украшение уже куплено!");
+    return;
+  }
+
+  if (coins < price) {
+    message("Пока не хватает монет!");
+    return;
+  }
+
+  coins -= price;
+  decorations.push(name);
+
+  localStorage.setItem(
+    "betaFlowerDecorations",
+    JSON.stringify(decorations)
+  );
+
+  updateCoins();
+  message("Куплено: " + name + "! 🎀");
+  openPanel("decorations");
+}
+
+function eventReward() {
+  if (localStorage.getItem("betaFlowerEventReward")) {
+    message("Ты уже получила эту награду!");
+    return;
+  }
+
+  coins += 100;
+  localStorage.setItem("betaFlowerEventReward", "yes");
+  updateCoins();
+  message("Получено 100 монет! 🎉");
+  openPanel("events");
+}
+
+document.getElementById("gameModal").addEventListener("click", function(event) {
+  if (event.target === this) closePanel();
+});
+
+// Suppress the image/text long-press context menu on the game surface.
+document.addEventListener("contextmenu",event=>{
+  if(!event.target.closest('input,textarea,[contenteditable="true"]'))event.preventDefault();
+});
+document.addEventListener("dragstart",event=>{
+  if(event.target.closest("img"))event.preventDefault();
+});
+</script>
+
+</body>
+</html>
