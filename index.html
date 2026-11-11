@@ -994,7 +994,7 @@ body{margin:0;display:flex;justify-content:center;align-items:stretch}
 /* Cat and mat form one anchored unit; both use the same local coordinate system. */
 .shop .cat-rest-spot{position:absolute;left:var(--cat-art-x,57%);top:var(--cat-art-y,102cqw);width:clamp(54px,16cqw,82px);height:clamp(54px,16cqw,82px);z-index:6;pointer-events:none}
 .shop .cat-rest-spot .cat[src]{position:absolute!important;left:0!important;top:0!important;right:auto!important;bottom:auto!important;width:100%!important;max-width:none!important;height:auto!important;z-index:2!important;pointer-events:auto}
-.shop .cat-rest-spot .cat-mat-home{position:absolute!important;left:-37.5%!important;top:48%!important;width:175%!important;height:auto!important;max-width:none!important;z-index:1!important;pointer-events:none!important}
+.shop .cat-rest-spot .cat-mat-home{position:absolute!important;left:-37.5%!important;top:0%!important;width:175%!important;height:auto!important;max-width:none!important;z-index:1!important;pointer-events:none!important}
 .shop .cat-rest-spot .cat-mat-home[hidden]{display:none!important}
 </style>
 </head>
@@ -1334,7 +1334,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.6.6"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.6.7"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
