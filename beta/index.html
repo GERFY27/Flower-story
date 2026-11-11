@@ -1439,7 +1439,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.9.6-beta"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.9.7-beta"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION+" · BETA";
 const GAME_DEVELOPER="GERFY27";
@@ -1895,7 +1895,7 @@ function drawMerge(){
    const recharge= cooling&&gen.readyAt?Math.max(0,Math.min(1,1-(gen.readyAt-Date.now())/MERGE_COOLDOWN)):1;
    return '<button class="merge-cell '+(item?'':'empty')+(generator?' merge-generator':'')+(cooling?' cooling':'')+(i===mergeState.selected?' selected':'')+'" style="'+(cooling?'--merge-recharge:'+recharge+';':'')+'" onclick="mergeTap('+i+')" aria-label="'+(item?mergeName(item):'Пустая клетка')+'">'+(item?mergeIcon(item):'')+badge+'</button>';
  }).join("");
- document.getElementById("mergeScreenContent").innerHTML='<div class="merge-head"><span>🌸 Цветочная мастерская</span><span>⚡ '+energy+'/'+ENERGY_MAX+'</span></div><div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div>';
+ document.getElementById("mergeScreenContent").innerHTML='<div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div>';
 }
 setInterval(()=>{if(!flowerDrag&&document.getElementById("mergeScreen")?.classList.contains("show"))drawMerge();},1000);
 
