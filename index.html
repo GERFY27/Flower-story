@@ -942,6 +942,12 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .top .right-controls > .achievement-shortcut{top:calc(200% + 2 * var(--rail-gap))!important}
 .top .right-controls > .event-shortcut{top:calc(300% + 3 * var(--rail-gap))!important}
 .top .right-controls > button > img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;margin:0!important;pointer-events:none}
+
+/* iPhone workshop: cover the entire visual viewport instead of a 9:16 centered frame. */
+html body .merge-screen{position:fixed!important;inset:0!important;top:0!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:none!important;height:100vh!important;height:100dvh!important;min-height:0!important;max-height:none!important;margin:0!important;border-radius:0!important;z-index:100!important}
+html body .merge-screen.show{display:flex!important}
+.merge-screen-header{padding-top:calc(12px + env(safe-area-inset-top,0px))!important}
+.merge-screen-content{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
 </style>
 </head>
 
@@ -1282,7 +1288,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.5.5"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.5.6"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
