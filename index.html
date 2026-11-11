@@ -1073,6 +1073,10 @@ input,textarea,[contenteditable="true"]{
 .merge-art img{display:block;max-width:94%;max-height:94%;width:100%;height:100%;object-fit:contain;pointer-events:none}
 .merge-art-fallback{font-size:clamp(18px,5vw,30px)}
 .merge-generator-badge{z-index:2}
+.merge-art{display:inline-flex;align-items:center;justify-content:center;width:100%;height:100%;min-width:0;min-height:0;pointer-events:none}
+.merge-art img{display:block;max-width:94%;max-height:94%;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.merge-art-fallback{font-size:clamp(18px,5vw,30px)}
+.merge-generator-badge{z-index:2}
 </style>
 </head>
 
@@ -1412,7 +1416,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.8.1"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.8.2"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1764,7 +1768,16 @@ function mergeOrder(){
 if(!Array.isArray(mergeState.orders))mergeState.orders=[];
 while(mergeState.orders.length<3)mergeState.orders.push(mergeOrder());
 mergeSave();
-function mergeIcon(item){return item.g!==undefined?MERGE_GENERATOR_ICONS[item.g]:MERGE_CHAINS[item.c]?.[item.l]||"🌸";}
+const MERGE_IMAGE_ROOT="https://raw.githubusercontent.com/GERFY27/Flower-story/beta/";
+const MERGE_IMAGE_TYPES=["bouquet","basket","gift","wrapping","toy"];
+function mergeIcon(item){
+ const category=item.g!==undefined?item.g:item.c;
+ const type=MERGE_IMAGE_TYPES[category];
+ if(!type)return "🌸";
+ const file=item.g!==undefined?"generator_"+type+".png":type+"_"+String(item.l+1).padStart(2,"0")+".png";
+ const fallback=item.g!==undefined?MERGE_GENERATOR_ICONS[category]:(MERGE_CHAINS[category]?.[item.l]||"🌸");
+ return '<span class="merge-art"><img src="'+MERGE_IMAGE_ROOT+file+'" alt="" draggable="false" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'inline\'"><span class="merge-art-fallback" style="display:none">'+fallback+'</span></span>';
+}
 function mergeName(item){return item.g!==undefined?MERGE_GENERATOR_NAMES[item.g]:MERGE_NAMES[item.c]?.[item.l]||"Предмет";}
 function mergeInventory(order){
  const used=new Set();
