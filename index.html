@@ -973,6 +973,19 @@ body{margin:0;display:flex;justify-content:center;align-items:stretch}
 
 /* Anchor the cat to a fixed point on the cover-scaled background artwork. */
 .shop .cat[src]{left:var(--cat-art-x,57%)!important;top:var(--cat-art-y,102cqw)!important;width:clamp(54px,16cqw,82px)!important;right:auto!important;bottom:auto!important}
+
+/* Equipped cat mat follows the same artwork anchor as the cat. */
+.shop .cat-mat-home{position:absolute!important;display:block;width:clamp(100px,29cqw,160px)!important;height:auto!important;left:calc(var(--cat-art-x,57%) - clamp(22px,6cqw,35px))!important;top:calc(var(--cat-art-y,102cqw) + clamp(38px,11cqw,61px))!important;z-index:5!important;pointer-events:none!important;object-fit:contain}
+.shop .cat-mat-home[hidden]{display:none!important}
+.shop .cat[src]{z-index:6!important}
+.cat-mat-shop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.cat-mat-option{min-width:0;text-align:center;border:2px solid #efd5df;border-radius:14px;padding:7px 4px;background:#fff8f3;color:#986675}
+.cat-mat-option.current{border-color:#b681bf;background:#f9effc}
+.cat-mat-option.locked{opacity:.65}
+.cat-mat-option img{width:100%;aspect-ratio:1;object-fit:contain}
+.cat-mat-option b,.cat-mat-option small{display:block}
+.cat-mat-option button{width:100%;margin-top:6px;padding:7px 2px;border:0;border-radius:9px;background:#cc8fb6;color:white;font-weight:700;font-size:11px}
+.cat-mat-option button:disabled{background:#d7c7d1;color:#765e70}
 </style>
 </head>
 
@@ -1014,7 +1027,7 @@ body{margin:0;display:flex;justify-content:center;align-items:stretch}
     <div class="counter"></div>
     <div class="plant">🪴</div>
     <img class="diana-home" src="./Diana_%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9_%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png" alt="Diana — флорист" draggable="false">
-    <img class="cat" src="cat.png" alt="Спящий котик" role="button" tabindex="0" aria-label="Погладить котика" onclick="petCat()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();petCat()}">
+    <img class="cat-mat-home" id="catMatHome" alt="Коврик котика" hidden><img class="cat" src="cat.png" alt="Спящий котик" role="button" tabindex="0" aria-label="Погладить котика" onclick="petCat()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();petCat()}">
     <div class="heart">💗</div>
   </div>
 
@@ -1256,11 +1269,9 @@ function openPanel(name) {
         </button>
       </div>
       <div class="game-item">
-        🧶 Мягкий коврик
-        <p>Цена: 100 монет</p>
-        <button class="game-action" onclick="buyDecoration('Коврик',100)">
-          Купить
-        </button>
+        🧶 Мягкий коврик для котика
+        <p>Текущий уровень: ${catMatLevel || "нет коврика"}. Улучшай коврик по порядку — новый заменяет старый.</p>
+        <div class="cat-mat-shop">${renderCatMatShop()}</div>
       </div>
       <div class="game-item">
         🪧 Вывеска лавки
@@ -1313,7 +1324,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.6.3"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.6.4"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1931,6 +1942,38 @@ function playWalk() {
   updateCoins();
   message("Ты собрала лепестки и получила 15 монет! 🌼");
 }
+
+
+const CAT_MAT_MAX_LEVEL=9;
+const CAT_MAT_PRICES=[0,100,150,225,325,450,600,800,1050,1350];
+let catMatLevel=Math.max(0,Math.min(CAT_MAT_MAX_LEVEL,Number(localStorage.getItem("flowerCatMatLevel"))||0));
+/* Preserve an earlier purchase of the old single-level rug. */
+if(catMatLevel===0&&decorations.includes("Коврик")){catMatLevel=1;localStorage.setItem("flowerCatMatLevel","1");}
+function catMatImage(level){return "./cat_mat_level_"+String(level).padStart(2,"0")+".png";}
+function updateCatMat(){
+  const mat=document.getElementById("catMatHome");
+  if(!mat)return;
+  mat.hidden=catMatLevel===0;
+  if(catMatLevel)mat.src=catMatImage(catMatLevel);
+}
+function renderCatMatShop(){
+  return Array.from({length:CAT_MAT_MAX_LEVEL},(_,i)=>{
+    const level=i+1,owned=level===catMatLevel,old=level<catMatLevel,next=level===catMatLevel+1;
+    const label=owned?"Установлен":old?"Заменён":next?"Купить":"Сначала предыдущий";
+    return '<div class="cat-mat-option '+(owned?'current':next?'':'locked')+'"><img loading="lazy" src="'+catMatImage(level)+'" alt="Коврик уровня '+level+'"><b>Уровень '+level+'</b><small>'+CAT_MAT_PRICES[level]+' монет</small><button '+(next?'':'disabled')+' onclick="buyCatMat('+level+')">'+label+'</button></div>';
+  }).join("");
+}
+function buyCatMat(level){
+  if(!Number.isInteger(level)||level!==catMatLevel+1||level>CAT_MAT_MAX_LEVEL){message("Коврики улучшаются по порядку!");return;}
+  const price=CAT_MAT_PRICES[level];
+  if(coins<price){message("Не хватает монет на коврик!");return;}
+  coins-=price;updateCoins();
+  catMatLevel=level;localStorage.setItem("flowerCatMatLevel",String(level));
+  updateCatMat();
+  message("Коврик уровня "+level+" установлен!");
+  openPanel("decorations");
+}
+updateCatMat();
 
 function buyDecoration(name, price) {
   if (decorations.includes(name)) {
