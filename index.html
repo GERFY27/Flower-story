@@ -886,6 +886,8 @@ body{display:flex;align-items:flex-start;justify-content:center}
 .energy-pill{position:absolute;top:clamp(54px,13cqw,76px);left:3%;z-index:12;display:flex;align-items:center;gap:5px;padding:5px 9px;border:2px solid #fff9f1;border-radius:18px;background:linear-gradient(#fffaf2,#ffe6db);box-shadow:0 3px 0 #d7a8a5;color:#986675;font-size:clamp(10px,2.7cqw,13px);font-weight:800}
 .energy-symbol{font-size:17px;color:#e9a13e}.energy-timer{font-size:10px;font-weight:600;color:#b48c88}
 
+/* Diana's feet align with the top edge of the bottom navigation panel. */
+.shop .diana-home{bottom:var(--diana-nav-bottom, 6%) !important}
 /* Flower workshop: compact portrait merge board and customer orders. */
 .merge-modal-card{max-width:520px!important;max-height:91dvh!important;padding:10px!important}
 .merge-head{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:4px 0 9px;color:#986675;font-weight:800;font-size:13px}
@@ -1247,7 +1249,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.5.0"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.5.1"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1475,6 +1477,16 @@ function makeBouquet() {
 
 
 
+/* Match Diana's lower edge to the navigation bar across screen sizes. */
+function alignDianaWithNavigation(){
+  const app=document.querySelector(".app"),nav=document.querySelector(".navigation");
+  if(!app||!nav)return;
+  const a=app.getBoundingClientRect(),n=nav.getBoundingClientRect();
+  app.style.setProperty("--diana-nav-bottom",Math.max(0,a.bottom-n.top)+"px");
+}
+window.addEventListener("resize",alignDianaWithNavigation);
+window.addEventListener("orientationchange",alignDianaWithNavigation);
+requestAnimationFrame(alignDianaWithNavigation);
 /* Persistent merge workshop. Two equal adjacent or distant items can be combined by tapping. */
 const MERGE_SIZE=49;
 const MERGE_CHAINS=[
