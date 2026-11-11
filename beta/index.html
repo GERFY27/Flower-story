@@ -1048,6 +1048,30 @@ input,textarea,[contenteditable="true"]{
 .merge-board .merge-cell,.match-grid .match-tile{touch-action:none!important;-webkit-user-select:none;user-select:none}
 .flower-drag-ghost{position:fixed!important;z-index:999999!important;pointer-events:none!important;transform:translate(-50%,-50%) scale(1.12);opacity:.92;box-shadow:0 8px 18px #60445b55!important}
 .flower-drag-source{opacity:.32!important}
+
+/* Beta city builder */
+#cityScreen{position:fixed;inset:0;z-index:11000;background:linear-gradient(#c9eafa,#f8f2dd 26%,#e6efcc);display:none;flex-direction:column;color:#5c534c;font-family:inherit}
+#cityScreen.show{display:flex}
+.city-top{display:flex;align-items:center;gap:9px;padding:calc(12px + env(safe-area-inset-top)) 12px 10px;background:#fff9f0ed;box-shadow:0 3px 12px #6d8c7140;flex-shrink:0}
+.city-top button,.city-action{border:0;border-radius:14px;background:#fff;color:#75545d;padding:10px 12px;font-weight:800;box-shadow:0 3px 0 #d9c9bb}
+.city-top strong{flex:1;font-size:17px}
+.city-scroll{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;align-items:center;padding:18px 8px 26px;touch-action:pan-x pan-y}
+.city-map{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));width:min(94vw,520px);aspect-ratio:1;gap:2px;padding:8px;background:#a6c87f;border:8px solid #b3d49b;border-radius:22px;box-shadow:0 12px 25px #617c5770;flex-shrink:0}
+.city-tile{position:relative;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:7px;background:linear-gradient(145deg,#b9dc89,#94bf71);font-size:clamp(15px,5.3vw,31px);padding:0;touch-action:manipulation}
+.city-tile.road{background:#a6a7a3;border-radius:2px}
+.city-tile.road:after{content:"";position:absolute;background:#f8ebc4;opacity:.8}
+.city-tile.road.h:after{width:75%;height:2px;top:50%}
+.city-tile.road.v:after{height:75%;width:2px;left:50%}
+.city-tile.road.cross:after{width:7px;height:7px;border-radius:50%}
+.city-tile.plot{background:linear-gradient(145deg,#e9d8ab,#d7c38e);outline:1px dashed #fff7d4;outline-offset:-4px}
+.city-tile.plot.selected{outline:3px solid #fff;box-shadow:inset 0 0 0 3px #e78b9f}
+.city-tile small{position:absolute;right:0;bottom:0;font-size:10px;background:#fff8e8;border-radius:6px;padding:0 2px;color:#6d7550}
+.city-panel{width:min(94vw,520px);margin:14px auto;background:#fffaf0;border-radius:19px;padding:13px;box-sizing:border-box;box-shadow:0 4px 15px #8c9d7650}
+.city-panel h3{font-size:16px;margin:0 0 8px}
+.city-panel p{font-size:13px;margin:5px 0 10px}
+.city-buildings{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.city-action{font-size:13px;text-align:center;line-height:1.5;background:#f7e7e6}
+.city-action:disabled{opacity:.45}
 </style>
 </head>
 
@@ -1121,6 +1145,7 @@ input,textarea,[contenteditable="true"]{
 
 <div class="toast" id="toast"></div>
 
+<section id="cityScreen" aria-label="Цветочный город" aria-hidden="true"><header class="city-top"><button onclick="closeCity()">← Назад</button><strong>🏙️ Цветочный город</strong><span id="cityMoney"></span></header><div class="city-scroll"><div class="city-map" id="cityMap"></div><div class="city-panel" id="cityPanel"></div></div></section>
 <section id="mergeScreen" class="merge-screen" aria-label="Цветочная мастерская" aria-hidden="true"><header class="merge-screen-header"><button type="button" onclick="closeMerge()">← Назад</button><strong>🌸 Мастерская</strong><span id="mergeScreenEnergy">⚡ 100/100</span></header><div id="mergeScreenContent" class="merge-screen-content"></div></section>
 <div class="modal" id="gameModal">
   <div class="modal-card">
@@ -1380,7 +1405,9 @@ function tab(button, name) {
     "Украшения": "decorations"
   };
 
+  if(name!=="Город")closeCity();
   if(name!=="Мастерская")closeMerge();
+  if(name==="Город"){closePanel();openCity();return;}
   if (pages[name] === null) {
     closePanel();
   } else {
@@ -1397,7 +1424,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.8.4-beta"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.9.0-beta"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION+" · BETA";
 const GAME_DEVELOPER="GERFY27";
@@ -2263,6 +2290,57 @@ document.addEventListener("click",e=>{
    e.preventDefault();e.stopImmediatePropagation();
  }
 },true);
+
+
+/* Independent beta city: saved separately from the main game. */
+const CITY_TYPES=[
+ {name:"Домик",icon:"🏡",price:80,income:0},
+ {name:"Цветочный магазин",icon:"🏬",price:150,income:0},
+ {name:"Парк",icon:"🌳",price:100,income:0},
+ {name:"Кафе",icon:"☕",price:200,income:0},
+ {name:"Фонтан",icon:"⛲",price:120,income:0},
+ {name:"Оранжерея",icon:"🌺",price:250,income:0}
+];
+const CITY_PLOTS=[0,1,3,4,5,7,8,9,10,12,13,14,16,17,27,28,30,31,32,34,35,36,37,39,40,41,43,44,63,64,66,67,68,70,71,72,73,75,76,77,79,80];
+let cityData={};try{const saved=JSON.parse(localStorage.getItem("betaFlowerCity")||"{}");if(saved&&typeof saved==="object"&&!Array.isArray(saved))cityData=saved;}catch(e){}
+let citySelected=null;
+function citySave(){localStorage.setItem("betaFlowerCity",JSON.stringify(cityData));}
+function openCity(){document.getElementById("cityScreen").classList.add("show");document.getElementById("cityScreen").setAttribute("aria-hidden","false");drawCity();}
+function closeCity(){const el=document.getElementById("cityScreen");if(!el)return;el.classList.remove("show");el.setAttribute("aria-hidden","true");}
+function cityChoose(i){citySelected=i;drawCity();}
+function cityBuild(type){
+ if(citySelected===null||!CITY_PLOTS.includes(citySelected)||cityData[citySelected])return;
+ const building=CITY_TYPES[type];if(!building||coins<building.price){message("Недостаточно монет");return;}
+ coins-=building.price;updateCoins();cityData[citySelected]={type,level:1};citySave();drawCity();
+}
+function cityUpgrade(){
+ const item=cityData[citySelected];if(!item)return;
+ const cost=100*item.level;
+ if(item.level>=5)return;
+ if(coins<cost){message("Недостаточно монет");return;}
+ coins-=cost;updateCoins();item.level++;citySave();drawCity();
+}
+function drawCity(){
+ const map=document.getElementById("cityMap");if(!map)return;
+ document.getElementById("cityMoney").textContent="🪙 "+coins;
+ let html="";
+ for(let i=0;i<81;i++){
+  const r=Math.floor(i/9),c=i%9,road=r===2||r===6||c===2||c===6;
+  if(road){const kind=(r===2||r===6)&&(c===2||c===6)?"cross":r===2||r===6?"h":"v";html+='<div class="city-tile road '+kind+'"></div>';continue;}
+  const plot=CITY_PLOTS.includes(i),building=cityData[i],type=building&&CITY_TYPES[building.type];
+  html+='<button class="city-tile '+(plot?"plot":"")+(citySelected===i?" selected":"")+'" '+(plot?'onclick="cityChoose('+i+')"':'disabled')+' aria-label="'+(type?type.name:"Участок")+'">'+(type?type.icon:plot?"＋":(i%7===0?"🌲":"🌿"))+(building?'<small>'+building.level+'</small>':"")+'</button>';
+ }
+ map.innerHTML=html;
+ const panel=document.getElementById("cityPanel"),count=Object.keys(cityData).length;
+ if(citySelected===null||!CITY_PLOTS.includes(citySelected)){panel.innerHTML='<h3>Мой город · '+count+' зданий</h3><p>Выбирай свободные участки на карте, строй дома, магазины и парки. Дороги уже проложены. Здания можно улучшать до 5-го уровня.</p>';return;}
+ const item=cityData[citySelected];
+ if(item){
+  const type=CITY_TYPES[item.type],cost=item.level*100;
+  panel.innerHTML='<h3>'+type.icon+' '+type.name+' · уровень '+item.level+'/5</h3><p>Участок №'+(citySelected+1)+'. Улучшай здания и развивай свой город.</p><button class="city-action" '+(item.level>=5||coins<cost?'disabled':'')+' onclick="cityUpgrade()">'+(item.level>=5?'Максимальный уровень':'Улучшить · '+cost+' 🪙')+'</button>';
+ }else{
+  panel.innerHTML='<h3>Свободный участок №'+(citySelected+1)+'</h3><p>Выбери сооружение для строительства:</p><div class="city-buildings">'+CITY_TYPES.map((b,i)=>'<button class="city-action" '+(coins<b.price?'disabled':'')+' onclick="cityBuild('+i+')">'+b.icon+' '+b.name+'<div>'+b.price+' 🪙</div></button>').join("")+'</div>';
+ }
+}
 
 </script>
 
