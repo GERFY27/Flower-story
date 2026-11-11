@@ -1427,7 +1427,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.8.6"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.8.7"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1883,7 +1883,7 @@ function drawMerge(){
    const recharge= cooling&&gen.readyAt?Math.max(0,Math.min(1,1-(gen.readyAt-Date.now())/MERGE_COOLDOWN)):1;
    return '<button class="merge-cell '+(item?'':'empty')+(generator?' merge-generator':'')+(cooling?' cooling':'')+(i===mergeState.selected?' selected':'')+'" style="'+(cooling?'--merge-recharge:'+recharge+';':'')+'" onclick="mergeTap('+i+')" aria-label="'+(item?mergeName(item):'Пустая клетка')+'">'+(item?mergeIcon(item):'')+badge+'</button>';
  }).join("");
- document.getElementById("mergeScreenContent").innerHTML='<div class="merge-head"><span>🌸 Цветочная мастерская</span><span>⚡ '+energy+'/'+ENERGY_MAX+'</span></div><div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div><div class="merge-tools"><button onclick="mergeState.selected=-1;drawMerge()">Снять выбор</button></div><p class="merge-hint">Нажимай на генераторы на поле: цветы — 15, корзинки — 14, подарки — 13, упаковка — 12, игрушки — 11 предметов, затем 5 минут перезарядки. Каждое создание стоит ⚡1. Перетаскивай предметы пальцем или выбирай клетки нажатием. Объединяй одинаковые предметы и выполняй заказы.</p>';
+ document.getElementById("mergeScreenContent").innerHTML='<div class="merge-head"><span>🌸 Цветочная мастерская</span><span>⚡ '+energy+'/'+ENERGY_MAX+'</span></div><div class="merge-orders">'+orders+'</div><div class="merge-board">'+cells+'</div>';
 }
 setInterval(()=>{if(!flowerDrag&&document.getElementById("mergeScreen")?.classList.contains("show"))drawMerge();},1000);
 
