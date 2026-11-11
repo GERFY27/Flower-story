@@ -970,6 +970,9 @@ body{margin:0;display:flex;justify-content:center;align-items:stretch}
 
 /* Diana's lower edge sits slightly behind the top of the bottom navigation. */
 .shop .diana-home{bottom:calc(var(--diana-nav-bottom, 6%) - 28px)!important}
+
+/* Anchor the cat to a fixed point on the cover-scaled background artwork. */
+.shop .cat[src]{left:var(--cat-art-x,57%)!important;top:var(--cat-art-y,102cqw)!important;width:clamp(54px,16cqw,82px)!important;right:auto!important;bottom:auto!important}
 </style>
 </head>
 
@@ -1310,7 +1313,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.6.2"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.6.3"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1550,6 +1553,30 @@ window.addEventListener("orientationchange",alignDianaWithNavigation);
 if(window.visualViewport)window.visualViewport.addEventListener("resize",alignDianaWithNavigation);
 if(typeof ResizeObserver!=="undefined"){const sceneObserver=new ResizeObserver(alignDianaWithNavigation);sceneObserver.observe(document.querySelector(".app"));sceneObserver.observe(document.querySelector(".navigation"));}
 requestAnimationFrame(alignDianaWithNavigation);
+
+/* Keep the cat attached to the same point of the background image when
+   background-size:cover crops differently on different screen ratios. */
+(function(){
+  const art=new Image();
+  art.src="./%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png";
+  function positionCatOnArtwork(){
+    const app=document.querySelector(".app");
+    if(!app||!art.naturalWidth||!art.naturalHeight)return;
+    const w=app.clientWidth,h=app.clientHeight;
+    const scale=Math.max(w/art.naturalWidth,h/art.naturalHeight);
+    const drawnWidth=art.naturalWidth*scale,drawnHeight=art.naturalHeight*scale;
+    const cropX=(w-drawnWidth)/2,cropY=(h-drawnHeight)/2;
+    app.style.setProperty("--cat-art-x",(cropX+drawnWidth*.57)+"px");
+    app.style.setProperty("--cat-art-y",(cropY+drawnWidth*1.02)+"px");
+  }
+  art.addEventListener("load",positionCatOnArtwork);
+  window.addEventListener("resize",positionCatOnArtwork);
+  window.addEventListener("orientationchange",positionCatOnArtwork);
+  if(window.visualViewport)window.visualViewport.addEventListener("resize",positionCatOnArtwork);
+  if(typeof ResizeObserver!=="undefined"){const app=document.querySelector(".app");if(app)new ResizeObserver(positionCatOnArtwork).observe(app);}
+  positionCatOnArtwork();
+})();
+
 /* Persistent merge workshop. Two equal adjacent or distant items can be combined by tapping. */
 const MERGE_SIZE=49;
 const MERGE_CHAINS=[
