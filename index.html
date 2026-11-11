@@ -990,6 +990,12 @@ body{margin:0;display:flex;justify-content:center;align-items:stretch}
 /* Place the cat visually on the mat; mat is underneath the cat, not below it. */
 .shop .cat-mat-home{left:var(--cat-mat-left,calc(var(--cat-art-x,57%) - 28px))!important;top:var(--cat-mat-top,calc(var(--cat-art-y,102cqw) + 26px))!important;width:var(--cat-mat-width,clamp(105px,28cqw,150px))!important;z-index:5!important}
 .shop .cat[src]{z-index:6!important}
+
+/* Cat and mat form one anchored unit; both use the same local coordinate system. */
+.shop .cat-rest-spot{position:absolute;left:var(--cat-art-x,57%);top:var(--cat-art-y,102cqw);width:clamp(54px,16cqw,82px);height:clamp(54px,16cqw,82px);z-index:6;pointer-events:none}
+.shop .cat-rest-spot .cat[src]{position:absolute!important;left:0!important;top:0!important;right:auto!important;bottom:auto!important;width:100%!important;max-width:none!important;height:auto!important;z-index:2!important;pointer-events:auto}
+.shop .cat-rest-spot .cat-mat-home{position:absolute!important;left:-37.5%!important;top:48%!important;width:175%!important;height:auto!important;max-width:none!important;z-index:1!important;pointer-events:none!important}
+.shop .cat-rest-spot .cat-mat-home[hidden]{display:none!important}
 </style>
 </head>
 
@@ -1031,7 +1037,7 @@ body{margin:0;display:flex;justify-content:center;align-items:stretch}
     <div class="counter"></div>
     <div class="plant">🪴</div>
     <img class="diana-home" src="./Diana_%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9_%D1%8D%D0%BA%D1%80%D0%B0%D0%BD.png" alt="Diana — флорист" draggable="false">
-    <img class="cat-mat-home" id="catMatHome" alt="Коврик котика" hidden><img class="cat" src="cat.png" alt="Спящий котик" role="button" tabindex="0" aria-label="Погладить котика" onclick="petCat()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();petCat()}">
+    <div class="cat-rest-spot"><img class="cat-mat-home" id="catMatHome" alt="Коврик котика" hidden><img class="cat" src="cat.png" alt="Спящий котик" role="button" tabindex="0" aria-label="Погладить котика" onclick="petCat()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();petCat()}"></div>
     <div class="heart">💗</div>
   </div>
 
@@ -1328,7 +1334,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.6.5"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.6.6"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1954,34 +1960,12 @@ let catMatLevel=Math.max(0,Math.min(CAT_MAT_MAX_LEVEL,Number(localStorage.getIte
 /* Preserve an earlier purchase of the old single-level rug. */
 if(catMatLevel===0&&decorations.includes("Коврик")){catMatLevel=1;localStorage.setItem("flowerCatMatLevel","1");}
 function catMatImage(level){return "./cat_mat_level_"+String(level).padStart(2,"0")+".png";}
-function positionCatMat(){
-  const app=document.querySelector(".app"),cat=document.querySelector(".shop .cat[src]"),mat=document.getElementById("catMatHome");
-  if(!app||!cat||!mat||mat.hidden)return;
-  const a=app.getBoundingClientRect(),c=cat.getBoundingClientRect();
-  if(!c.width||!c.height)return;
-  const width=c.width*1.75;
-  const height=width*(mat.naturalHeight&&mat.naturalWidth?mat.naturalHeight/mat.naturalWidth:1);
-  /* The cat's lower body overlaps the upper half of the oval mat. */
-  app.style.setProperty("--cat-mat-width",width+"px");
-  app.style.setProperty("--cat-mat-left",(c.left-a.left+c.width/2-width/2)+"px");
-  app.style.setProperty("--cat-mat-top",(c.bottom-a.top-height*.62)+"px");
-}
-window.addEventListener("resize",positionCatMat);
-window.addEventListener("orientationchange",positionCatMat);
-if(window.visualViewport)window.visualViewport.addEventListener("resize",positionCatMat);
-document.addEventListener("DOMContentLoaded",()=>{
- const cat=document.querySelector(".shop .cat[src]"),mat=document.getElementById("catMatHome");
- if(cat)cat.addEventListener("load",positionCatMat);
- if(mat)mat.addEventListener("load",positionCatMat);
- if(typeof ResizeObserver!=="undefined"&&cat)new ResizeObserver(positionCatMat).observe(cat);
- positionCatMat();
-});
 function updateCatMat(){
   const mat=document.getElementById("catMatHome");
   if(!mat)return;
   mat.hidden=catMatLevel===0;
   if(catMatLevel)mat.src=catMatImage(catMatLevel);
-  requestAnimationFrame(positionCatMat);
+  
 }
 function renderCatMatShop(){
   return Array.from({length:CAT_MAT_MAX_LEVEL},(_,i)=>{
