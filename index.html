@@ -948,6 +948,25 @@ html body .merge-screen{position:fixed!important;inset:0!important;top:0!importa
 html body .merge-screen.show{display:flex!important}
 .merge-screen-header{padding-top:calc(12px + env(safe-area-inset-top,0px))!important}
 .merge-screen-content{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}
+
+/* Responsive layout: use available viewport, preserve artwork aspect ratio. */
+:root{--scene-width:min(100vw,520px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+html,body{width:100%;height:100%;height:100dvh;overflow:hidden}
+body{margin:0;display:flex;justify-content:center;align-items:stretch}
+.app{width:var(--scene-width)!important;max-width:520px!important;height:100dvh!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;margin:0 auto!important;padding:clamp(8px,2.5vw,15px) clamp(8px,2.5vw,15px) calc(78px + var(--safe-bottom))!important;background-size:cover!important;background-position:center center!important;position:relative;container-type:inline-size}
+.navigation{width:var(--scene-width)!important;max-width:520px!important;bottom:0!important;left:50%!important;transform:translateX(-50%)!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;padding:clamp(4px,1.5vw,8px) 4px calc(5px + var(--safe-bottom))!important}
+.nav-button{min-width:0!important;min-height:clamp(44px,8dvh,57px)!important;font-size:clamp(9px,2.3cqw,12px)!important}
+.nav-button span{font-size:clamp(18px,5cqw,26px)!important}
+.shop .diana-home{max-height:min(70%,calc(100dvh - 160px))!important}
+.shop .cat[src]{top:clamp(250px,102cqw,calc(100dvh - 170px))!important}
+.modal{inset:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) 10px calc(8px + var(--safe-bottom))!important}
+.modal-card{width:min(100%,520px)!important;max-width:520px!important;max-height:calc(100dvh - 20px - env(safe-area-inset-top,0px) - var(--safe-bottom))!important;overflow-y:auto!important}
+.merge-screen{width:100vw!important;height:100dvh!important;max-width:none!important}
+.merge-screen-content{min-height:0;overflow-y:auto}
+.merge-screen .merge-board{width:100%;max-width:min(100%,min(56dvh,520px));margin-left:auto;margin-right:auto}
+.merge-screen .merge-cell{font-size:clamp(17px,5.5vw,36px)}
+@media(max-height:650px){.merge-screen-content{justify-content:flex-start!important}.merge-screen .merge-orders{margin-bottom:6px}.merge-screen .merge-tools{margin-top:6px}.merge-screen .merge-hint{margin-top:4px}}
+@media(min-width:700px){.app{box-shadow:0 0 45px #a86c7830}.merge-screen-content{max-width:700px;width:100%;margin:0 auto}.merge-screen .merge-board{max-width:min(58dvh,560px)}}
 </style>
 </head>
 
@@ -1288,7 +1307,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.5.6"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.6.0"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1525,6 +1544,8 @@ function alignDianaWithNavigation(){
 }
 window.addEventListener("resize",alignDianaWithNavigation);
 window.addEventListener("orientationchange",alignDianaWithNavigation);
+if(window.visualViewport)window.visualViewport.addEventListener("resize",alignDianaWithNavigation);
+if(typeof ResizeObserver!=="undefined"){const sceneObserver=new ResizeObserver(alignDianaWithNavigation);sceneObserver.observe(document.querySelector(".app"));sceneObserver.observe(document.querySelector(".navigation"));}
 requestAnimationFrame(alignDianaWithNavigation);
 /* Persistent merge workshop. Two equal adjacent or distant items can be combined by tapping. */
 const MERGE_SIZE=49;
