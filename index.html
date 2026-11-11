@@ -1014,6 +1014,16 @@ body{margin:0;display:flex;justify-content:center;align-items:stretch}
 .shop .diana-home{pointer-events:auto!important;cursor:pointer;touch-action:manipulation}
 .shop .diana-speech{position:absolute;left:var(--diana-speech-x,10px);top:var(--diana-speech-y,90px);width:clamp(160px,52cqw,260px);aspect-ratio:1720/845;background:url("./%D0%BE%D0%B1%D0%BB%D0%B0%D1%87%D0%BA%D0%BE%20%D0%B4%D0%B8%D0%B0%D0%BB%D0%BE%D0%B3%D0%B0.png") center/contain no-repeat;z-index:15;display:flex;align-items:center;justify-content:center;padding:12% 12% 16%;pointer-events:none;text-align:center;color:#80518d;font-size:clamp(12px,3.1cqw,17px);font-weight:800;line-height:1.2;text-shadow:0 1px #fff}
 .shop .diana-speech[hidden]{display:none!important}
+
+/* Compact full-width cat mat offer: artwork left, details and purchase right. */
+.cat-mat-shop{display:block!important;margin:10px 0 2px!important;width:100%!important}
+.cat-mat-shop .cat-mat-option{display:grid!important;grid-template-columns:minmax(88px,40%) minmax(0,1fr)!important;align-items:center!important;gap:12px!important;width:100%!important;box-sizing:border-box!important;padding:10px!important;text-align:left!important}
+.cat-mat-shop .cat-mat-option img{display:block!important;width:100%!important;max-height:135px!important;aspect-ratio:1!important;object-fit:contain!important}
+.cat-mat-details{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:7px;min-width:0}
+.cat-mat-details b{font-size:clamp(15px,3.7cqw,20px);line-height:1.25}
+.cat-mat-details small{font-size:clamp(13px,3cqw,16px)}
+.cat-mat-details button{font-size:clamp(13px,3cqw,16px)!important;padding:10px 8px!important;margin-top:4px!important}
+.cat-mat-complete{padding:12px;text-align:center;color:#986675;font-weight:700}
 </style>
 </head>
 
@@ -1299,7 +1309,7 @@ function openPanel(name) {
       </div>
       <div class="game-item">
         🧶 Мягкий коврик для котика
-        <p>Текущий уровень: ${catMatLevel || "нет коврика"}. Улучшай коврик по порядку — новый заменяет старый.</p>
+        
         <div class="cat-mat-shop">${renderCatMatShop()}</div>
       </div>
       <div class="game-item">
@@ -1353,7 +1363,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.7.6"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.7.7"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -2017,8 +2027,8 @@ function updateCatMat(){
 }
 function renderCatMatShop(){
   const level=catMatLevel+1;
-  if(level>CAT_MAT_MAX_LEVEL)return '<div class="cat-mat-option current">Все улучшения куплены! Коврик уровня 9 установлен.</div>';
-  return '<div class="cat-mat-option"><img loading="lazy" src="'+catMatImage(level)+'" alt="Коврик уровня '+level+'"><b>Следующий коврик — уровень '+level+'</b><small>'+CAT_MAT_PRICES[level]+' монет</small><button onclick="buyCatMat('+level+')">Купить</button></div>';
+  if(level>CAT_MAT_MAX_LEVEL)return '<div class="cat-mat-complete">Все коврики куплены · Уровень 9</div>';
+  return '<div class="cat-mat-option"><img loading="lazy" src="'+catMatImage(level)+'" alt="Коврик уровня '+level+'"><div class="cat-mat-details"><b>Уровень '+level+'</b><small>'+CAT_MAT_PRICES[level]+' монет</small><button onclick="buyCatMat('+level+')">Купить</button></div></div>';
 }
 function buyCatMat(level){
   if(!Number.isInteger(level)||level!==catMatLevel+1||level>CAT_MAT_MAX_LEVEL){message("Коврики улучшаются по порядку!");return;}
