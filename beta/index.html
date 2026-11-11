@@ -1388,7 +1388,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.8.1-beta"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.8.2-beta"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
@@ -1795,7 +1795,8 @@ function mergeTap(index){
  if(selected===index){mergeState.selected=-1;drawMerge();return;}
  if(selected<0){if(target)mergeState.selected=index;drawMerge();return;}
  const from=board[selected];
- if(!from||from.g!==undefined){mergeState.selected=-1;drawMerge();return;}
+ if(!from){mergeState.selected=-1;drawMerge();return;}
+ if(from.g!==undefined){if(!target){board[index]=from;board[selected]=null;mergeSave();}mergeState.selected=-1;drawMerge();return;}
  if(target&&target.g===undefined&&target.c===from.c&&target.l===from.l&&target.l<8){
    board[index]={c:target.c,l:target.l+1};board[selected]=null;
    mergeState.selected=-1;mergeSave();drawMerge();return;
@@ -2202,7 +2203,7 @@ document.addEventListener("pointerdown",e=>{
  const type=source.classList.contains("merge-cell")?"merge":"match";
  const index=Array.prototype.indexOf.call(source.parentElement.children,source);
  if(index<0)return;
- if(type==="merge"&&(!mergeState.board[index]||mergeState.board[index].g!==undefined))return;
+ if(type==="merge"&&!mergeState.board[index])return;
  if(type==="match"&&(!arcade||arcade.type!=="match"||arcade.busy||arcade.moves<=0))return;
  flowerDrag={type,index,source,x:e.clientX,y:e.clientY,moved:false,ghost:null};
 },{passive:true});
@@ -2232,8 +2233,12 @@ document.addEventListener("pointerup",e=>{
  flowerSuppressClickUntil=Date.now()+500;
  if(target<0||target===d.index)return;
  if(d.type==="merge"){
-   mergeState.selected=d.index;
-   mergeTap(target);
+   const from=mergeState.board[d.index],to=mergeState.board[target];
+   if(from&&from.g!==undefined){
+     if(!to){mergeState.board[target]=from;mergeState.board[d.index]=null;mergeState.selected=-1;mergeSave();drawMerge();}
+   }else if(to&&to.g!==undefined){
+     if(from){mergeState.board[target]=from;mergeState.board[d.index]=to;mergeState.selected=-1;mergeSave();drawMerge();}
+   }else{mergeState.selected=d.index;mergeTap(target);}
  }else{
    const adjacent=Math.abs(Math.floor(target/6)-Math.floor(d.index/6))+Math.abs(target%6-d.index%6)===1;
    if(adjacent&&arcade&&arcade.type==="match"&&!arcade.busy){
