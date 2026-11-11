@@ -1108,8 +1108,8 @@ input,textarea,[contenteditable="true"]{
     <span>🏡</span>Лавка
   </button>
   <button class="nav-button" onclick="tab(this,'Мастерская')"><span>🌱</span>Мастерская</button>
-  <button class="nav-button" onclick="tab(this,'Букеты')">
-    <span>💐</span>Букеты
+  <button class="nav-button" onclick="tab(this,'Город')">
+    <span>🏙️</span>Город
   </button>
   <button class="nav-button" onclick="tab(this,'Мини-игры')">
     <span>🎮</span>Мини-игры
@@ -1302,6 +1302,15 @@ function openPanel(name) {
       </div>
     `,
 
+    city: `
+      <div class="modal-title">🏙️ Цветочный город</div>
+      <div class="game-item" style="text-align:center">
+        <div style="font-size:58px;margin:12px 0">🏡 🌳 🏬</div>
+        <b>Добро пожаловать в город!</b>
+        <p>Здесь появятся новые места, здания и возможности для развития цветочной истории.</p>
+        <p>Пока город готовится к открытию.</p>
+      </div>
+    `,
     bouquets: `
       <div class="modal-title">💐 Мастерская букетов</div>
       <div class="game-item">
@@ -1366,7 +1375,7 @@ function tab(button, name) {
   const pages = {
     "Лавка": null,
     "Мастерская": "merge",
-    "Букеты": "bouquets",
+    "Город": "city",
     "Мини-игры": "games",
     "Украшения": "decorations"
   };
@@ -1388,7 +1397,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.8.3-beta"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.8.4-beta"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION+" · BETA";
 const GAME_DEVELOPER="GERFY27";
