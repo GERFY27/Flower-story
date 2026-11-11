@@ -967,6 +967,9 @@ body{margin:0;display:flex;justify-content:center;align-items:stretch}
 .merge-screen .merge-cell{font-size:clamp(17px,5.5vw,36px)}
 @media(max-height:650px){.merge-screen-content{justify-content:flex-start!important}.merge-screen .merge-orders{margin-bottom:6px}.merge-screen .merge-tools{margin-top:6px}.merge-screen .merge-hint{margin-top:4px}}
 @media(min-width:700px){.app{box-shadow:0 0 45px #a86c7830}.merge-screen-content{max-width:700px;width:100%;margin:0 auto}.merge-screen .merge-board{max-width:min(58dvh,560px)}}
+
+/* Diana's lower edge sits slightly behind the top of the bottom navigation. */
+.shop .diana-home{bottom:calc(var(--diana-nav-bottom, 6%) - 12px)!important}
 </style>
 </head>
 
@@ -1307,7 +1310,7 @@ function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
 }
-const GAME_VERSION="0.6.0"; // Change this value when publishing a new game release.
+const GAME_VERSION="0.6.1"; // Change this value when publishing a new game release.
 const splashVersionElement=document.getElementById("splashVersion");
 if(splashVersionElement)splashVersionElement.textContent="Версия "+GAME_VERSION;
 const GAME_DEVELOPER="GERFY27";
