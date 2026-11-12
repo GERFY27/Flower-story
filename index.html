@@ -1277,9 +1277,9 @@ input,textarea,[contenteditable="true"]{
   }
   const studioIntro=document.getElementById("agdgIntro");
   agdgChime();
-  // Fade in .85s, hold for 6s, fade out 1s, then reveal original loader.
-  setTimeout(()=>studioIntro.classList.add("agdg-out"),6850);
-  setTimeout(()=>{studioIntro.remove();load();},7850);
+  // Fade in .85s, hold for 3.5s, fade out 1s, then reveal original loader.
+  setTimeout(()=>studioIntro.classList.add("agdg-out"),4350);
+  setTimeout(()=>{studioIntro.remove();load();},5350);
 })();
 let coins = Number(localStorage.getItem("flowerCoins")) || 250;
 const ENERGY_MAX=100, ENERGY_REGEN_MS=5*60*1000, ENERGY_GAME_COST=5;
