@@ -1124,7 +1124,7 @@ input,textarea,[contenteditable="true"]{
     <div class="player"><img class="star-png" src="./star_icon.png" alt="Звезда"> Уровень 1</div>
     <div class="money">
       <div class="money-item"><img class="currency-icon" src="./%D0%BC%D0%BE%D0%BD%D0%B5%D1%82%D0%B0.png" alt="Монеты"> <span id="coins">250</span></div>
-      <div class="money-item"><img class="currency-icon" src="./%D0%B0%D0%BB%D0%BC%D0%B0%D0%B7.png" alt="Алмазы"> <span>15</span></div>
+      <div class="money-item"><img class="currency-icon" src="./%D0%B0%D0%BB%D0%BC%D0%B0%D0%B7.png" alt="Алмазы"> <span id="diamonds">15</span></div>
     </div>
     <div class="right-controls">
       <button class="settings-trigger" onclick="openSettings()" aria-label="Настройки"><img src="./%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8.png" alt=""></button>
@@ -1490,6 +1490,11 @@ function updateCoins() {
   localStorage.setItem("betaFlowerCoins", coins);
 }
 
+let diamonds=Number(localStorage.getItem("flowerDiamonds")??"15");
+if(!Number.isFinite(diamonds))diamonds=15;
+function updateDiamonds(){document.getElementById("diamonds").textContent=diamonds;localStorage.setItem("flowerDiamonds",String(diamonds));}
+updateDiamonds();
+
 function localDateKey(date) {
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
   return y+"-"+m+"-"+d;
@@ -1701,46 +1706,56 @@ function toggleGameMotion(){
   if(label)label.textContent=disabled?"выключена":"включена";
 }
 document.body.classList.toggle("reduce-game-motion",localStorage.getItem("betaFlowerReduceMotion")==="1");
+function dailyReward(date,dayIndex){
+  const key=localDateKey(date);
+  const seed=Number(key.replace(/-/g,""));
+  if(dayIndex===6)return {type:"diamonds",amount:1};
+  const roll=((seed*9301+49297)%233280)/233280;
+  if(roll<.10)return {type:"diamonds",amount:1+(seed%3)};
+  if(roll<.30)return {type:"energy",amount:10+5*(dayIndex%3)};
+  return {type:"coins",amount:30+dayIndex*10+(roll>.82?30:0)};
+}
+function dailyRewardLabel(reward){
+  return reward.amount+" "+(reward.type==="diamonds"?"алмаз.":reward.type==="energy"?"энергии":"монет");
+}
 function openWeeklyGifts() {
-  const now=new Date();
-  const monday=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const now=new Date(),monday=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
-  const claimed=JSON.parse(localStorage.getItem("betaFlowerWeeklyGifts")||"{}");
-  const oldClaim=localStorage.getItem("betaFlowerGiftTaken")===now.toDateString();
-  const names=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+  const claimed=JSON.parse(localStorage.getItem("flowerWeeklyGifts")||"{}");
+  const oldClaim=localStorage.getItem("flowerGiftTaken")===now.toDateString();
   let cards="";
-  for(let i=0;i<7;i++){
+  for(let i=0;i<8;i++){
     const date=new Date(monday);date.setDate(monday.getDate()+i);
-    const key=localDateKey(date),isToday=key===localDateKey(now);
-    const isClaimed=!!claimed[key]||(isToday&&oldClaim);
-    const isFuture=date>now&&!isToday;
-    const label=isClaimed?"Получено":isToday?"Забрать +50":"Недоступно";
+    const key=localDateKey(date),isToday=key===localDateKey(now),isClaimed=!!claimed[key]||(isToday&&oldClaim);
+    const reward=dailyReward(date,i%7);
+    const icon=reward.type==="diamonds"?"./%D0%B0%D0%BB%D0%BC%D0%B0%D0%B7.png":reward.type==="energy"?"./energy2.png":"./%D0%BC%D0%BE%D0%BD%D0%B5%D1%82%D0%B0.png";
+    const label=isClaimed?"Получено":isToday?"Забрать":"Недоступно";
     cards+=`<div class="weekly-day ${isToday?"weekly-today":""}">
-      <strong>${names[i]} <small>${date.getDate()}.${String(date.getMonth()+1).padStart(2,"0")}</small></strong>
-      <img src="./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png" alt="">
-      <span>50 монет</span>
+      <strong>День ${i+1} <small>${date.getDate()}.${String(date.getMonth()+1).padStart(2,"0")}</small></strong>
+      <img src="${icon}" alt="">
+      <span>${dailyRewardLabel(reward)}</span>
       <button class="weekly-claim" ${isToday&&!isClaimed?'onclick="gift()"':"disabled"}>${label}</button>
     </div>`;
   }
-  document.getElementById("modalContent").innerHTML='<div class="modal-title">Подарки этой недели</div><p class="weekly-hint">Каждый день — 50 монет. Пропущенные дни нельзя забрать позже.</p><div class="weekly-grid">'+cards+'</div>';
+  document.getElementById("modalContent").innerHTML='<div class="modal-title">Ежедневные награды</div><p class="weekly-hint">В начале недели награды скромнее. В конце недели — 1 алмаз. Иногда выпадают бонусы! День 8 — начало следующей недели. Пропущенные дни нельзя забрать позже.</p><div class="weekly-grid">'+cards+'</div>';
   document.getElementById("gameModal").classList.add("show");
 }
 function gift() {
-  if (giftTaken) {
-    message("Ты уже забрала подарок сегодня! 💗");
+  const now=new Date(),key=localDateKey(now);
+  const claimed=JSON.parse(localStorage.getItem("flowerWeeklyGifts")||"{}");
+  if(claimed[key]||localStorage.getItem("flowerGiftTaken")===now.toDateString()){
+    message("Награда за сегодня уже получена!");
     return;
   }
-
-  coins += 50;
-  giftTaken = true;
-
-  localStorage.setItem("betaFlowerGiftTaken", today);
-  const claimed=JSON.parse(localStorage.getItem("betaFlowerWeeklyGifts")||"{}");
-  claimed[localDateKey(new Date())]=true;
-  localStorage.setItem("betaFlowerWeeklyGifts",JSON.stringify(claimed));
-  updateCoins();
+  const dayIndex=(now.getDay()+6)%7,reward=dailyReward(now,dayIndex);
+  if(reward.type==="coins"){coins+=reward.amount;updateCoins();}
+  else if(reward.type==="diamonds"){diamonds+=reward.amount;updateDiamonds();}
+  else {refreshEnergy();energy=Math.min(ENERGY_MAX,energy+reward.amount);if(energy===ENERGY_MAX)energyTimestamp=Date.now();saveEnergy();refreshEnergy();}
+  giftTaken=true;
+  localStorage.setItem("flowerGiftTaken",now.toDateString());
+  claimed[key]=true;localStorage.setItem("flowerWeeklyGifts",JSON.stringify(claimed));
   openWeeklyGifts();
-  message("Получено 50 монет! STAR_ICON");
+  message("Получено: "+dailyRewardLabel(reward)+"!");
 }
 
 function makeBouquet() {
