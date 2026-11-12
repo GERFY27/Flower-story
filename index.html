@@ -1216,8 +1216,8 @@ input,textarea,[contenteditable="true"]{
   retry.style.cssText="display:none;margin:16px auto 0;padding:12px 22px;border:2px solid white;border-radius:16px;background:#edb5c5;color:#7d4c61;font-weight:700;box-shadow:0 4px 0 #d49bab";
   splash.querySelector(".splash-inner").appendChild(retry);
   const ready=new Set();
-  const splashStarted=performance.now();
-  const minimumSplashMs=2800;
+  let splashStarted=0;
+  const minimumSplashMs=4800;
   let running=false;
   function loadImage(src){
     return new Promise(resolve=>{
@@ -1233,7 +1233,7 @@ input,textarea,[contenteditable="true"]{
   }
   async function load(){
     if(running)return;
-    running=true;retry.style.display="none";
+    running=true;if(!splashStarted)splashStarted=performance.now();retry.style.display="none";
     caption.textContent="Загружаем цветочную лавку...";
     const missing=assets.filter(src=>!ready.has(src));
     await Promise.all(missing.map(async src=>{
