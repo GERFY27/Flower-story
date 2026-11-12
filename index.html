@@ -1660,7 +1660,7 @@ function openSettings() {
       '<input id="gameVolume" class="settings-volume" type="range" min="0" max="100" step="1" value="'+gameVolume+'" oninput="setGameVolume(this.value)" aria-label="Громкость игры">'+
       '<button class="game-action" onclick="toggleGameMotion()">Анимация: <span id="motionSettingLabel">'+(localStorage.getItem("flowerReduceMotion")==="1"?'выключена':'включена')+'</span></button>'+
     '</div>'+
-    '<div class="settings-footer"><div>Цветочная история</div><div>Версия '+GAME_VERSION+'</div><div>Студия разработки: <strong>AGDG studio</strong></div><div class="settings-studio-logo"><img src="./AGDG_studio_avatar_transparent_1024.png" alt="Логотип AGDG studio"></div><div><a href="https://t.me/+gsCOYPfYDD9hNGNi" target="_blank" rel="noopener noreferrer" style="color:#8d559e;text-decoration:underline;font-weight:700">Сообщество в Telegram</a></div></div>';
+    '<div class="settings-footer"><div>Цветочная история</div><div>Версия '+GAME_VERSION+'</div><div>Разработчик: GERFY27</div><div>Студия разработки: <strong>AGDG studio</strong></div><div class="settings-studio-logo"><img src="./AGDG_studio_avatar_transparent_1024.png" alt="Логотип AGDG studio"></div><div><a href="https://t.me/+gsCOYPfYDD9hNGNi" target="_blank" rel="noopener noreferrer" style="color:#8d559e;text-decoration:underline;font-weight:700">Сообщество в Telegram</a></div></div>';
   document.getElementById("settingsScreen").classList.add("show");
 }
 function closeSettings(){document.getElementById("settingsScreen").classList.remove("show");}
