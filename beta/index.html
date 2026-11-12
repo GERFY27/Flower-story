@@ -1732,12 +1732,12 @@ function openWeeklyGifts() {
     const label=isClaimed?"Получено":isToday?"Забрать":"Недоступно";
     cards+=`<div class="weekly-day ${isToday?"weekly-today":""}">
       <strong>День ${i+1} <small>${date.getDate()}.${String(date.getMonth()+1).padStart(2,"0")}</small></strong>
-      <img src="${icon}" alt="">
-      <span>${dailyRewardLabel(reward)}</span>
+      <img src="${isClaimed?icon:"./%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA.png"}" alt="">
+      <span>${isClaimed?dailyRewardLabel(reward):"Секретная награда"}</span>
       <button class="weekly-claim" ${isToday&&!isClaimed?'onclick="gift()"':"disabled"}>${label}</button>
     </div>`;
   }
-  document.getElementById("modalContent").innerHTML='<div class="modal-title">Ежедневные награды</div><p class="weekly-hint">В начале недели награды скромнее. В конце недели — 1 алмаз. Иногда выпадают бонусы! День 8 — начало следующей недели. Пропущенные дни нельзя забрать позже.</p><div class="weekly-grid">'+cards+'</div>';
+  document.getElementById("modalContent").innerHTML='<div class="modal-title">Ежедневные награды</div><p class="weekly-hint">Награда открывается только после получения. День 8 — начало следующей недели. Пропущенные дни нельзя забрать позже.</p><div class="weekly-grid">'+cards+'</div>';
   document.getElementById("gameModal").classList.add("show");
 }
 function gift() {
