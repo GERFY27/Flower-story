@@ -1097,6 +1097,18 @@ input,textarea,[contenteditable="true"]{
 .energy-symbol{display:inline-flex;align-items:center;justify-content:center}
 #mergeScreenEnergy{display:inline-flex;align-items:center;gap:3px}
 .game-action .energy-png{width:1.05em;height:1.05em}
+
+.settings-fullscreen{position:fixed;inset:0;z-index:9500;display:none;flex-direction:column;background:linear-gradient(165deg,#f8e5e4,#fff3e7);color:#76565b;overflow:hidden}
+.settings-fullscreen.show{display:flex}
+.settings-screen-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:calc(16px + env(safe-area-inset-top)) 16px 14px;background:#f7e2e1;border-bottom:2px solid #edcbce;color:#996879}
+.settings-screen-header strong{font-size:17px}
+.settings-screen-header button{justify-self:start;border:2px solid #e6c0c7;border-radius:13px;padding:10px 13px;background:#fff8f4;color:#9c6878;font-weight:700}
+.settings-screen-content{flex:1;overflow-y:auto;overscroll-behavior:contain;width:100%;max-width:500px;margin:0 auto;padding:24px 20px calc(32px + env(safe-area-inset-bottom))}
+.settings-intro{text-align:center;font-size:15px;font-weight:700;color:#b17b8a;margin-bottom:18px}
+.settings-screen-content .settings-section{background:#fff9f5;border:2px solid #f0d6d4;border-radius:20px;padding:18px 15px;box-shadow:0 5px 15px #bd879018}
+.settings-screen-content .settings-footer{margin-top:28px;font-size:13px}
+.settings-studio-logo{display:flex;justify-content:center;margin:8px auto 10px}
+.settings-studio-logo img{display:block;width:min(48vw,180px);max-height:155px;object-fit:contain;filter:drop-shadow(0 5px 8px #866d8222)}
 </style>
 </head>
 
@@ -1173,6 +1185,7 @@ input,textarea,[contenteditable="true"]{
 
 <section id="cityScreen" aria-label="Цветочный город" aria-hidden="true"><header class="city-top"><button onclick="closeCity()">← Назад</button><strong>🏙️ Цветочный город</strong><span id="cityMoney"></span></header><div class="city-scroll"><div class="city-map" id="cityMap"></div><div class="city-panel" id="cityPanel"></div></div></section>
 <section id="mergeScreen" class="merge-screen" aria-label="Цветочная мастерская" aria-hidden="true"><header class="merge-screen-header"><button type="button" onclick="closeMerge()">← Назад</button><strong>🌸 Мастерская</strong><span id="mergeScreenEnergy"><img class="energy-png" src="./energy.png" alt="Энергия"> 100/100</span></header><div id="mergeScreenContent" class="merge-screen-content"></div></section>
+<section id="settingsScreen" class="settings-fullscreen" aria-label="Настройки"><header class="settings-screen-header"><button type="button" onclick="closeSettings()">← Назад</button><strong>Настройки</strong><span></span></header><div id="settingsScreenContent" class="settings-screen-content"></div></section>
 <div class="modal" id="gameModal">
   <div class="modal-card">
     <div id="modalContent"></div>
@@ -1650,8 +1663,8 @@ function toggleGameMusic(){
 document.addEventListener("pointerdown",()=>{if(gameMusicEnabled&&gameSoundEnabled)updateMusic();},{once:true,passive:true});
 document.addEventListener("visibilitychange",updateMusic);
 function openSettings() {
-  document.getElementById("modalContent").innerHTML =
-    '<div class="modal-title">Настройки</div>'+
+  document.getElementById("settingsScreenContent").innerHTML =
+    '<div class="settings-intro">Звук и оформление игры</div>'+
     '<div class="settings-section">'+
       '<div class="settings-line"><span>Звук игры</span><button id="soundToggle" class="settings-switch" type="button" role="switch" aria-checked="'+gameSoundEnabled+'" onclick="toggleGameSound()">'+(gameSoundEnabled?'Включён':'Выключен')+'</button></div>'+
       '<div class="settings-line"><span>Фоновая музыка</span><button id="musicToggle" class="settings-switch" type="button" role="switch" aria-checked="'+gameMusicEnabled+'" onclick="toggleGameMusic()">'+(gameMusicEnabled?'Включена':'Выключена')+'</button></div>'+
@@ -1659,9 +1672,10 @@ function openSettings() {
       '<input id="gameVolume" class="settings-volume" type="range" min="0" max="100" step="1" value="'+gameVolume+'" oninput="setGameVolume(this.value)" aria-label="Громкость игры">'+
       '<button class="game-action" onclick="toggleGameMotion()">Анимация: <span id="motionSettingLabel">'+(localStorage.getItem("betaFlowerReduceMotion")==="1"?'выключена':'включена')+'</span></button>'+
     '</div>'+
-    '<div class="settings-footer"><div>Цветочная история</div><div>Версия '+GAME_VERSION+'</div><div>Разработчик: '+GAME_DEVELOPER+'</div><div><a href="https://t.me/+gsCOYPfYDD9hNGNi" target="_blank" rel="noopener noreferrer" style="color:#8d559e;text-decoration:underline;font-weight:700">Сообщество в Telegram</a></div></div>';
-  document.getElementById("gameModal").classList.add("show");
+    '<div class="settings-footer"><div>Цветочная история</div><div>Версия '+GAME_VERSION+'</div><div>Студия разработки: <strong>AGDG studio</strong></div><div class="settings-studio-logo"><img src="./AGDG_studio_avatar_transparent_1024.png" alt="Логотип AGDG studio"></div><div><a href="https://t.me/+gsCOYPfYDD9hNGNi" target="_blank" rel="noopener noreferrer" style="color:#8d559e;text-decoration:underline;font-weight:700">Сообщество в Telegram</a></div></div>';
+  document.getElementById("settingsScreen").classList.add("show");
 }
+function closeSettings(){document.getElementById("settingsScreen").classList.remove("show");}
 function toggleGameSound(){
   gameSoundEnabled=!gameSoundEnabled;
   localStorage.setItem("betaFlowerSoundEnabled",gameSoundEnabled?"1":"0");
