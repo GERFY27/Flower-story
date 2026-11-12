@@ -1725,7 +1725,7 @@ function openWeeklyGifts() {
       <button class="weekly-claim" ${isToday&&!isClaimed?'onclick="gift()"':"disabled"}>${label}</button>
     </div>`;
   }
-  document.getElementById("modalContent").innerHTML='<div class="modal-title">Ежедневные награды</div><p class="weekly-hint">Награда открывается только после получения. День 8 — начало следующей недели. Пропущенные дни нельзя забрать позже.</p><div class="weekly-grid">'+cards+'</div>';
+  document.getElementById("modalContent").innerHTML='<div class="modal-title">Ежедневные награды</div><div class="weekly-grid">'+cards+'</div>';
   document.getElementById("gameModal").classList.add("show");
 }
 function gift() {
